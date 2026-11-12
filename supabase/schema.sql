@@ -213,18 +213,25 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 -- ---------- Archivos (cuentos, materiales, fotos) ----------
-insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('archivos', 'archivos', true, 26214400,
-        array['application/pdf','image/png','image/jpeg','image/gif','image/webp','video/mp4','video/webm','text/plain','text/csv'])
-on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+do $outer$ begin
+  insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+  values ('archivos', 'archivos', true, 26214400,
+          array['application/pdf','image/png','image/jpeg','image/gif','image/webp','video/mp4','video/webm','text/plain','text/csv'])
+  on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+exception when others then raise notice 'AVISO: no se pudo crear la carpeta de archivos: %', sqlerrm;
+end $outer$;
 
--- Solo maestros y administradores suben o borran, y solo dentro de la carpeta de su congregación
-drop policy if exists "equipo sube archivos" on storage.objects;
-create policy "equipo sube archivos" on storage.objects for insert to authenticated
-  with check (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid));
-drop policy if exists "equipo borra archivos" on storage.objects;
-create policy "equipo borra archivos" on storage.objects for delete to authenticated
-  using (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid));
-drop policy if exists "equipo lista archivos" on storage.objects;
-create policy "equipo lista archivos" on storage.objects for select to authenticated
-  using (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid));
+do $outer$ begin
+  execute 'drop policy if exists "equipo sube archivos" on storage.objects';
+  execute $p$create policy "equipo sube archivos" on storage.objects for insert to authenticated
+    with check (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid))$p$;
+  execute 'drop policy if exists "equipo borra archivos" on storage.objects';
+  execute $p$create policy "equipo borra archivos" on storage.objects for delete to authenticated
+    using (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid))$p$;
+  execute 'drop policy if exists "equipo lista archivos" on storage.objects';
+  execute $p$create policy "equipo lista archivos" on storage.objects for select to authenticated
+    using (bucket_id = 'archivos' and public.es_equipo(((storage.foldername(name))[1])::uuid))$p$;
+exception when others then raise notice 'AVISO: no se pudieron crear los permisos de archivos: %', sqlerrm;
+end $outer$;
+
+select 'Listo: base de datos de Eterno Pacto Kids creada' as resultado;
