@@ -92,9 +92,11 @@
   const lecturasTot = (x) => x.cuentos + x.historias + x.capitulos + x.actividades;
   function statsNinos(cid) {
     const ninos = docsDe(cid, "ninos"); const asis = docsDe(cid, "asistencia"); const bonos = docsDe(cid, "bonos"); const libro = docsDe(cid, "libro");
+    const cfg = docsDe(cid, "config").find((d) => d.id === "general"); const cr = (cfg && Array.isArray(cfg.data.criterios)) ? cfg.data.criterios : null;
+    const pts = { ...PTS, material: 5, conducta: 5, participa: 5 }; if (cr) cr.forEach((c) => { pts[c.k] = Number(c.p) || 0; });
     return ninos.map((n) => {
-      const r = { id: n.id, nombre: n.data.nombre || "–", apoderado: n.data.apoderado || "", presente: 0, versiculo: 0, biblia: 0, tarea: 0, estrellas: 0, notas: [], obs: "" };
-      asis.forEach((a) => Object.keys(PTS).forEach((k) => { if ((a.data[k] || []).includes(n.id)) { r[k]++; r.estrellas += PTS[k]; } }));
+      const r = { id: n.id, nombre: n.data.nombre || "–", apoderado: n.data.apoderado || "", familia: !!n.data.familia_uid, presente: 0, versiculo: 0, biblia: 0, tarea: 0, material: 0, conducta: 0, participa: 0, estrellas: 0, notas: [], obs: "" };
+      asis.forEach((a) => Object.keys(pts).forEach((k) => { if (Array.isArray(a.data[k]) && a.data[k].includes(n.id)) { r[k] = (r[k] || 0) + 1; r.estrellas += pts[k]; } }));
       bonos.forEach((b) => { if (b.data.ninoId === n.id) r.estrellas += Number(b.data.pts) || 0; });
       libro.slice().sort((a, b) => (a.actualizado < b.actualizado ? 1 : -1)).forEach((l) => {
         const nt = l.data.notas && l.data.notas[n.id]; if (nt != null) r.notas.push(Number(nt));
@@ -213,8 +215,8 @@
       <td><select class="inp" data-rol="${esc(m.user_id)}" aria-label="Rol de ${esc(m.u.nombre || "")}">${["familia", "maestro", "admin"].map((r) => `<option value="${r}" ${r === m.rol ? "selected" : ""}>${ROLN[r]}</option>`).join("")}</select></td>
       <td class="small">${fmtFechaHora(m.u.ultimo_ingreso)}</td><td><button class="btn danger sm" data-quitar="${esc(m.user_id)}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Sin miembros.</p>`}</section>
     <section class="card"><h2>Niños (${ninos.length}) · ${regs} domingos con registro</h2>
-      ${ninos.length ? `<div class="tbl"><table><thead><tr><th>Niño/a</th><th>Apoderado</th><th class="num">Asistencias</th><th class="num">Versículos</th><th class="num">Biblia</th><th class="num">Tareas</th><th class="num">Estrellas</th><th class="num">Promedio</th><th>Última observación</th></tr></thead><tbody>
-      ${ninos.map((n) => `<tr><td><b>${esc(n.nombre)}</b></td><td>${esc(n.apoderado)}</td><td class="num">${n.presente}${regs ? `<span class="muted small"> / ${regs}</span>` : ""}</td><td class="num">${n.versiculo}</td><td class="num">${n.biblia}</td><td class="num">${n.tarea}</td><td class="num"><b>${n.estrellas}</b></td><td class="num">${n.promedio != null ? `<span class="pill ${n.promedio < 4 ? "bad" : "ok"}">${n.promedio.toFixed(1).replace(".", ",")}</span>` : "–"}</td><td class="small">${esc(n.obs)}</td></tr>`).join("")}
+      ${ninos.length ? `<div class="tbl"><table><thead><tr><th>Niño/a</th><th>Apoderado</th><th class="num">Asistencias</th><th class="num">Versículos</th><th class="num">Biblia</th><th class="num">Tareas</th><th class="num">Material</th><th class="num">Conducta</th><th class="num">Particip.</th><th class="num">Estrellas</th><th class="num">Promedio</th><th>Última observación</th></tr></thead><tbody>
+      ${ninos.map((n) => `<tr><td><b>${esc(n.nombre)}</b>${n.familia ? ' <span title="Vinculado a su familia">👪</span>' : ""}</td><td>${esc(n.apoderado)}</td><td class="num">${n.presente}${regs ? `<span class="muted small"> / ${regs}</span>` : ""}</td><td class="num">${n.versiculo}</td><td class="num">${n.biblia}</td><td class="num">${n.tarea}</td><td class="num">${n.material}</td><td class="num">${n.conducta}</td><td class="num">${n.participa}</td><td class="num"><b>${n.estrellas}</b></td><td class="num">${n.promedio != null ? `<span class="pill ${n.promedio < 4 ? "bad" : "ok"}">${n.promedio.toFixed(1).replace(".", ",")}</span>` : "–"}</td><td class="small">${esc(n.obs)}</td></tr>`).join("")}
       </tbody></table></div>` : `<p class="empty">Esta congregación aún no inscribe niños.</p>`}</section>
     <section class="card"><h2>Lectura en familia</h2>
       ${fams.length ? `<div class="tbl"><table><thead><tr><th>Cuenta</th><th>Perfil</th><th class="num">Cuentos</th><th class="num">Historias</th><th class="num">Capítulos</th><th class="num">Actividades</th><th class="num">Versículos</th><th class="num">Insignias</th></tr></thead><tbody>

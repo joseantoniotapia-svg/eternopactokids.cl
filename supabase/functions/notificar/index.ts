@@ -21,7 +21,7 @@ type Aviso = { titulo: string; texto: string; url: string; tag?: string };
 function ahoraCL() {
   const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "America/Santiago", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hour12: false, weekday: "short" })
     .formatToParts(new Date()).map((x) => [x.type, x.value]));
-  return { fecha: `${p.year}-${p.month}-${p.day}`, hora: Number(p.hour) % 24, sabado: p.weekday === "Sat" };
+  return { fecha: `${p.year}-${p.month}-${p.day}`, hora: Number(p.hour) % 24, sabado: p.weekday === "Sat", dia: Number(p.day) };
 }
 const sumarDias = (f: string, n: number) => { const d = new Date(f + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
@@ -82,9 +82,42 @@ async function nombreFamilia(uid: string) {
   const { data: p } = await sb.from("perfiles").select("nombre").eq("id", uid).maybeSingle(); return (p && p.nombre) || "Una familia";
 }
 
+const CRIT: { k: string; n: string; p: number; ico: string; on?: boolean }[] = [{ k: "presente", n: "Asistió", p: 10, ico: "✅" }, { k: "versiculo", n: "Versículo", p: 15, ico: "📖" }, { k: "biblia", n: "Biblia", p: 5, ico: "✝️" }, { k: "tarea", n: "Tarea", p: 10, ico: "🏠" }, { k: "material", n: "Material", p: 5, ico: "🎒" }, { k: "conducta", n: "Comportamiento", p: 5, ico: "😇" }, { k: "participa", n: "Participación", p: 5, ico: "🙋" }];
+async function resumenesMensuales(hoy: string) {
+  const fin = sumarDias(hoy, -1); const ini = fin.slice(0, 8) + "01"; const clave = fin.slice(0, 7);
+  const mes = new Date(fin + "T12:00:00Z").toLocaleDateString("es-CL", { month: "long", timeZone: "UTC" });
+  const { data: ninos } = await sb.from("docs").select("comunidad_id,id,data").eq("col", "ninos").not("data->>familia_uid", "is", null);
+  const porCom: Record<string, any[]> = {}; (ninos || []).forEach((n: any) => { if (n.data && n.data.familia_uid) (porCom[n.comunidad_id] = porCom[n.comunidad_id] || []).push(n); });
+  let enviados = 0;
+  for (const [cid, ns] of Object.entries(porCom)) {
+    const [{ data: clases }, { data: asis }, { data: cfg }] = await Promise.all([
+      sb.from("docs").select("id,data").eq("comunidad_id", cid).eq("col", "clases").gte("data->>fecha", ini).lte("data->>fecha", fin),
+      sb.from("docs").select("id,data").eq("comunidad_id", cid).eq("col", "asistencia"),
+      sb.from("docs").select("data").eq("comunidad_id", cid).eq("col", "config").eq("id", "general").maybeSingle()]);
+    const lista = (cfg && cfg.data && Array.isArray(cfg.data.criterios)) ? CRIT.map((c) => ({ ...c, ...(cfg.data.criterios.find((x: any) => x.k === c.k) || {}) })).concat(cfg.data.criterios.filter((x: any) => !CRIT.some((c) => c.k === x.k))) : CRIT;
+    const crit = lista.filter((c: any) => c.on !== false);
+    const reg = (clases || []).filter((c: any) => (asis || []).some((a: any) => a.id === c.id));
+    if (!reg.length) continue;
+    const porFam: Record<string, any[]> = {}; ns.forEach((n: any) => (porFam[n.data.familia_uid] = porFam[n.data.familia_uid] || []).push(n));
+    for (const [uid, hijos] of Object.entries(porFam)) {
+      if (!(await nuevo("resumen", uid + "/" + cid + "/" + clave))) continue;
+      const bloques = hijos.map((n: any) => {
+        const cuenta = (k: string) => reg.filter((c: any) => { const a = (asis || []).find((x: any) => x.id === c.id); return a && Array.isArray(a.data[k]) && a.data[k].includes(n.id); }).length;
+        const estrellas = crit.reduce((t: number, c: any) => t + cuenta(c.k) * (Number(c.p) || 0), 0);
+        return { nombre: n.data.nombre, asis: cuenta("presente"), estrellas, filas: crit.map((c: any) => `<tr><td style="padding:4px 8px">${c.ico || "⭐"} ${esc(c.n)}</td><td style="padding:4px 8px;text-align:right"><b>${cuenta(c.k)} de ${reg.length}</b></td></tr>`).join("") };
+      });
+      const html = plantilla(`Resumen de ${mes}`, bloques.map((b) => `<h2 style="margin:16px 0 6px;font-size:19px">${esc(b.nombre)}</h2><p style="margin:0 0 6px">Asistió <b>${b.asis} de ${reg.length}</b> domingos y ganó <b>⭐ ${b.estrellas} estrellas</b> este mes.</p><table style="border-collapse:collapse;width:100%;background:#FFF4E4;border-radius:12px">${b.filas}</table>`).join("") + `<p style="margin-top:14px">¡Gracias por acompañar a tus hijos en su caminar con Jesús! 💛</p>`, "Ver el detalle en la app", `${APP}/?com=${cid}#puntos`);
+      const pf = await prefs([uid]);
+      if (!pf[uid] || pf[uid].correo !== false) enviados += await enviarCorreos(await correos([uid]), `Resumen de ${mes} en la escuela dominical`, html);
+      await enviarPush([uid], { titulo: `Resumen de ${mes} 📊`, texto: bloques.map((b) => `${b.nombre}: ${b.asis}/${reg.length} domingos, ⭐ ${b.estrellas}`).join(" · "), url: `${APP}/?com=${cid}#puntos`, tag: "resumen-" + clave });
+    }
+  }
+  return enviados;
+}
+
 Deno.serve(async () => {
-  const r = { clases: 0, retos: 0, pendientes: 0, aprobados: 0, recordatorios: 0, push: 0, correos: 0 };
-  const { fecha, hora, sabado } = ahoraCL();
+  const r: Record<string, number> = { clases: 0, retos: 0, pendientes: 0, aprobados: 0, recordatorios: 0, push: 0, correos: 0, resumenes: 0 };
+  const { fecha, hora, sabado, dia } = ahoraCL();
   // Sin claves configuradas no se marca nada como avisado, para no perder avisos
   if (!PRIV && !RESEND) return new Response(JSON.stringify({ ok: true, push_activo: false, correo_activo: false, nota: "Faltan VAPID_PRIVATE_KEY y RESEND_API_KEY" }), { headers: { "Content-Type": "application/json" } });
   try {
@@ -101,6 +134,8 @@ Deno.serve(async () => {
       r.correos += await enviarCorreos(await correos(ids.filter((i) => !pf[i] || pf[i].correo !== false)), "Nueva clase: " + d.titulo, html);
       r.clases++;
     }
+    // 5. Resumen mensual para cada familia con hijos vinculados (el día 1, desde las 9:00)
+    if (dia === 1 && hora >= 9) r.resumenes = await resumenesMensuales(fecha);
     if (!PRIV) return new Response(JSON.stringify({ ok: true, push_activo: false, correo_activo: true, ...r }), { headers: { "Content-Type": "application/json" } });
     // 2. Retos entre familias que esperan respuesta
     const { data: retos } = await sb.from("retos").select("*").eq("estado", "pendiente").gte("creado", new Date(Date.now() - 2 * 864e5).toISOString());
