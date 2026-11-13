@@ -19,8 +19,10 @@
   const COLN = { clases: "Clases", cuentos: "Cuentos", materiales: "Material niños", matprofes: "Material profes", muro: "Muro", biblicos: "Personajes bíblicos", links: "Enlaces", contactos: "Contactos", premios: "Premios", compromisos: "Cartas", parabolas: "Parábolas", ninos: "Niños", asistencia: "Asistencia", bonos: "Estrellas", libro: "Libro de clases", config: "Configuración" };
   const MODERABLES = ["muro", "materiales", "matprofes", "cuentos", "biblicos", "links", "contactos", "clases", "premios", "compromisos", "parabolas"];
 
-  const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [] };
-  const ui = { tab: "resumen", com: null, buscar: "", bib: "cuentos", modCol: "", modCom: "", subida: null };
+  const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [] };
+  const NIVN = { todos: "Todos los usuarios", miembros: "Miembros", equipo: "Maestros y admins", admins: "Solo administradores", super: "Solo súper admin" };
+  const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"]];
+  const ui = { tab: "resumen", com: null, buscar: "", bib: "cuentos", modCol: "", modCom: "", subida: null, matCol: "cuentos", foroCom: "" };
   let yo = null;
 
   let toastT;
@@ -58,6 +60,14 @@
   async function cargar() {
     $("#main").innerHTML = `<p class="muted">Cargando datos…</p>`;
     try {
+      const [pl, ex, fo, me] = await Promise.all([
+        sb.from("planes").select("*").order("orden"),
+        sb.from("excepciones").select("*"),
+        sb.from("foros").select("*").order("orden"),
+        sb.from("mensajes").select("id,tema_id,autor,como,es_nino,texto,estado,reportes,creado,temas(titulo,foro_id)").or("estado.eq.pendiente,reportes.gt.0").order("creado", { ascending: false }).limit(300)
+      ]);
+      D.planes = pl.data || []; D.excepciones = ex.data || []; D.foros = fo.data || []; D.mensajes = me.data || [];
+      if (pl.error) console.warn("Falta ejecutar supabase/plataforma.sql:", pl.error.message);
       const [c, u, d, f, m] = await Promise.all([
         sb.from("comunidades").select("*").order("creado"),
         sb.rpc("super_usuarios"),
@@ -96,14 +106,19 @@
   function ultimaActividad(cid) { let m = null; docsDe(cid).forEach((d) => { if (!m || d.actualizado > m) m = d.actualizado; }); return m; }
   const miembrosDe = (cid) => D.miembros.filter((m) => m.comunidad_id === cid);
   const familiasDe = (cid) => { const ids = new Set(miembrosDe(cid).map((m) => m.user_id)); return D.familias.filter((f) => ids.has(f.user_id)); };
+  const planOrden = (id) => ((D.planes.find((p) => p.id === (id || "gratis")) || {}).orden) || 0;
+  const planNombre = (id) => (D.planes.find((p) => p.id === (id || "gratis")) || {}).nombre || "Gratis";
+  const excepcion = (cid, col, id) => D.excepciones.find((e) => e.comunidad_id === cid && e.col === col && e.doc_id === id);
+  function liberado(c, d) { const e = excepcion(c.id, d.col, d.id); return e ? e.liberado : planOrden(d.data.plan) <= planOrden(c.plan_id); }
+  const planSelect = (attrs, val) => `<select class="inp" ${attrs}>${(D.planes.length ? D.planes : [{ id: "gratis", nombre: "Gratis" }]).map((p) => `<option value="${esc(p.id)}" ${p.id === (val || "gratis") ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}</select>`;
   const semana = (d) => { const t = new Date(d); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t; };
 
   /* ---------- vistas ---------- */
-  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["moderacion", "Moderación"]];
+  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
-    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length };
+    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
-    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, moderacion: vModeracion }[ui.tab];
+    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
   }
 
@@ -149,8 +164,8 @@
     const q = ui.buscar.toLowerCase();
     const coms = congregaciones().filter((c) => !q || [c.nombre, c.ciudad, c.region, c.pais, c.codigo].join(" ").toLowerCase().includes(q));
     return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Congregaciones</h1></div><input class="search" id="buscar" type="search" placeholder="Buscar por nombre, ciudad o código" value="${esc(ui.buscar)}" aria-label="Buscar congregación"></div>
-    ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th class="num">Miembros</th><th class="num">Niños</th><th class="num">Clases</th><th class="num">Cuentos</th><th>Última actividad</th></tr></thead><tbody>
-    ${coms.map((c) => `<tr class="click" data-com="${esc(c.id)}" tabindex="0"><td><b>${esc(c.nombre)}</b><div class="muted small">Código <span class="code">${esc(c.codigo)}</span> · desde ${fmtFecha(c.creado)}</div></td><td>${esc([c.ciudad, c.region, c.pais].filter(Boolean).join(", ") || "Sin ubicación")}</td><td class="num">${miembrosDe(c.id).length}</td><td class="num">${docsDe(c.id, "ninos").length}</td><td class="num">${docsDe(c.id, "clases").length}</td><td class="num">${docsDe(c.id, "cuentos").length}</td><td class="small">${fmtFechaHora(ultimaActividad(c.id))}</td></tr>`).join("")}
+    ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th class="num">Miembros</th><th class="num">Niños</th><th class="num">Clases</th><th class="num">Cuentos</th><th>Plan</th><th>Última actividad</th></tr></thead><tbody>
+    ${coms.map((c) => `<tr class="click" data-com="${esc(c.id)}" tabindex="0"><td><b>${esc(c.nombre)}</b><div class="muted small">Código <span class="code">${esc(c.codigo)}</span> · desde ${fmtFecha(c.creado)}</div></td><td>${esc([c.ciudad, c.region, c.pais].filter(Boolean).join(", ") || "Sin ubicación")}</td><td class="num">${miembrosDe(c.id).length}</td><td class="num">${docsDe(c.id, "ninos").length}</td><td class="num">${docsDe(c.id, "clases").length}</td><td class="num">${docsDe(c.id, "cuentos").length}</td><td><span class="pill ${c.plan_id && c.plan_id !== "gratis" ? "acc" : ""}">${esc(planNombre(c.plan_id))}</span></td><td class="small">${fmtFechaHora(ultimaActividad(c.id))}</td></tr>`).join("")}
     </tbody></table></div>` : `<p class="empty">${q ? "Ninguna congregación coincide." : "Aún no hay congregaciones."}</p>`}`;
   }
 
@@ -168,6 +183,7 @@
       <div class="field"><label for="cReg">Región</label><input class="inp" id="cReg" list="regiones" value="${esc(c.region || "")}"><datalist id="regiones">${REGIONES.map((r) => `<option value="${esc(r)}">`).join("")}</datalist></div>
       <div class="field"><label for="cPai">País</label><input class="inp" id="cPai" value="${esc(c.pais || "")}"></div>
       <div class="field" style="justify-content:flex-end"><button class="btn" type="submit">Guardar cambios</button></div></form></section>
+    ${vPlanCom(c)}
     <section class="card"><div class="row between"><h2>Miembros (${mi.length})</h2><form id="fAdd" class="row"><input class="inp" id="addEmail" type="email" placeholder="correo de un usuario registrado" aria-label="Correo del usuario a agregar"><select class="inp" id="addRol" aria-label="Rol">${["familia", "maestro", "admin"].map((r) => `<option value="${r}">${ROLN[r]}</option>`).join("")}</select><button class="btn sm" type="submit">Agregar</button></form></div>
       ${mi.length ? `<div class="tbl"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Último ingreso</th><th></th></tr></thead><tbody>${mi.map((m) => `<tr><td>${esc(m.u.nombre || "Sin nombre")}${m.u.suspendido ? ' <span class="pill bad">Suspendido</span>' : ""}</td><td>${esc(m.u.email || "")}</td>
       <td><select class="inp" data-rol="${esc(m.user_id)}" aria-label="Rol de ${esc(m.u.nombre || "")}">${["familia", "maestro", "admin"].map((r) => `<option value="${r}" ${r === m.rol ? "selected" : ""}>${ROLN[r]}</option>`).join("")}</select></td>
@@ -184,6 +200,43 @@
       <button class="btn line sm" style="align-self:flex-start" data-act="moderarCom" data-id="${esc(c.id)}">Revisar contenido en Moderación</button></section>
     <section class="card danger-zone"><h2>Eliminar congregación</h2><p class="small">Borra la congregación con todas sus clases, niños, notas y contenido. Los usuarios siguen existiendo. <b>No se puede deshacer.</b></p>
       <form class="row" id="fDel"><input class="inp" id="delNom" placeholder="Escribe el nombre exacto para confirmar" aria-label="Nombre de la congregación para confirmar" style="min-width:260px"><button class="btn danger" type="submit">Eliminar definitivamente</button></form></section>`;
+  }
+
+  function vPlanCom(c) {
+    const items = docsDe(CENTRAL, ui.matCol).sort((a, b) => (a.data.numero || 0) - (b.data.numero || 0) || String(a.data.titulo || a.data.nombre || "").localeCompare(String(b.data.titulo || b.data.nombre || ""), "es"));
+    const lib = items.filter((d) => liberado(c, d)).length;
+    return `<section class="card"><div class="row between"><h2>Plan y material liberado</h2><label class="row small">Plan de la congregación ${planSelect(`id="planCom" aria-label="Plan de la congregación"`, c.plan_id)}</label></div>
+      <p class="muted small">El plan libera todo el material de la biblioteca central de ese nivel o menor. Con la columna "Acceso" haces excepciones para esta congregación: liberar algo de un plan superior o bloquear algo puntual. Lo bloqueado se ve en la app con un candado, pero no se puede abrir.</p>
+      <div class="seg" role="group" aria-label="Tipo de material">${CENTRAL_COLS.map(([k, n]) => `<button aria-pressed="${ui.matCol === k}" data-matcol="${k}">${n} (${docsDe(CENTRAL, k).length})</button>`).join("")}</div>
+      ${items.length ? `<p class="small"><b>${lib}</b> de ${items.length} liberados para esta congregación.</p><div class="tbl"><table><thead><tr><th>Material</th><th>Plan del material</th><th>Acceso</th><th>Estado</th></tr></thead><tbody>
+      ${items.map((d) => { const e = excepcion(c.id, d.col, d.id); const ok = liberado(c, d); return `<tr><td><b>${d.data.numero != null ? esc(d.data.numero) + ". " : ""}${esc(d.data.titulo || d.data.nombre || d.id)}</b></td><td>${esc(planNombre(d.data.plan))}</td>
+        <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el plan</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select></td>
+        <td>${ok ? '<span class="pill ok">Liberado</span>' : '<span class="pill warn">🔒 Bloqueado</span>'}</td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay material de este tipo en la biblioteca central.</p>`}</section>`;
+  }
+
+  function vForos() {
+    const coms = congregaciones();
+    const fs = D.foros.filter((f) => ui.foroCom === "" ? !f.comunidad_id : f.comunidad_id === ui.foroCom);
+    const raiz = fs.filter((f) => !f.padre_id || !fs.some((x) => x.id === f.padre_id));
+    const fila = (f, sub) => `<tr><td>${sub ? "↳ " : ""}<b>${esc(f.nombre)}</b>${f.descripcion ? `<div class="small muted">${esc(f.descripcion)}</div>` : ""}</td>
+      <td><select class="inp" data-foro="${esc(f.id)}" data-k="lectura" aria-label="Quién lee">${Object.entries(NIVN).map(([k, n]) => `<option value="${k}" ${f.lectura === k ? "selected" : ""}>${n}</option>`).join("")}</select></td>
+      <td><select class="inp" data-foro="${esc(f.id)}" data-k="escritura" aria-label="Quién escribe">${Object.entries(NIVN).map(([k, n]) => `<option value="${k}" ${f.escritura === k ? "selected" : ""}>${n}</option>`).join("")}</select></td>
+      <td>${f.comunidad_id ? `<select class="inp" data-foro="${esc(f.id)}" data-k="ninos" aria-label="Niños"><option value="false">No</option><option value="true" ${f.ninos ? "selected" : ""}>Sí, con aprobación</option></select>` : '<span class="muted small">Solo adultos</span>'}</td>
+      <td><button class="btn danger sm" data-borrarforo="${esc(f.id)}">Eliminar</button></td></tr>`;
+    const pend = D.mensajes;
+    return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Foros</h1></div>
+      <select class="inp" id="foroCom" aria-label="Foros de"><option value="">Foros generales (todas las congregaciones)</option>${coms.map((c) => `<option value="${esc(c.id)}" ${ui.foroCom === c.id ? "selected" : ""}>${esc(c.nombre)}</option>`).join("")}</select></div>
+    <p class="muted small">Tú decides quién puede leer y escribir en cada foro. "Miembros" en un foro general significa cualquier persona inscrita en alguna congregación; en un foro de congregación, solo sus miembros. Los niños escriben solo en foros de su congregación marcados para niños, y sus mensajes esperan la aprobación de un maestro.</p>
+    <section class="card">${fs.length ? `<div class="tbl"><table><thead><tr><th>Foro</th><th>Quién lee</th><th>Quién escribe</th><th>Niños</th><th></th></tr></thead><tbody>
+      ${raiz.map((f) => fila(f, false) + fs.filter((x) => x.padre_id === f.id).map((x) => fila(x, true)).join("")).join("")}</tbody></table></div>` : `<p class="empty">No hay foros aquí todavía.</p>`}
+      <form class="row" id="fForo"><input class="inp" id="foroNom" placeholder="Nombre del nuevo foro" maxlength="80" aria-label="Nombre del nuevo foro" style="min-width:220px">
+      <select class="inp" id="foroPadre" aria-label="Dentro de"><option value="">Foro principal</option>${raiz.map((f) => `<option value="${esc(f.id)}">Subforo de ${esc(f.nombre)}</option>`).join("")}</select>
+      <button class="btn sm" type="submit">Crear foro</button></form></section>
+    <section class="card"><h2>Mensajes por revisar (${pend.length})</h2><p class="muted small">Mensajes de niños esperando aprobación y mensajes reportados, de todas las congregaciones.</p>
+      ${pend.length ? `<div class="tbl"><table><thead><tr><th>Mensaje</th><th>Foro / tema</th><th>Estado</th><th></th></tr></thead><tbody>${pend.map((m) => { const fo = D.foros.find((f) => m.temas && f.id === m.temas.foro_id) || {}; return `<tr><td>${esc(String(m.texto).slice(0, 220))}<div class="small muted">${esc(m.como ? m.como + " (con " + m.autor + ")" : m.autor)} · ${fmtFechaHora(m.creado)}</div></td>
+        <td class="small">${esc(fo.nombre || "")}${fo.comunidad_id ? " · " + esc(nombreCom(fo.comunidad_id)) : ""}<br><span class="muted">${esc((m.temas && m.temas.titulo) || "")}</span></td>
+        <td>${m.estado === "pendiente" ? '<span class="pill warn">Pendiente</span>' : m.estado === "oculto" ? '<span class="pill">Oculto</span>' : ""}${m.reportes ? ` <span class="pill bad">${m.reportes} reporte${m.reportes > 1 ? "s" : ""}</span>` : ""}</td>
+        <td class="row"><button class="btn sm" data-msg="${esc(m.id)}" data-v="publicado">Aprobar</button><button class="btn ghost sm" data-msg="${esc(m.id)}" data-v="oculto">Ocultar</button><button class="btn danger sm" data-msg="${esc(m.id)}" data-v="borrar">Eliminar</button></td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay mensajes por revisar.</p>`}</section>`;
   }
 
   function vUsuarios() {
@@ -204,14 +257,15 @@
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
-    <p class="muted">Lo que subas aquí aparece automáticamente en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores.</p>
+    <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con la columna "Plan" decides qué plan lo libera: <b>Gratis</b> lo ven todas; lo de <b>Básico</b> o <b>Completo</b> aparece con candado en las congregaciones de un plan menor. En cada congregación puedes hacer excepciones.</p>
     <div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
     <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 25 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, imágenes o videos MP4 de hasta 25 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
       <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4"}" hidden></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} subidos`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
-    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th>Título</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
+    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th>Título</th><th>Plan</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
     ${items.map((d) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"></td>` : ""}
       <td><input class="inp" style="width:100%;min-width:200px" data-edit="titulo" data-id="${esc(d.id)}" value="${esc(d.data.titulo || "")}" aria-label="Título"></td>
+      <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}</td>
       <td class="small">${d.data.asset ? `<a href="${esc(blobUrl(d.data.asset))}" target="_blank" rel="noopener">${esc(d.data.archivo || "Abrir")}</a> <span class="muted">${fmtMB(d.data.tamano)}</span>` : (d.data.url ? `<a href="${esc(d.data.url)}" target="_blank" rel="noopener">Enlace</a>` : "–")}</td>
       <td class="small">${fmtFecha(d.actualizado)}</td><td><button class="btn danger sm" data-borrar="${esc(d.id)}" data-col="${esc(ui.bib)}" data-com="${CENTRAL}">Eliminar</button></td></tr>`).join("")}
     </tbody></table></div><p class="muted small">Los cambios de número o título se guardan al salir de la casilla.</p>` : `<p class="empty">Aún no hay ${ui.bib === "cuentos" ? "cuentos" : "material"} en la biblioteca central.</p>`}`;
@@ -285,6 +339,18 @@
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; render(); return; }
+      if (b.dataset.matcol) { ui.matCol = b.dataset.matcol; render(); return; }
+      if (b.dataset.borrarforo) {
+        if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Eliminar con sus temas?"; return; }
+        const { error } = await sb.from("foros").delete().eq("id", b.dataset.borrarforo); if (error) throw error;
+        D.foros = D.foros.filter((f) => f.id !== b.dataset.borrarforo && f.padre_id !== b.dataset.borrarforo); toast("Foro eliminado"); render(); return;
+      }
+      if (b.dataset.msg) {
+        const id = b.dataset.msg, v = b.dataset.v;
+        if (v === "borrar") { if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Seguro?"; return; } const { error } = await sb.from("mensajes").delete().eq("id", id); if (error) throw error; }
+        else { const { error } = await sb.from("mensajes").update({ estado: v, reportes: 0 }).eq("id", id); if (error) throw error; }
+        D.mensajes = D.mensajes.filter((m) => m.id !== id); toast(v === "publicado" ? "Mensaje aprobado" : v === "oculto" ? "Mensaje ocultado" : "Mensaje eliminado"); render(); return;
+      }
       const act = b.dataset.act;
       if (act === "volverCom") { ui.com = null; render(); return; }
       if (act === "moderarCom") { ui.tab = "moderacion"; ui.modCom = b.dataset.id; ui.com = null; render(); return; }
@@ -313,6 +379,28 @@
     const t = e.target;
     try {
       if (t.id === "files") { const fs = [...t.files]; t.value = ""; subir(fs); return; }
+      if (t.id === "foroCom") { ui.foroCom = t.value; render(); return; }
+      if (t.id === "planCom") {
+        const { error } = await sb.rpc("super_set_plan", { p_comunidad: ui.com, p_plan: t.value }); if (error) throw error;
+        D.comunidades.find((c) => c.id === ui.com).plan_id = t.value; toast("Plan actualizado a " + planNombre(t.value)); render(); return;
+      }
+      if (t.dataset.exc) {
+        const k = { comunidad_id: ui.com, col: t.dataset.col, doc_id: t.dataset.exc };
+        if (t.value === "") { const { error } = await sb.from("excepciones").delete().match(k); if (error) throw error; D.excepciones = D.excepciones.filter((e) => !(e.comunidad_id === k.comunidad_id && e.col === k.col && e.doc_id === k.doc_id)); }
+        else { const row = { ...k, liberado: t.value === "1" }; const { error } = await sb.from("excepciones").upsert(row); if (error) throw error; D.excepciones = D.excepciones.filter((e) => !(e.comunidad_id === k.comunidad_id && e.col === k.col && e.doc_id === k.doc_id)).concat([row]); }
+        toast("Acceso actualizado"); render(); return;
+      }
+      if (t.dataset.plan) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.plan); if (!d) return;
+        const data = { ...d.data, plan: t.value };
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", ui.bib).eq("id", d.id);
+        if (error) throw error; d.data = data; toast("Plan del material: " + planNombre(t.value)); return;
+      }
+      if (t.dataset.foro) {
+        const v = t.dataset.k === "ninos" ? t.value === "true" : t.value;
+        const { error } = await sb.from("foros").update({ [t.dataset.k]: v }).eq("id", t.dataset.foro); if (error) throw error;
+        const f = D.foros.find((x) => x.id === t.dataset.foro); if (f) f[t.dataset.k] = v; toast("Foro actualizado"); return;
+      }
       if (t.id === "modCol") { ui.modCol = t.value; render(); return; }
       if (t.id === "modCom") { ui.modCom = t.value; render(); return; }
       if (t.dataset.rol) {
@@ -336,6 +424,13 @@
         if (upd.nombre.length < 2) return toast("Escribe el nombre de la congregación");
         const { error } = await sb.from("comunidades").update(upd).eq("id", ui.com); if (error) throw error;
         Object.assign(D.comunidades.find((c) => c.id === ui.com), upd); toast("Datos guardados"); render(); return;
+      }
+      if (f.id === "fForo") {
+        const nombre = $("#foroNom").value.trim(); if (nombre.length < 2) return toast("Escribe el nombre del foro");
+        const padre = $("#foroPadre").value || null; const pf = padre && D.foros.find((x) => x.id === padre);
+        const row = { comunidad_id: ui.foroCom || null, padre_id: padre, nombre, lectura: pf ? pf.lectura : (ui.foroCom ? "miembros" : "todos"), escritura: pf ? pf.escritura : (ui.foroCom ? "miembros" : "todos"), ninos: pf ? pf.ninos : false, orden: D.foros.length + 1 };
+        const { data, error } = await sb.from("foros").insert(row).select().single(); if (error) throw error;
+        D.foros.push(data); toast("Foro creado"); render(); return;
       }
       if (f.id === "fAdd") {
         const email = $("#addEmail").value.trim().toLowerCase(); const u = D.usuarios.find((x) => (x.email || "").toLowerCase() === email);

@@ -37,11 +37,15 @@
     const cargar = async (col) => {
       if (cargando[col]) return cargando[col];
       cargando[col] = (async () => {
-        const ids = CON_CENTRAL.includes(col) ? [cid, CENTRAL] : [cid];
-        const { data, error } = await sb.from("docs").select("comunidad_id,id,data").in("comunidad_id", ids).eq("col", col).limit(5000);
+        const [propio, central] = await Promise.all([
+          sb.from("docs").select("id,data").eq("comunidad_id", cid).eq("col", col).limit(5000),
+          CON_CENTRAL.includes(col) ? sb.rpc("central_para", { p_comunidad: cid, p_col: col }) : Promise.resolve({ data: [] })
+        ]);
         cargando[col] = null;
-        if (error) throw error;
-        cache[col] = (data || []).map((r) => r.comunidad_id === CENTRAL ? { id: "c_" + r.id, data: { ...r.data, _central: true } } : { id: r.id, data: r.data });
+        if (propio.error) throw propio.error;
+        if (central.error) console.warn("biblioteca central", central.error.message);
+        cache[col] = (propio.data || []).map((r) => ({ id: r.id, data: r.data }))
+          .concat((central.data || []).map((r) => ({ id: "c_" + r.id, data: { ...r.data, _central: true, _bloqueado: !!r.bloqueado } })));
         emitir(col);
       })();
       return cargando[col];
@@ -134,6 +138,7 @@
   let famTimer = null;
   window.EPK = {
     get user() { return CTX.user; }, get comunidad() { return CTX.comunidad; }, get rol() { return CTX.rol; },
+    get sb() { return sb; }, get super() { return !!CTX.super; },
     async cargarFamilia() {
       const { data, error } = await sb.from("familias").select("data").eq("user_id", CTX.user.id).maybeSingle();
       if (error) return null; return data ? data.data : null;

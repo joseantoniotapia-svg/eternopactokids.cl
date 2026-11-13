@@ -133,6 +133,10 @@ button.item:hover{border-color:var(--accent)}
 .datechip.past{background:var(--sunk);color:var(--muted)}
 .pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:.78rem;font-weight:700;background:var(--sunk);color:var(--muted);white-space:nowrap}
 .pill.sun{background:var(--sun-soft);color:var(--sun-ink)}
+.post.pend{border-style:dashed;opacity:.85}
+.item.mia{background:var(--sun-soft)}
+.pill.lock{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
+.res.bloq{opacity:.72}
 .pill.leaf{background:var(--leaf-soft);color:var(--leaf)}
 
 .avatar{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:600;font-size:1.1rem}
@@ -351,7 +355,7 @@ const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos",
 const COLS_EQUIPO=["matprofes","libro"];
 const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],libro:{},biblicos:[],config:{}};
 const loaded={};
-const ui={tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
+const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
 let db=null,canEdit=false,dbFailed=false;
 const pendingAsis={};
@@ -363,6 +367,9 @@ const h=(location.hash||"").slice(1);
 if(h==="museo")ui.tab="biblia";else if(["inicio","clases","recursos","puntos","biblia","mas"].includes(h))ui.tab=h;
 
 const ed=()=>canEdit&&!ui.familia;
+const claseOculta=c=>c&&(c.visible==="no"?"Oculta para las familias":(c.publicar&&c.publicar>hoyISO()?"Visible desde el "+fLarga(c.publicar):""));
+const LOCK=`<span class="pill lock" title="Este material aún no está liberado para tu congregación">🔒 Bloqueado</span>`;
+const pillOculta=c=>{const t=canEdit&&claseOculta(c);return t?`<span class="pill sun">🔒 ${esc(t)}</span>`:"";};
 
 /* ---------- iconos ---------- */
 const I={
@@ -495,7 +502,9 @@ function formClase(c){
       {k:"versiculoCita",label:"Cita del versículo",ph:"Salmo 56:3"},
       {k:"material",label:"Material de la semana",type:"textarea",ph:"Hoja para colorear | https://...\nVideo de la historia | https://...",hint:"Un material por línea: nombre | enlace"},
       {k:"tarea",label:"Tarea para la casa",type:"textarea"},
-      {k:"consideraciones",label:"Consideraciones",type:"textarea",ph:"Traer Biblia, ensayo para el programa, cambios de horario…"}
+      {k:"consideraciones",label:"Consideraciones",type:"textarea",ph:"Traer Biblia, ensayo para el programa, cambios de horario…"},
+      {k:"visible",label:"¿Las familias pueden ver esta clase?",type:"select",opts:[["si","Sí, visible para las familias"],["no","No, solo el equipo de maestros"]]},
+      {k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date",hint:"Déjalo vacío para mostrarla de inmediato. Antes de esa fecha solo la ve el equipo."}
     ],
     onSave:async v=>{
       v.material=String(v.material||"").split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.lastIndexOf("|");const t=i>=0?l.slice(0,i).trim():l;const u=i>=0?l.slice(i+1).trim():(safeUrl(l)||"");return{titulo:t||u,url:u};});
@@ -597,7 +606,7 @@ function vClases(){
   out+=`<div class="sec-h"><h2>Clases dominicales</h2>${ed()?`<button class="btn sm" data-act="nuevaClase">Nueva clase</button>`:""}</div>`;
   if(!S.clases.length)return out+emptyBox("Sin clases todavía",ed()?"Crea la primera lección: fecha, pasaje, versículo, material y tarea.":"Aquí aparecerá el calendario de lecciones.","");
   const row=(c,past)=>{const f=fCorta(c.fecha);const a=S.asistencia[c.id];const n=a&&a.presente?a.presente.length:0;
-    return `<button class="item" data-act="verClase" data-id="${esc(c.id)}"><span class="datechip${past?" past":""}"><b>${f.dia}</b><span>${esc(f.mes)}</span></span><span class="grow"><b>${esc(c.titulo)}</b><span class="muted small">${esc(c.cita||"")}</span></span>${past&&n?`<span class="pill leaf">${n} asistieron</span>`:""}</button>`;};
+    return `<button class="item" data-act="verClase" data-id="${esc(c.id)}"><span class="datechip${past?" past":""}"><b>${f.dia}</b><span>${esc(f.mes)}</span></span><span class="grow"><b>${esc(c.titulo)}</b><span class="muted small">${pillOculta(c)} ${esc(c.cita||"")}</span></span>${past&&n?`<span class="pill leaf">${n} asistieron</span>`:""}</button>`;};
   if(prox.length)out+=`<p class="eyebrow">Próximas</p><div class="list">${prox.map(c=>row(c,false)).join("")}</div>`;
   if(pas.length)out+=`<p class="eyebrow">Anteriores</p><div class="list">${pas.map(c=>row(c,true)).join("")}</div>`;
   return out;
@@ -606,7 +615,7 @@ function vClases(){
 function vClase(c){
   const a=S.asistencia[c.id]||{};
   let out=`<button class="back" data-act="volver">‹ Todas las clases</button>
-  <section class="card"><p class="eyebrow">${esc(fLarga(c.fecha))}</p><h2 style="font-size:1.6rem">${esc(c.titulo)}</h2>${c.cita?`<p><b>${esc(c.cita)}</b></p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}
+  <section class="card"><p class="eyebrow">${esc(fLarga(c.fecha))}</p>${pillOculta(c)}<h2 style="font-size:1.6rem">${esc(c.titulo)}</h2>${c.cita?`<p><b>${esc(c.cita)}</b></p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}
   ${ed()?`<div class="row"><button class="btn ghost sm" data-act="editClase" data-id="${esc(c.id)}">Editar clase</button></div>`:""}</section>`;
   if(c.versiculo)out+=`<section class="verse"><p class="eyebrow">Versículo para memorizar</p><blockquote>${esc(c.versiculo)}</blockquote>${c.versiculoCita?`<cite>${esc(c.versiculoCita)}</cite>`:""}</section>`;
   const mats=(c.material||[]).filter(m=>safeUrl(m.url)||m.titulo);
@@ -630,8 +639,10 @@ function vClase(c){
 
 function vPuntos(){
   if(ui.nino){const n=S.ninos.find(x=>x.id===ui.nino);if(n)return vNino(n);ui.nino=null;}
+  const segP=`<div class="seg" role="group" aria-label="Puntos"><button aria-pressed="${ui.pts==="estrellas"}" data-act="ptsSeg" data-k="estrellas">Estrellas y premios</button><button aria-pressed="${ui.pts==="retos"}" data-act="ptsSeg" data-k="retos">Retos entre familias${window.EPKX&&EPKX.pendientes()?` <span class="pill sun">${EPKX.pendientes()}</span>`:""}</button></div>`;
+  if(ui.pts==="retos")return guia("simon","¡Miau! ¿Quién lee más en familia? Reta a otra familia o únete a los desafíos de la congregación.")+segP+(window.EPKX?EPKX.vRetos():"");
   const r=ranking();const max=Math.max(1,...r.map(x=>x.p.total));
-  let out=guia("simon","¡Miau! Aprender también puede ser divertido. Junta estrellas cada domingo y canjéalas por premios.")+`<div class="sec-h"><h2>Estrellas y premios</h2>${ed()?`<button class="btn sm" data-act="nuevoNino">Agregar niño/a</button>`:""}</div>
+  let out=guia("simon","¡Miau! Aprender también puede ser divertido. Junta estrellas cada domingo y canjéalas por premios.")+segP+`<div class="sec-h"><h2>Estrellas y premios</h2>${ed()?`<button class="btn sm" data-act="nuevoNino">Agregar niño/a</button>`:""}</div>
   <div class="note">Cada domingo se ganan estrellas: asistir <b>${PTS.presente}</b>, recitar el versículo <b>${PTS.versiculo}</b>, traer la Biblia <b>${PTS.biblia}</b> y hacer la tarea <b>${PTS.tarea}</b>.</div>`;
   if(!r.length)out+=emptyBox("Aún no hay niños en la clase",ed()?"Agrega a cada niño con su nombre y apoderado. Luego marca la asistencia en cada clase.":"Los maestros agregarán a los niños de la clase.","");
   else out+=`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b><span class="bar" style="margin-top:6px"><i style="width:${Math.max(0,x.p.total)/max*100}%"></i></span></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`;
@@ -679,9 +690,10 @@ function vParabola(p){
 }
 
 function vMas(){
-  const seg=[["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["personajes","Nuestros personajes"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
+  const seg=[["foro","Foro"],["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["personajes","Nuestros personajes"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
   let out=guia("maria","El amor también se demuestra. Aquí están los avisos, nuestro compromiso, los personajes y a quién escribir.")+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
-  if(ui.mas==="familia"){out+=vFamilia();}
+  if(ui.mas==="foro"){out+=window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`;}
+  else if(ui.mas==="familia"){out+=vFamilia();}
   else if(ui.mas==="compromiso"){
     const cs=[...S.compromisos].sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1);
     out+=`<div class="sec-h"><h2>Carta de compromiso</h2>${ed()?`<button class="btn sm" data-act="nuevoCompromiso">Nueva carta</button>`:""}</div>`;
@@ -799,7 +811,9 @@ function botonesArchivo(asset,nombre,url){
 function filaMaterial(m,col){
   const cl=m.claseId?S.clases.find(c=>c.id===m.claseId):null;const tipo=m.asset?(extDe(m.archivo)||"pdf").toUpperCase():(safeUrl(m.url)?"Enlace":"");
   const L=lector();const ok=col==="materiales"&&L&&L.mats[m.id];
-  return `<div class="item res"><span class="grow"><b>${ok?"✓ ":""}${esc(m.titulo)}</b><span class="muted small">${m._central?`<span class="pill sun">Biblioteca central</span> `:""}${tipo?`<span class="pill">${esc(tipo)}</span> `:""}${m.tamano?fmtMB(m.tamano)+" · ":""}${cl?"Clase: "+esc(cl.titulo):""}${m.desc?(cl?" · ":"")+esc(m.desc):""}</span></span><span class="acts"><button class="btn sm" data-act="leerMat" data-col="${col}" data-id="${esc(m.id)}">${col==="materiales"?(ok?"Ver otra vez":"Hacer actividad"):"Ver"}</button>${m.asset?`<button class="btn line sm" data-act="bajar" data-asset="${esc(m.asset)}" data-n="${esc(m.archivo||"material.pdf")}">Descargar</button>`:""}${ed()&&!m._central?`<button class="copy" data-act="editMaterial" data-col="${col}" data-id="${esc(m.id)}">Editar</button>`:""}</span></div>`;
+  const bl=m._bloqueado&&!(window.EPK&&EPK.super);
+  if(bl)return `<div class="item res bloq"><span class="grow"><b>${esc(m.titulo)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span>${m.desc?" "+esc(m.desc):""}</span></span><span class="acts">${LOCK}</span></div>`;
+  return `<div class="item res"><span class="grow"><b>${ok?"✓ ":""}${esc(m.titulo)}</b><span class="muted small">${m._central?`<span class="pill sun">Biblioteca central</span> `:""}${m._bloqueado?LOCK+" ":""}${tipo?`<span class="pill">${esc(tipo)}</span> `:""}${m.tamano?fmtMB(m.tamano)+" · ":""}${cl?"Clase: "+esc(cl.titulo):""}${m.desc?(cl?" · ":"")+esc(m.desc):""}</span></span><span class="acts"><button class="btn sm" data-act="leerMat" data-col="${col}" data-id="${esc(m.id)}">${col==="materiales"?(ok?"Ver otra vez":"Hacer actividad"):"Ver"}</button>${m.asset?`<button class="btn line sm" data-act="bajar" data-asset="${esc(m.asset)}" data-n="${esc(m.archivo||"material.pdf")}">Descargar</button>`:""}${ed()&&!m._central?`<button class="copy" data-act="editMaterial" data-col="${col}" data-id="${esc(m.id)}">Editar</button>`:""}</span></div>`;
 }
 function listaCuentosHTML(){
   const q=ui.buscar.trim().toLowerCase();
@@ -807,7 +821,8 @@ function listaCuentosHTML(){
   if(!S.cuentos.length)return emptyBox("Aún no hay cuentos",ed()?"Sube los PDF de los cuentos. Si el nombre del archivo trae el número (por ejemplo, Cuento 12 - El arca de Noé.pdf), se ordenan solos.":"Pronto estarán aquí los cuentos de cada semana para leer y descargar.","");
   if(!cs.length)return `<p class="muted">Ningún cuento coincide con “${esc(ui.buscar)}”.</p>`;
   const L=lector();
-  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];return `<div class="item res"><span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span><span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${c._central?`<span class="pill sun">Biblioteca central</span> `:""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
+  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];if(c._bloqueado&&!(window.EPK&&EPK.super))return `<div class="item res bloq"><span class="numchip">${esc(c.numero??"–")}</span><span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span> Cuento ${esc(c.numero??"")}</span></span><span class="acts">${LOCK}</span></div>`;
+  return `<div class="item res"><span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span><span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${c._central?`<span class="pill sun">Biblioteca central</span> `:""}${c._bloqueado?LOCK+" ":""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
 }
 function vRecursos(){
   const seg=[["cuentos","Cuentos"],["ninos","Para niños"]].concat(ed()?[["profes","Para profes"]]:[]);
@@ -907,9 +922,10 @@ function vBiblicos(){
   const bs=[...S.biblicos].sort((a,b)=>(a.orden||0)-(b.orden||0)||String(a.nombre).localeCompare(String(b.nombre),"es"));const L=lector();
   let out=`<div class="sec-h"><h2>Personajes bíblicos</h2>${ed()?`<button class="btn sm" data-act="nuevoBiblico">Agregar personaje</button>`:""}</div>`;
   if(!bs.length)return out+emptyBox("Aún no hay personajes",ed()?"Agrega a David, Ester, Moisés o Pedro: sube una o dos fotos (la app les quita el fondo), escribe su historia y los versículos donde aparecen.":"Pronto conocerás aquí a los héroes de la Biblia.","");
-  return out+`<div class="bgrid">${bs.map(b=>`<button class="bcard" data-act="verBiblico" data-id="${esc(b.id)}"><span class="bfoto">${fotoB(b)}</span><b>${L&&L.biblicos[b.id]?"✓ ":""}${esc(b.nombre)}</b>${b.titulo?`<span class="muted small">${esc(b.titulo)}</span>`:""}</button>`).join("")}</div>`;
+  return out+`<div class="bgrid">${bs.map(b=>`<button class="bcard${b._bloqueado&&!(window.EPK&&EPK.super)?" res bloq":""}" data-act="verBiblico" data-id="${esc(b.id)}"><span class="bfoto">${b._bloqueado&&!(window.EPK&&EPK.super)?"🔒":fotoB(b)}</span><b>${L&&L.biblicos[b.id]?"✓ ":""}${esc(b.nombre)}</b>${b.titulo?`<span class="muted small">${esc(b.titulo)}</span>`:""}</button>`).join("")}</div>`;
 }
 function vBiblico(b){
+  if(b._bloqueado&&!(window.EPK&&EPK.super))return `<button class="back" data-act="verBiblico" data-id="">‹ Todos los personajes</button><section class="empty"><h3>🔒 ${esc(b.nombre||"Personaje")}</h3><p class="muted">Este personaje de la biblioteca central todavía no está liberado para tu congregación. Pídele a tu administrador que lo solicite.</p></section>`;
   return `<button class="back" data-act="verBiblico" data-id="">‹ Todos los personajes</button>
   <section class="card"><div class="bdet">${(b.fotos&&b.fotos.length?b.fotos:[null]).map(f=>`<span class="bfoto">${f?`<img src="${esc(blobUrl(f))}" alt="${esc(b.nombre)}">`:`<span class="ini">${inicial(b.nombre)}</span>`}</span>`).join("")}</div>
   <h2 style="font-size:1.8rem">${esc(b.nombre)}</h2>${b.titulo?`<p><b>${esc(b.titulo)}</b></p>`:""}${b.descripcion?`<p style="white-space:pre-wrap">${esc(b.descripcion)}</p>`:""}
@@ -1200,8 +1216,10 @@ function marcar(claseId,ninoId,k){
 document.addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]");if(!b)return;const act=b.dataset.act,id=b.dataset.id;
   const find=(col)=>S[col].find(x=>x.id===id);
+  if(act.startsWith("fx_")){if(window.EPKX)EPKX.accion(act,b);return;}
   switch(act){
     case "tab":irA(b.dataset.tab);break;
+    case "ptsSeg":ui.pts=b.dataset.k;render();break;
     case "volver":ui.clase=null;ui.nino=null;ui.parabola=null;render();window.scrollTo(0,0);break;
     case "verClase":ui.tab="clases";ui.clase=id;render();window.scrollTo(0,0);break;
     case "verNino":ui.tab="puntos";ui.nino=id;render();window.scrollTo(0,0);break;
@@ -1276,6 +1294,7 @@ document.addEventListener("click",async e=>{
   }
 });
 document.addEventListener("focusout",()=>{if(renderPend)setTimeout(()=>{if(renderPend)render();},50);});
+window.EPKapp={render,toast,openForm,BIB:()=>BIB};
 $("#menuBtn").onclick=()=>{if(window.EPK)EPK.abrirMenu();};
 $("#perfilBtn").onclick=()=>{ui.tab="mas";ui.mas="familia";render();window.scrollTo(0,0);};
 $("#rClose").onclick=cerrarLector;
@@ -1327,6 +1346,7 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
 })();
 })();};
 </script>
+<script src="comunidad.js"></script>
 <script src="cuentas.js"></script>
 </body>
 </html>
