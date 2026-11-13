@@ -135,6 +135,9 @@ button.item:hover{border-color:var(--accent)}
 .pill.sun{background:var(--sun-soft);color:var(--sun-ink)}
 .post.pend{border-style:dashed;opacity:.85}
 .item.mia{background:var(--sun-soft)}
+.thumb{flex:none;width:58px;height:76px;object-fit:cover;object-position:top;border-radius:8px 4px 8px 8px;border:2px solid var(--edge,var(--line));background:#fff;box-shadow:2px 2px 0 var(--edge,transparent)}
+.thumb-w{position:relative;flex:none;display:block}.thumb-ok{position:absolute;right:-6px;bottom:-6px;width:24px;height:24px;border-radius:50%;background:var(--leaf);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.8rem;border:2px solid var(--surface)}
+.res.bloq .thumb{filter:grayscale(.7) blur(.6px)}
 .pill.lock{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
 .res.bloq{opacity:.72}
 .pill.leaf{background:var(--leaf-soft);color:var(--leaf)}
@@ -967,6 +970,16 @@ function upErr(e){const c=e&&e.code;
   if(c==="quota_or_state")return "se llenó el espacio de archivos de la app.";
   if(c==="not_granted"||c==="capability_disabled")return "solo maestros y administradores pueden subir archivos.";
   return "no se pudo subir. Revisa la conexión e inténtalo otra vez.";}
+async function miniatura(file){
+  try{const ext=extDe(file.name);let src;
+    if(ext==="pdf"){const lib=await pdfjs();const doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;const pg=await doc.getPage(1);const v0=pg.getViewport({scale:1});const vp=pg.getViewport({scale:260/v0.width});
+      const c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);const cx=c.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:cx,viewport:vp}).promise;src=c;}
+    else if(/^(png|jpe?g|gif|webp)$/.test(ext)){const bm=await createImageBitmap(file);const k=260/bm.width;const c=document.createElement("canvas");c.width=260;c.height=Math.round(bm.height*k);c.getContext("2d").drawImage(bm,0,0,c.width,c.height);src=c;}
+    else return null;
+    const blob=await new Promise(r=>src.toBlob(r,"image/jpeg",.78));return blob?new File([blob],"mini.jpg",{type:"image/jpeg"}):null;
+  }catch(e){console.warn("miniatura",e);return null;}}
+async function subirMiniatura(file){const m=await miniatura(file);if(!m)return null;try{return (await subirArchivo(m)).id;}catch(e){return null;}}
+const thumbHTML=(x)=>x.thumb?`<img class="thumb" src="${esc(blobUrl(x.thumb))}" alt="" loading="lazy" width="58" height="76">`:"";
 async function subirArchivo(file){
   if(!assets)throw {code:"not_granted"};
   const ext=extDe(file.name);const type=TIPOS[ext]||file.type;
@@ -991,8 +1004,8 @@ function filaMaterial(m,col){
   const cl=m.claseId?S.clases.find(c=>c.id===m.claseId):null;const tipo=m.asset?(extDe(m.archivo)||"pdf").toUpperCase():(safeUrl(m.url)?"Enlace":"");
   const L=lector();const ok=col==="materiales"&&L&&L.mats[m.id];
   const bl=m._bloqueado&&!(window.EPK&&EPK.super);
-  if(bl)return `<div class="item res bloq"><span class="grow"><b>${esc(m.titulo)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span>${m.desc?" "+esc(m.desc):""}</span></span><span class="acts">${LOCK}</span></div>`;
-  return `<div class="item res"><span class="grow"><b>${ok?"✓ ":""}${esc(m.titulo)}</b><span class="muted small">${m._central?`<span class="pill sun">Biblioteca central</span> `:""}${m._bloqueado?LOCK+" ":""}${tipo?`<span class="pill">${esc(tipo)}</span> `:""}${m.tamano?fmtMB(m.tamano)+" · ":""}${cl?"Clase: "+esc(cl.titulo):""}${m.desc?(cl?" · ":"")+esc(m.desc):""}</span></span><span class="acts"><button class="btn sm" data-act="leerMat" data-col="${col}" data-id="${esc(m.id)}">${col==="materiales"?(ok?"Ver otra vez":"Hacer actividad"):"Ver"}</button>${m.asset?`<button class="btn line sm" data-act="bajar" data-asset="${esc(m.asset)}" data-n="${esc(m.archivo||"material.pdf")}">Descargar</button>`:""}${ed()&&!m._central?`<button class="copy" data-act="editMaterial" data-col="${col}" data-id="${esc(m.id)}">Editar</button>`:""}</span></div>`;
+  if(bl)return `<div class="item res bloq">${thumbHTML(m)}<span class="grow"><b>${esc(m.titulo)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span>${m.desc?" "+esc(m.desc):""}</span></span><span class="acts">${LOCK}</span></div>`;
+  return `<div class="item res">${thumbHTML(m)}<span class="grow"><b>${ok?"✓ ":""}${esc(m.titulo)}</b><span class="muted small">${m._central?`<span class="pill sun">Biblioteca central</span> `:""}${m._bloqueado?LOCK+" ":""}${tipo?`<span class="pill">${esc(tipo)}</span> `:""}${m.tamano?fmtMB(m.tamano)+" · ":""}${cl?"Clase: "+esc(cl.titulo):""}${m.desc?(cl?" · ":"")+esc(m.desc):""}</span></span><span class="acts"><button class="btn sm" data-act="leerMat" data-col="${col}" data-id="${esc(m.id)}">${col==="materiales"?(ok?"Ver otra vez":"Hacer actividad"):"Ver"}</button>${m.asset?`<button class="btn line sm" data-act="bajar" data-asset="${esc(m.asset)}" data-n="${esc(m.archivo||"material.pdf")}">Descargar</button>`:""}${ed()&&!m._central?`<button class="copy" data-act="editMaterial" data-col="${col}" data-id="${esc(m.id)}">Editar</button>`:""}</span></div>`;
 }
 function listaCuentosHTML(){
   const q=ui.buscar.trim().toLowerCase();
@@ -1000,8 +1013,8 @@ function listaCuentosHTML(){
   if(!S.cuentos.length)return emptyBox("Aún no hay cuentos",ed()?"Sube los PDF de los cuentos. Si el nombre del archivo trae el número (por ejemplo, Cuento 12 - El arca de Noé.pdf), se ordenan solos.":"Pronto estarán aquí los cuentos de cada semana para leer y descargar.","");
   if(!cs.length)return `<p class="muted">Ningún cuento coincide con “${esc(ui.buscar)}”.</p>`;
   const L=lector();
-  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];if(c._bloqueado&&!(window.EPK&&EPK.super))return `<div class="item res bloq"><span class="numchip">${esc(c.numero??"–")}</span><span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span> Cuento ${esc(c.numero??"")}</span></span><span class="acts">${LOCK}</span></div>`;
-  return `<div class="item res"><span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span><span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${c._central?`<span class="pill sun">Biblioteca central</span> `:""}${c._bloqueado?LOCK+" ":""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
+  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];if(c._bloqueado&&!(window.EPK&&EPK.super))return `<div class="item res bloq">${c.thumb?thumbHTML(c):`<span class="numchip">${esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span> Cuento ${esc(c.numero??"")}</span></span><span class="acts">${LOCK}</span></div>`;
+  return `<div class="item res">${c.thumb?`<span class="thumb-w">${thumbHTML(c)}${ok?`<span class="thumb-ok">✓</span>`:""}</span>`:`<span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${c._central?`<span class="pill sun">Biblioteca central</span> `:""}${c._bloqueado?LOCK+" ":""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
 }
 function vRecursos(){
   const seg=[["cuentos","Cuentos"],["ninos","Para niños"]].concat(ed()?[["profes","Para profes"]]:[]);
@@ -1031,11 +1044,12 @@ async function subirCuentos(files){
     const base=f.name.replace(/\.pdf$/i,"");const m=base.match(/\d+/);const num=m?parseInt(m[0],10):null;
     const titulo=base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i,"").replace(/_+/g," ").trim()||base;
     try{
-      const r=await subirArchivo(f);
+      const r=await subirArchivo(f);const thumb=await subirMiniatura(f);
       const prev=num!=null?S.cuentos.find(c=>c.numero===num&&!c._central):null;
       const id=prev?prev.id:(num!=null?"cuento-"+String(num).padStart(3,"0"):null);
-      await guardar("cuentos",id,{...(prev||{}),numero:num!=null?num:(Math.max(0,...S.cuentos.map(c=>c.numero||0))+1),titulo:prev&&prev.titulo?prev.titulo:titulo,asset:r.id,archivo:f.name,tamano:r.sizeBytes,subido:hoyISO()});
+      await guardar("cuentos",id,{...(prev||{}),numero:num!=null?num:(Math.max(0,...S.cuentos.map(c=>c.numero||0))+1),titulo:prev&&prev.titulo?prev.titulo:titulo,asset:r.id,thumb,archivo:f.name,tamano:r.sizeBytes,subido:hoyISO()});
       if(prev&&prev.asset&&prev.asset!==r.id){try{await assets.delete(prev.asset);}catch(e){}}
+      if(prev&&prev.thumb&&prev.thumb!==thumb){try{await assets.delete(prev.thumb);}catch(e){}}
     }catch(e){ui.progreso.errores.push(f.name+": "+upErr(e));}
     ui.progreso.hecho++;render();
   }
@@ -1058,9 +1072,9 @@ function formMaterial(col,m){
     onSave:async v=>{const f=v.archivo_nuevo;delete v.archivo_nuevo;const d={...(m||{}),...v,fecha:(m&&m.fecha)||hoyISO()};
       if(v.url&&!safeUrl(v.url))throw "El enlace debe comenzar con https://";
       if(!f&&!d.asset&&!safeUrl(v.url))throw "Elige un archivo o pega un enlace.";
-      if(f){const r=await subirArchivo(f).catch(e=>{throw "El archivo "+upErr(e);});const old=m&&m.asset;d.asset=r.id;d.archivo=f.name;d.tamano=r.sizeBytes;await guardar(col,m&&m.id,d);if(old&&old!==r.id){try{await assets.delete(old);}catch(e){}}refrescarUso();}
+      if(f){const r=await subirArchivo(f).catch(e=>{throw "El archivo "+upErr(e);});const old=m&&m.asset,oldT=m&&m.thumb;d.asset=r.id;d.archivo=f.name;d.tamano=r.sizeBytes;d.thumb=await subirMiniatura(f);await guardar(col,m&&m.id,d);if(old&&old!==r.id){try{await assets.delete(old);}catch(e){}}if(oldT){try{await assets.delete(oldT);}catch(e){}}refrescarUso();}
       else await guardar(col,m&&m.id,d);},
-    onDelete:m?async()=>{await borrar(col,m.id);if(m.asset&&assets){try{await assets.delete(m.asset);}catch(e){}}refrescarUso();}:null});
+    onDelete:m?async()=>{await borrar(col,m.id);for(const a of [m.asset,m.thumb])if(a&&assets){try{await assets.delete(a);}catch(e){}}refrescarUso();}:null});
 }
 
 /* ---------- Mi Biblia ---------- */

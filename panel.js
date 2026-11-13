@@ -107,18 +107,18 @@
   const miembrosDe = (cid) => D.miembros.filter((m) => m.comunidad_id === cid);
   const familiasDe = (cid) => { const ids = new Set(miembrosDe(cid).map((m) => m.user_id)); return D.familias.filter((f) => ids.has(f.user_id)); };
   const planOrden = (id) => ((D.planes.find((p) => p.id === (id || "gratis")) || {}).orden) || 0;
-  const planNombre = (id) => (D.planes.find((p) => p.id === (id || "gratis")) || {}).nombre || "Gratis";
+  const planNombre = (id) => (D.planes.find((p) => p.id === (id || "gratis")) || {}).nombre || "Inicial";
   const excepcion = (cid, col, id) => D.excepciones.find((e) => e.comunidad_id === cid && e.col === col && e.doc_id === id);
   function liberado(c, d) { const e = excepcion(c.id, d.col, d.id); return e ? e.liberado : planOrden(d.data.plan) <= planOrden(c.plan_id); }
-  const planSelect = (attrs, val) => `<select class="inp" ${attrs}>${(D.planes.length ? D.planes : [{ id: "gratis", nombre: "Gratis" }]).map((p) => `<option value="${esc(p.id)}" ${p.id === (val || "gratis") ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}</select>`;
+  const planSelect = (attrs, val) => `<select class="inp" ${attrs}>${(D.planes.length ? D.planes : [{ id: "gratis", nombre: "Inicial" }]).map((p) => `<option value="${esc(p.id)}" ${p.id === (val || "gratis") ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}</select>`;
   const semana = (d) => { const t = new Date(d); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t; };
 
   /* ---------- vistas ---------- */
-  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["foros", "Foros"], ["moderacion", "Moderación"]];
+  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
     const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
-    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, foros: vForos, moderacion: vModeracion }[ui.tab];
+    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
   }
 
@@ -164,7 +164,7 @@
     const q = ui.buscar.toLowerCase();
     const coms = congregaciones().filter((c) => !q || [c.nombre, c.ciudad, c.region, c.pais, c.codigo].join(" ").toLowerCase().includes(q));
     return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Congregaciones</h1></div><input class="search" id="buscar" type="search" placeholder="Buscar por nombre, ciudad o código" value="${esc(ui.buscar)}" aria-label="Buscar congregación"></div>
-    ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th class="num">Miembros</th><th class="num">Niños</th><th class="num">Clases</th><th class="num">Cuentos</th><th>Plan</th><th>Última actividad</th></tr></thead><tbody>
+    ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th class="num">Miembros</th><th class="num">Niños</th><th class="num">Clases</th><th class="num">Cuentos</th><th>Permiso</th><th>Última actividad</th></tr></thead><tbody>
     ${coms.map((c) => `<tr class="click" data-com="${esc(c.id)}" tabindex="0"><td><b>${esc(c.nombre)}</b><div class="muted small">Código <span class="code">${esc(c.codigo)}</span> · desde ${fmtFecha(c.creado)}</div></td><td>${esc([c.ciudad, c.region, c.pais].filter(Boolean).join(", ") || "Sin ubicación")}</td><td class="num">${miembrosDe(c.id).length}</td><td class="num">${docsDe(c.id, "ninos").length}</td><td class="num">${docsDe(c.id, "clases").length}</td><td class="num">${docsDe(c.id, "cuentos").length}</td><td><span class="pill ${c.plan_id && c.plan_id !== "gratis" ? "acc" : ""}">${esc(planNombre(c.plan_id))}</span></td><td class="small">${fmtFechaHora(ultimaActividad(c.id))}</td></tr>`).join("")}
     </tbody></table></div>` : `<p class="empty">${q ? "Ninguna congregación coincide." : "Aún no hay congregaciones."}</p>`}`;
   }
@@ -205,13 +205,32 @@
   function vPlanCom(c) {
     const items = docsDe(CENTRAL, ui.matCol).sort((a, b) => (a.data.numero || 0) - (b.data.numero || 0) || String(a.data.titulo || a.data.nombre || "").localeCompare(String(b.data.titulo || b.data.nombre || ""), "es"));
     const lib = items.filter((d) => liberado(c, d)).length;
-    return `<section class="card"><div class="row between"><h2>Plan y material liberado</h2><label class="row small">Plan de la congregación ${planSelect(`id="planCom" aria-label="Plan de la congregación"`, c.plan_id)}</label></div>
-      <p class="muted small">El plan libera todo el material de la biblioteca central de ese nivel o menor. Con la columna "Acceso" haces excepciones para esta congregación: liberar algo de un plan superior o bloquear algo puntual. Lo bloqueado se ve en la app con un candado, pero no se puede abrir.</p>
+    return `<section class="card"><div class="row between"><h2>Permiso y material liberado</h2><label class="row small">Permiso de la congregación ${planSelect(`id="planCom" aria-label="Plan de la congregación"`, c.plan_id)}</label></div>
+      <p class="muted small">El permiso libera todo el material de la biblioteca central de ese nivel o menor. Con la columna "Acceso" haces excepciones para esta congregación: liberar algo de un plan superior o bloquear algo puntual. Lo bloqueado se ve en la app con un candado, pero no se puede abrir.</p>
       <div class="seg" role="group" aria-label="Tipo de material">${CENTRAL_COLS.map(([k, n]) => `<button aria-pressed="${ui.matCol === k}" data-matcol="${k}">${n} (${docsDe(CENTRAL, k).length})</button>`).join("")}</div>
-      ${items.length ? `<p class="small"><b>${lib}</b> de ${items.length} liberados para esta congregación.</p><div class="tbl"><table><thead><tr><th>Material</th><th>Plan del material</th><th>Acceso</th><th>Estado</th></tr></thead><tbody>
-      ${items.map((d) => { const e = excepcion(c.id, d.col, d.id); const ok = liberado(c, d); return `<tr><td><b>${d.data.numero != null ? esc(d.data.numero) + ". " : ""}${esc(d.data.titulo || d.data.nombre || d.id)}</b></td><td>${esc(planNombre(d.data.plan))}</td>
-        <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el plan</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select></td>
+      ${items.length ? `<p class="small"><b>${lib}</b> de ${items.length} liberados para esta congregación.</p><div class="tbl"><table><thead><tr><th></th><th>Material</th><th>Permiso del material</th><th>Acceso</th><th>Estado</th></tr></thead><tbody>
+      ${items.map((d) => { const e = excepcion(c.id, d.col, d.id); const ok = liberado(c, d); return `<tr><td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : ""}</td><td><b>${d.data.numero != null ? esc(d.data.numero) + ". " : ""}${esc(d.data.titulo || d.data.nombre || d.id)}</b></td><td>${esc(planNombre(d.data.plan))}</td>
+        <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el permiso</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select></td>
         <td>${ok ? '<span class="pill ok">Liberado</span>' : '<span class="pill warn">🔒 Bloqueado</span>'}</td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay material de este tipo en la biblioteca central.</p>`}</section>`;
+  }
+
+  function vPermisos() {
+    const central = D.docs.filter((d) => d.comunidad_id === CENTRAL && CENTRAL_COLS.some(([k]) => k === d.col));
+    const porPlan = (id) => central.filter((d) => (d.data.plan || "gratis") === id).length;
+    const coms = congregaciones().filter((c) => !ui.buscar || [c.nombre, c.ciudad, c.region].join(" ").toLowerCase().includes(ui.buscar.toLowerCase()));
+    return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Permisos</h1></div><input class="search" id="buscar" type="search" placeholder="Buscar congregación" value="${esc(ui.buscar)}" aria-label="Buscar congregación"></div>
+    <p class="muted">Cada congregación tiene un permiso. Con él ve abierto todo el material de la biblioteca central de ese nivel o menor; lo demás le aparece con candado. Las excepciones puntuales se hacen dentro de cada congregación.</p>
+    <section class="card"><h2>Niveles de permiso</h2><div class="tbl"><table><thead><tr><th>Nivel</th><th>Nombre</th><th>Descripción</th><th class="num">Material de este nivel</th><th class="num">Congregaciones</th></tr></thead><tbody>
+      ${D.planes.map((p) => `<tr><td><span class="pill acc">${p.orden + 1}</span></td><td><input class="inp" data-plann="${esc(p.id)}" data-k="nombre" value="${esc(p.nombre)}" maxlength="30" aria-label="Nombre del permiso" style="width:130px"></td>
+        <td><input class="inp" data-plann="${esc(p.id)}" data-k="descripcion" value="${esc(p.descripcion || "")}" maxlength="120" aria-label="Descripción" style="width:100%;min-width:220px"></td>
+        <td class="num">${porPlan(p.id)}</td><td class="num">${congregaciones().filter((c) => (c.plan_id || "gratis") === p.id).length}</td></tr>`).join("")}</tbody></table></div>
+      <p class="muted small">Los cambios de nombre y descripción se guardan al salir de la casilla.</p></section>
+    <section class="card"><h2>Permiso de cada congregación (${coms.length})</h2>
+      ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th>Permiso</th><th class="num">Material liberado</th><th class="num">Excepciones</th><th></th></tr></thead><tbody>
+      ${coms.map((c) => { const lib = central.filter((d) => liberado(c, d)).length; const ex = D.excepciones.filter((e) => e.comunidad_id === c.id).length;
+        return `<tr><td><b>${esc(c.nombre)}</b><div class="muted small">${miembrosDe(c.id).length} miembros</div></td><td class="small">${esc([c.ciudad, c.region].filter(Boolean).join(", ") || "–")}</td>
+        <td>${planSelect(`data-plancom="${esc(c.id)}" aria-label="Permiso de ${esc(c.nombre)}"`, c.plan_id)}</td><td class="num">${lib} / ${central.length}</td><td class="num">${ex || "–"}</td>
+        <td><button class="btn line sm" data-act="verCom" data-id="${esc(c.id)}">Excepciones ›</button></td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay congregaciones.</p>`}</section>`;
   }
 
   function vForos() {
@@ -257,13 +276,15 @@
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
-    <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con la columna "Plan" decides qué plan lo libera: <b>Gratis</b> lo ven todas; lo de <b>Básico</b> o <b>Completo</b> aparece con candado en las congregaciones de un plan menor. En cada congregación puedes hacer excepciones.</p>
-    <div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
+    <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con la columna "Plan" decides qué permiso lo libera: lo <b>Inicial</b> lo ven todas; lo <b>Avanzado</b> o <b>Completo</b> aparece con candado en las congregaciones con un permiso menor. En cada congregación puedes hacer excepciones.</p>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
+    <button class="btn ghost sm" data-act="miniaturas">Crear miniaturas que faltan (${D.docs.filter((d) => d.comunidad_id === CENTRAL && ["cuentos", "materiales", "matprofes"].includes(d.col) && d.data.asset && !d.data.thumb).length})</button></div>
     <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 25 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, imágenes o videos MP4 de hasta 25 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
       <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4"}" hidden></label>
-    ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} subidos`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
-    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th>Título</th><th>Plan</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
+    ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `${pg.txt || "Subiendo"} ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} ${pg.txt ? "con miniatura" : "subidos"}`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
+    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
     ${items.map((d) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"></td>` : ""}
+      <td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : '<span class="thumb vacio">PDF</span>'}</td>
       <td><input class="inp" style="width:100%;min-width:200px" data-edit="titulo" data-id="${esc(d.id)}" value="${esc(d.data.titulo || "")}" aria-label="Título"></td>
       <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}</td>
       <td class="small">${d.data.asset ? `<a href="${esc(blobUrl(d.data.asset))}" target="_blank" rel="noopener">${esc(d.data.archivo || "Abrir")}</a> <span class="muted">${fmtMB(d.data.tamano)}</span>` : (d.data.url ? `<a href="${esc(d.data.url)}" target="_blank" rel="noopener">Enlace</a>` : "–")}</td>
@@ -290,9 +311,39 @@
     const d = D.docs.find((x) => x.comunidad_id === cid && x.col === col && x.id === id);
     const { error } = await sb.from("docs").delete().eq("comunidad_id", cid).eq("col", col).eq("id", id);
     if (error) throw error;
-    const files = [d && d.data.asset, ...((d && d.data.fotos) || [])].filter(Boolean);
+    const files = [d && d.data.asset, d && d.data.thumb, ...((d && d.data.fotos) || [])].filter(Boolean);
     if (files.length) await sb.storage.from(BUCKET).remove(files);
     D.docs = D.docs.filter((x) => x !== d);
+  }
+  let PDFLIB = null;
+  const cargarScript = (src) => new Promise((ok, mal) => { const t = document.createElement("script"); t.src = src; t.onload = ok; t.onerror = mal; document.head.appendChild(t); });
+  async function pdfjs() { if (PDFLIB) return PDFLIB; const B = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/"; await cargarScript(B + "pdf.min.js"); window.pdfjsLib.GlobalWorkerOptions.workerSrc = B + "pdf.worker.min.js"; PDFLIB = window.pdfjsLib; return PDFLIB; }
+  async function miniatura(buf, ext) {
+    try {
+      if (buf instanceof Blob) buf = await buf.arrayBuffer();
+      let c;
+      if (ext === "pdf") { const lib = await pdfjs(); const doc = await lib.getDocument({ data: buf }).promise; const pg = await doc.getPage(1); const v0 = pg.getViewport({ scale: 1 }); const vp = pg.getViewport({ scale: 260 / v0.width });
+        c = document.createElement("canvas"); c.width = Math.round(vp.width); c.height = Math.round(vp.height); const cx = c.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, c.width, c.height); await pg.render({ canvasContext: cx, viewport: vp }).promise; }
+      else if (/^(png|jpe?g|gif|webp)$/.test(ext)) { const bm = await createImageBitmap(new Blob([buf])); c = document.createElement("canvas"); c.width = 260; c.height = Math.round(bm.height * 260 / bm.width); c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height); }
+      else return null;
+      const blob = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.78)); if (!blob) return null;
+      const path = CENTRAL + "/" + crypto.randomUUID() + ".jpg";
+      const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+      return error ? null : path;
+    } catch (e) { console.warn("miniatura", e); return null; }
+  }
+  async function crearMiniaturas() {
+    const faltan = D.docs.filter((d) => d.comunidad_id === CENTRAL && ["cuentos", "materiales", "matprofes"].includes(d.col) && d.data.asset && !d.data.thumb);
+    if (!faltan.length) { toast("Todo el material ya tiene miniatura"); return; }
+    ui.subida = { hecho: 0, total: faltan.length, errores: [], txt: "Creando miniaturas" }; render();
+    for (const d of faltan) {
+      try {
+        const r = await fetch(blobUrl(d.data.asset)); if (!r.ok) throw new Error("no se pudo leer el archivo");
+        const thumb = await miniatura(await r.arrayBuffer(), (d.data.asset.split(".").pop() || "").toLowerCase());
+        if (thumb) { const data = { ...d.data, thumb }; const { error } = await sb.from("docs").update({ data }).eq("comunidad_id", CENTRAL).eq("col", d.col).eq("id", d.id); if (error) throw error; d.data = data; }
+      } catch (e) { ui.subida.errores.push((d.data.titulo || d.id) + ": " + (e.message || e)); }
+      ui.subida.hecho++; render();
+    }
   }
   const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4" };
   async function subir(files) {
@@ -305,6 +356,7 @@
         const ext = f.name.split(".").pop().toLowerCase(); const path = CENTRAL + "/" + crypto.randomUUID() + "." + ext;
         const { error: e1 } = await sb.storage.from(BUCKET).upload(path, f, { contentType: TIPOS[ext], cacheControl: "31536000" });
         if (e1) throw e1;
+        const thumb = await miniatura(f, ext);
         const base = f.name.replace(/\.[^.]+$/, "");
         let id, data;
         if (ui.bib === "cuentos") {
@@ -312,11 +364,11 @@
           const titulo = base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i, "").replace(/_+/g, " ").trim() || base;
           id = "cuento-" + String(num).padStart(3, "0");
           const prev = D.docs.find((d) => d.comunidad_id === CENTRAL && d.col === "cuentos" && d.id === id);
-          data = { ...(prev ? prev.data : {}), numero: num, titulo: prev && prev.data.titulo ? prev.data.titulo : titulo, asset: path, archivo: f.name, tamano: f.size, subido: new Date().toISOString().slice(0, 10) };
-          if (prev && prev.data.asset) await sb.storage.from(BUCKET).remove([prev.data.asset]);
+          data = { ...(prev ? prev.data : {}), numero: num, titulo: prev && prev.data.titulo ? prev.data.titulo : titulo, asset: path, thumb, archivo: f.name, tamano: f.size, subido: new Date().toISOString().slice(0, 10) };
+          const viejos = prev ? [prev.data.asset, prev.data.thumb].filter(Boolean) : []; if (viejos.length) await sb.storage.from(BUCKET).remove(viejos);
         } else {
           id = crypto.randomUUID().replace(/-/g, "").slice(0, 20);
-          data = { titulo: base.replace(/[_-]+/g, " ").trim(), asset: path, archivo: f.name, tamano: f.size, fecha: new Date().toISOString().slice(0, 10) };
+          data = { titulo: base.replace(/[_-]+/g, " ").trim(), asset: path, thumb, archivo: f.name, tamano: f.size, fecha: new Date().toISOString().slice(0, 10) };
         }
         const { error: e2 } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: ui.bib, id, data, actualizado: new Date().toISOString() });
         if (e2) throw e2;
@@ -355,6 +407,8 @@
       if (act === "volverCom") { ui.com = null; render(); return; }
       if (act === "moderarCom") { ui.tab = "moderacion"; ui.modCom = b.dataset.id; ui.com = null; render(); return; }
       if (act === "csv") { csv(); return; }
+      if (act === "miniaturas") { crearMiniaturas(); return; }
+      if (act === "verCom") { ui.tab = "congregaciones"; ui.com = b.dataset.id; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.quitar) {
         if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Seguro?"; return; }
         const { error } = await sb.rpc("quitar_miembro", { p_comunidad: ui.com, p_user: b.dataset.quitar }); if (error) throw error;
@@ -380,6 +434,15 @@
     try {
       if (t.id === "files") { const fs = [...t.files]; t.value = ""; subir(fs); return; }
       if (t.id === "foroCom") { ui.foroCom = t.value; render(); return; }
+      if (t.dataset.plancom) {
+        const { error } = await sb.rpc("super_set_plan", { p_comunidad: t.dataset.plancom, p_plan: t.value }); if (error) throw error;
+        D.comunidades.find((c) => c.id === t.dataset.plancom).plan_id = t.value; toast("Permiso actualizado: " + planNombre(t.value)); render(); return;
+      }
+      if (t.dataset.plann) {
+        const v = t.value.trim(); if (t.dataset.k === "nombre" && v.length < 2) { toast("Escribe un nombre"); render(); return; }
+        const { error } = await sb.from("planes").update({ [t.dataset.k]: v || null }).eq("id", t.dataset.plann); if (error) throw error;
+        const pl = D.planes.find((x) => x.id === t.dataset.plann); if (pl) pl[t.dataset.k] = v; toast("Guardado"); return;
+      }
       if (t.id === "planCom") {
         const { error } = await sb.rpc("super_set_plan", { p_comunidad: ui.com, p_plan: t.value }); if (error) throw error;
         D.comunidades.find((c) => c.id === ui.com).plan_id = t.value; toast("Plan actualizado a " + planNombre(t.value)); render(); return;
