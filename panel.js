@@ -37,7 +37,7 @@
       gate(`<h1>Panel de Control</h1><p class="muted">Ingresa con tu cuenta de súper administrador.</p>
       <form id="lf" class="form" style="grid-template-columns:1fr"><div class="field"><label for="le">Correo</label><input class="inp" id="le" type="email" autocomplete="email" required></div>
       <div class="field"><label for="lp">Contraseña</label><input class="inp" id="lp" type="password" autocomplete="current-password" required></div>
-      <p id="lm" class="small" style="color:var(--rose)" hidden></p><button class="btn" type="submit">Ingresar</button></form><a class="small" href="/">Volver a la app</a>`);
+      <p id="lm" class="small" style="color:var(--rose)" hidden></p><button class="btn" type="submit">Ingresar</button></form><a class="small" href="/app">Volver a la app</a>`);
       $("#lf").addEventListener("submit", async (e) => {
         e.preventDefault();
         const { error } = await sb.auth.signInWithPassword({ email: $("#le").value.trim(), password: $("#lp").value });
@@ -49,7 +49,7 @@
     yo = data.session.user;
     const { data: s, error } = await sb.rpc("soy_super");
     if (error || !s) {
-      gate(`<h1>Acceso restringido</h1><p class="muted">Esta sección es solo para el súper administrador de Eterno Pacto Kids. Tu cuenta (${esc(yo.email)}) no tiene ese permiso.</p><a class="btn" href="/">Volver a la app</a>`);
+      gate(`<h1>Acceso restringido</h1><p class="muted">Esta sección es solo para el súper administrador de Eterno Pacto Kids. Tu cuenta (${esc(yo.email)}) no tiene ese permiso.</p><a class="btn" href="/app">Volver a la app</a>`);
       return;
     }
     $("#gate").hidden = true; $("#app").hidden = false;

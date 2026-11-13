@@ -1,6 +1,6 @@
 /* Eterno Pacto Kids · service worker: instalar la app, leer sin internet y recibir avisos */
-const V = "epk-v6";
-const BASE = ["/", "/index.html", "/cuentas.js", "/comunidad.js", "/manifest.webmanifest", "/img/logo-kids.webp", "/img/grupo.webp", "/img/icono-192.png",
+const V = "epk-v7";
+const BASE = ["/app", "/index.html", "/cuentas.js", "/comunidad.js", "/manifest.webmanifest", "/img/logo-kids.webp", "/img/grupo.webp", "/img/icono-192.png",
   "/img/santiago-full.webp", "/img/maria-full.webp", "/img/mateo-full.webp", "/img/sara-full.webp", "/img/simon-full.webp"];
 
 self.addEventListener("install", (e) => {
@@ -11,7 +11,7 @@ self.addEventListener("activate", (e) => {
 });
 
 const guardar = (cache, req, res) => { if (res && (res.ok || res.type === "opaque")) caches.open(cache).then((c) => c.put(req, res.clone())); return res; };
-const primeroRed = (req, cache) => fetch(req).then((r) => guardar(cache, req, r)).catch(() => caches.match(req, { ignoreSearch: req.mode === "navigate" }).then((r) => r || caches.match("/")));
+const primeroRed = (req, cache) => fetch(req).then((r) => guardar(cache, req, r)).catch(() => caches.match(req, { ignoreSearch: req.mode === "navigate" }).then((r) => r || caches.match("/app")));
 const primeroCache = (req, cache) => caches.match(req).then((r) => r || fetch(req).then((x) => guardar(cache, req, x)));
 const cacheYActualiza = (req, cache) => caches.match(req).then((r) => { const red = fetch(req).then((x) => guardar(cache, req, x)).catch(() => r); return r || red; });
 

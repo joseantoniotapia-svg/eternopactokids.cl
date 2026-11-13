@@ -957,7 +957,8 @@ function vMas(){
     out+=`<section class="card"><h2>Acerca de Eterno Pacto Kids</h2><p>App de seguimiento de la escuela dominical${S.config.iglesia?" de "+esc(S.config.iglesia):""}.${S.config.horario?" Clases: "+esc(S.config.horario)+".":""}</p>
     ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="config">Editar datos de la congregación</button>`:""}</section>
     <section class="card"><p class="eyebrow">Quién puede hacer qué</p><p class="small"><b>Administradores</b>: invitan a las familias y nombran maestros (menú ☰ → Miembros y roles).</p><p class="small"><b>Maestros</b>: crean clases, marcan asistencia, ponen notas, dan estrellas, suben material y publican en el muro.</p><p class="small"><b>Familias</b>: ven la clase, el versículo, los cuentos y las estrellas, y leen la Biblia con su perfil. Los niños usan la app junto a sus padres.</p></section>
-    <section class="card"><p class="eyebrow">Cuidado de los niños</p><p class="small">Guarda solo nombre y apoderado. No publiques apellidos, direcciones, teléfonos de niños ni datos de salud. El muro es solo para el equipo de maestros.</p></section>`;
+    <section class="card"><p class="eyebrow">Cuidado de los niños</p><p class="small">Guarda solo nombre y apoderado. No publiques apellidos, direcciones, teléfonos de niños ni datos de salud. El muro es solo para el equipo de maestros.</p></section>
+    <section class="card"><p class="eyebrow">Contacto</p><p class="small">¿Dudas, sugerencias o quieres sumar a tu congregación? Escríbenos a <a href="mailto:contacto@eternopactokids.cl">contacto@eternopactokids.cl</a>.</p><p class="small"><a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a></p></section>`;
   }
   return out;
 }
@@ -1512,7 +1513,7 @@ function qzSig(){QZ.i++;QZ.resp=null;const c=S.cuentos.find(x=>x.id===QZ.cuento)
 let QRLIB=false;
 async function mostrarQR(id){const c=S.clases.find(x=>x.id===id);if(!c)return;
   if(!c.qr){const t=(crypto.randomUUID?crypto.randomUUID():String(Math.random())).replace(/[^a-z0-9]/gi,"").slice(0,12);try{await guardar("clases",c.id,{...c,qr:t});c.qr=t;}catch(e){toast(errMsg(e));return;}}
-  const url=location.origin+"/?com="+encodeURIComponent(EPK.comunidad.id)+"&asis="+encodeURIComponent(c.id)+"&t="+encodeURIComponent(c.qr);
+  const url=location.origin+"/app?com="+encodeURIComponent(EPK.comunidad.id)+"&asis="+encodeURIComponent(c.id)+"&t="+encodeURIComponent(c.qr);
   $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet qr-sheet"><h2>Asistencia: ${esc(c.titulo)}</h2><p class="muted small">Las familias escanean este código con la cámara de su celular al llegar. Funciona solo el día de la clase (${esc(fLarga(c.fecha))}).</p>
     <div id="qrBox" class="qr-box" aria-label="Código QR de asistencia"></div><div class="row between"><button class="btn line sm" id="qrCopy">Copiar enlace</button><button class="btn" id="qrClose">Listo</button></div></div></div>`;
   $("#qrClose").onclick=()=>{$("#sheetRoot").innerHTML="";const a=S.asistencia[c.id];render();};
