@@ -371,6 +371,7 @@
   }
 
   /* ---------- arranque ---------- */
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-ir],[data-salir]"); if (!b || !root().contains(b)) return;
     if (b.dataset.salir) { sb.auth.signOut().then(() => location.replace(location.pathname)); return; }
