@@ -1,6 +1,6 @@
 /* Eterno Pacto Kids · service worker: instalar la app, leer sin internet y recibir avisos */
 const V = "epk-v7";
-const BASE = ["/app", "/index.html", "/cuentas.js", "/comunidad.js", "/manifest.webmanifest", "/img/logo-kids.webp", "/img/grupo.webp", "/img/icono-192.png",
+const BASE = ["/app", "/cuentas.js", "/comunidad.js", "/manifest.webmanifest", "/img/logo-kids.webp", "/img/grupo.webp", "/img/icono-192.png",
   "/img/santiago-full.webp", "/img/maria-full.webp", "/img/mateo-full.webp", "/img/sara-full.webp", "/img/simon-full.webp"];
 
 self.addEventListener("install", (e) => {
