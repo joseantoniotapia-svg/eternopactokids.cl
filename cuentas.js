@@ -4,10 +4,12 @@
   const SB_URL = "https://izkqplqwxoszwqpzxwrb.supabase.co";
   const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6a3FwbHF3eG9zendxcHp4d3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ1MDU2MjMsImV4cCI6MjExMDA4MTYyM30.o9TizvJI1wvRRMRh-FfUDnw4bP8PT8m_jzQBath49YY";
   const BUCKET = "archivos";
+  const CENTRAL = "00000000-0000-0000-0000-000000000001";
+  const CON_CENTRAL = ["cuentos", "materiales", "matprofes", "biblicos"];
   const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const CTX = { user: null, comunidad: null, rol: null, comunidades: [] };
+  const CTX = { user: null, comunidad: null, rol: null, comunidades: [], super: false };
   const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
 
   /* ---------- utilidades públicas ---------- */
@@ -35,10 +37,12 @@
     const cargar = async (col) => {
       if (cargando[col]) return cargando[col];
       cargando[col] = (async () => {
-        const { data, error } = await sb.from("docs").select("id,data").eq("comunidad_id", cid).eq("col", col).limit(5000);
+        const ids = CON_CENTRAL.includes(col) ? [cid, CENTRAL] : [cid];
+        const { data, error } = await sb.from("docs").select("comunidad_id,id,data").in("comunidad_id", ids).eq("col", col).limit(5000);
         cargando[col] = null;
         if (error) throw error;
-        cache[col] = data || []; emitir(col);
+        cache[col] = (data || []).map((r) => r.comunidad_id === CENTRAL ? { id: "c_" + r.id, data: { ...r.data, _central: true } } : { id: r.id, data: r.data });
+        emitir(col);
       })();
       return cargando[col];
     };
@@ -46,7 +50,7 @@
     sb.channel("docs-" + cid)
       .on("postgres_changes", { event: "*", schema: "public", table: "docs" }, (p) => {
         const r = (p.new && p.new.col) ? p.new : p.old;
-        if (!r || (r.comunidad_id && r.comunidad_id !== cid)) return;
+        if (!r || (r.comunidad_id && r.comunidad_id !== cid && r.comunidad_id !== CENTRAL)) return;
         if (r.col) recargar(r.col);
       })
       .subscribe();
@@ -234,17 +238,25 @@
   async function misComunidades() {
     const { data, error } = await sb.from("miembros").select("rol, comunidades(id,nombre,codigo)").eq("user_id", CTX.user.id);
     if (error) throw error;
-    return (data || []).filter((m) => m.comunidades).map((m) => ({ ...m.comunidades, rol: m.rol }));
+    const lista = (data || []).filter((m) => m.comunidades && m.comunidades.id !== CENTRAL).map((m) => ({ ...m.comunidades, rol: m.rol }));
+    if (CTX.super) {
+      const { data: todas } = await sb.from("comunidades").select("id,nombre,codigo").neq("id", CENTRAL).order("nombre");
+      (todas || []).forEach((c) => { const x = lista.find((l) => l.id === c.id); if (x) x.rol = "admin"; else lista.push({ ...c, rol: "admin", externa: true }); });
+    }
+    return lista;
   }
 
   function pantallaComunidad(lista) {
     const inv = LS.get("epk_invitacion") || "";
     marco(`<h1>Tu congregación</h1>
-    ${lista.length ? `<p class="ac-sub">Elige con cuál quieres entrar.</p><div class="ac-lista">${lista.map((c) => `<button class="ac-com" data-com="${esc(c.id)}"><b>${esc(c.nombre)}</b><span>${{ admin: "Administrador", maestro: "Maestro", familia: "Familia" }[c.rol]}</span></button>`).join("")}</div><hr>` : `<p class="ac-sub">Para empezar, únete a tu congregación con el código que te dio tu maestro.</p>`}
+    ${lista.length ? `<p class="ac-sub">Elige con cuál quieres entrar.</p><div class="ac-lista">${lista.map((c) => `<button class="ac-com" data-com="${esc(c.id)}"><b>${esc(c.nombre)}</b><span>${c.externa ? "Súper admin" : { admin: "Administrador", maestro: "Maestro", familia: "Familia" }[c.rol]}</span></button>`).join("")}${CTX.super ? `<a class="ac-com" href="panel.html"><b>Panel de Control</b><span>Súper admin</span></a>` : ""}</div><hr>` : `<p class="ac-sub">Para empezar, únete a tu congregación con el código que te dio tu maestro.</p>`}
     <form id="acUnir" novalidate><label for="acCodigo">Código de invitación</label><input id="acCodigo" autocomplete="off" autocapitalize="characters" maxlength="8" value="${esc(inv)}" placeholder="Ej: 1B9D00">
     <p id="acMsg" class="ac-msg" hidden></p><button type="submit" class="ac-btn">Unirme</button></form>
     <details class="ac-det"><summary>Soy pastor o maestro y quiero crear mi congregación</summary>
     <form id="acCrear" novalidate><label for="acNombreCom">Nombre de la congregación</label><input id="acNombreCom" maxlength="80" placeholder="Iglesia Eterno Pacto">
+    <label for="acCiudad">Ciudad o comuna</label><input id="acCiudad" maxlength="60" placeholder="Paine">
+    <label for="acRegion">Región</label><input id="acRegion" maxlength="60" list="acRegiones" placeholder="Metropolitana"><datalist id="acRegiones">${["Arica y Parinacota","Tarapacá","Antofagasta","Atacama","Coquimbo","Valparaíso","Metropolitana","O'Higgins","Maule","Ñuble","Biobío","La Araucanía","Los Ríos","Los Lagos","Aysén","Magallanes"].map((r) => `<option value="${esc(r)}">`).join("")}</datalist>
+    <label for="acPais">País</label><input id="acPais" maxlength="60" value="Chile">
     <p class="ac-sub">Quedarás como administrador y podrás invitar a maestros y familias.</p><button type="submit" class="ac-btn sec">Crear congregación</button></form></details>
     <p class="ac-alt"><button class="ac-link" data-salir="1">Cerrar sesión</button></p>`);
     root().querySelectorAll("[data-com]").forEach((b) => b.addEventListener("click", () => entrar(lista.find((c) => c.id === b.dataset.com))));
@@ -259,7 +271,7 @@
     $("#acCrear").addEventListener("submit", async (e) => {
       e.preventDefault(); const n = $("#acNombreCom").value.trim(); if (n.length < 2) return msg("Escribe el nombre de la congregación.");
       ocupado(e.target, true, "Creando…");
-      const { data, error } = await sb.rpc("crear_comunidad", { p_nombre: n });
+      const { data, error } = await sb.rpc("crear_comunidad", { p_nombre: n, p_ciudad: $("#acCiudad").value.trim(), p_region: $("#acRegion").value.trim(), p_pais: $("#acPais").value.trim() || "Chile" });
       ocupado(e.target, false, "Crear congregación");
       if (error) return msg(traducirError(error));
       const l = await misComunidades(); entrar(l.find((c) => c.id === data), true);
@@ -280,6 +292,7 @@
 
   async function alIniciarSesion(user) {
     CTX.user = user;
+    try { const { data: s } = await sb.rpc("soy_super"); CTX.super = !!s; } catch (e) { CTX.super = false; }
     let lista = [];
     try { lista = await misComunidades(); } catch (e) { marco(`<h1>Sin conexión</h1><p class="ac-sub">${esc(traducirError(e))}</p><button class="ac-btn" onclick="location.reload()">Reintentar</button>`); return; }
     CTX.comunidades = lista;
@@ -292,7 +305,8 @@
       return entrar(lista.find((c) => c.id === data));
     }
     if (inv) LS.del("epk_invitacion");
-    const elegida = lista.find((c) => c.codigo === inv) || lista.find((c) => c.id === guardada) || (lista.length === 1 ? lista[0] : null);
+    const pedida = params.get("com");
+    const elegida = (pedida && lista.find((c) => c.id === pedida)) || lista.find((c) => c.codigo === inv) || lista.find((c) => c.id === guardada) || (lista.length === 1 ? lista[0] : null);
     if (elegida) entrar(elegida); else pantallaComunidad(lista);
   }
 
@@ -309,6 +323,7 @@
     const r = hoja(`<h2>${esc(c.nombre)}</h2><p class="muted small">${esc(nombreU)} · ${ROLN[CTX.rol]}</p>
       <div class="list">
       ${equipo() ? `<button class="item" data-m="invitar"><span class="grow"><b>Invitar familias y maestros</b><span class="muted small">Código ${esc(c.codigo)}</span></span></button>` : ""}
+      ${CTX.super ? `<a class="item" href="panel.html"><span class="grow"><b>Panel de Control</b><span class="muted small">Súper administrador: todas las congregaciones</span></span></a>` : ""}
       ${CTX.rol === "admin" ? `<button class="item" data-m="miembros"><span class="grow"><b>Miembros y roles</b><span class="muted small">Nombrar maestros y administradores</span></span></button>` : ""}
       <button class="item" data-m="cambiar"><span class="grow"><b>Cambiar o unirme a otra congregación</b></span></button>
       <a class="item" href="privacidad.html"><span class="grow"><b>Privacidad y términos</b></span></a>
