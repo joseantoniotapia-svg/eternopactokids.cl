@@ -4,10 +4,11 @@
 //   VAPID_PRIVATE_KEY  (obligatoria para avisos al celular)
 //   RESEND_API_KEY     (opcional: sin ella no se envían correos)
 //   MAIL_FROM          (opcional, por defecto "Eterno Pacto Kids <avisos@eternopactokids.cl>")
+//   APP_URL            (opcional, por defecto https://eternopactokidscl.vercel.app; cámbialo a https://eternopactokids.cl cuando el dominio funcione)
 import webpush from "npm:web-push@3.6.7";
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
-const APP = "https://eternopactokids.cl";
+const APP = Deno.env.get("APP_URL") || "https://eternopactokidscl.vercel.app";
 const VAPID_PUBLIC = "BEouliY8VS3uiHD8aQqesSYXAd6M7H2-7e0NLiEUnI7gdi2DKtQxReVNwQO2O7YhzZ-DLq0djn6UO89R28DitKk";
 const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 const PRIV = Deno.env.get("VAPID_PRIVATE_KEY");
