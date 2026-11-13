@@ -5,7 +5,7 @@
   const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6a3FwbHF3eG9zendxcHp4d3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ1MDU2MjMsImV4cCI6MjExMDA4MTYyM30.o9TizvJI1wvRRMRh-FfUDnw4bP8PT8m_jzQBath49YY";
   const BUCKET = "archivos";
   const CENTRAL = "00000000-0000-0000-0000-000000000001";
-  const CON_CENTRAL = ["cuentos", "materiales", "matprofes", "biblicos"];
+  const CON_CENTRAL = ["cuentos", "materiales", "matprofes", "biblicos", "maestras"];
   const sb = window.supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

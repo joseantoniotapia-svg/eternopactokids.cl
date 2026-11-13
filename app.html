@@ -171,6 +171,19 @@ button.item:hover{border-color:var(--accent)}
 .ck-torta{font-size:2.4rem;flex:none}
 .aviso-permiso{background:var(--rose-soft);color:var(--rose);border:2px solid var(--rose);border-radius:16px;padding:12px 14px;font-weight:700}
 .avisos .av-fila{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.avisos .av-fila .grow b{display:block}.avisos input[type=checkbox]{width:24px;height:24px;flex:none;accent-color:#5B3DF5}
+.bclases{display:grid;gap:14px}
+.bclase{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:var(--bd,1px solid var(--line));box-shadow:var(--sh,none);border-radius:22px 10px 24px 16px;padding:12px}
+.bclase img{width:96px;height:144px;object-fit:cover;flex:none;border-radius:12px 4px 12px 10px;border:2px solid var(--edge,var(--line));background:var(--sunk)}
+.bclase h3{font-size:1.25rem}.bclase .grow{display:flex;flex-direction:column;gap:6px;min-width:0}.bclase.bloq img{filter:grayscale(.7)}
+.cl-portada{margin:0;align-self:center;max-width:420px;width:100%}.cl-portada img{width:100%;height:auto;border:var(--bd,1px solid var(--line));box-shadow:var(--sh,none);border-radius:24px 10px 26px 16px;transform:rotate(-.8deg)}
+.cl-sub{font-family:var(--display);font-weight:500;color:var(--accent);font-size:1.1rem}
+.cl-archivos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.cl-archivos li{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed var(--line)}.cl-archivos li:last-child{border-bottom:0}
+.cl-archivos .grow{flex:1;min-width:150px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.cl-archivos .acts{display:flex;gap:6px}
+.cl-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--pop-violet,#7A4DFF);color:#fff;font-weight:700;border:2px solid var(--edge,transparent)}
+.cl-guia summary{cursor:pointer}.cl-guia-txt{white-space:pre-line;line-height:1.6}
+.hero-portada{position:absolute;right:16px;top:16px;width:clamp(70px,20vw,110px);height:auto;border:3px solid #fff;border-radius:12px 4px 12px 10px;transform:rotate(5deg);box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.hero:has(.hero-portada){padding-right:clamp(100px,26vw,150px)}
 .pill.lock{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
 .res.bloq{opacity:.72}
 .pill.leaf{background:var(--leaf-soft);color:var(--leaf)}
@@ -539,8 +552,8 @@ const pad=n=>String(n).padStart(2,"0");
 const PTS={presente:10,versiculo:15,biblia:5,tarea:10};
 const MARCAS=[["presente","Asistió"],["versiculo","Versículo"],["biblia","Biblia"],["tarea","Tarea"]];
 const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos"];
-const COLS_EQUIPO=["matprofes","libro"];
-const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],libro:{},biblicos:[],config:{}};
+const COLS_EQUIPO=["matprofes","libro","maestras"];
+const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},biblicos:[],config:{}};
 const loaded={};
 const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
@@ -809,7 +822,7 @@ function vInicio(){
     out+=emptyBox("Aún no hay clases publicadas",ed()?"Agrega la lección del próximo domingo con su versículo, material y tarea. Las familias la verán aquí.":"Los maestros publicarán aquí la lección del domingo, el versículo y la tarea.",ed()?`<button class="btn" data-act="nuevaClase">Agregar la primera clase</button>`:"");
   }else{
     const prox=(c.fecha||"")>=hoyISO();
-    out+=`<section class="hero">${I.sprout}<p class="eyebrow">${prox?"Próxima clase":"Última clase"} · ${esc(fLarga(c.fecha))}</p><h1>${esc(c.titulo)}</h1>${c.cita?`<p class="cita">${esc(c.cita)}</p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}<button class="btn" data-act="verClase" data-id="${esc(c.id)}">Ver la clase completa</button></section>`;
+    out+=`<section class="hero">${I.sprout}${c.portadaMini||c.portada?`<img class="hero-portada" src="${esc(srcDe(c.portadaMini||c.portada))}" alt="" loading="lazy">`:""}<p class="eyebrow">${prox?"Próxima clase":"Última clase"} · ${esc(fLarga(c.fecha))}</p><h1>${esc(c.titulo)}</h1>${c.cita?`<p class="cita">${esc(c.cita)}</p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}<button class="btn" data-act="verClase" data-id="${esc(c.id)}">Ver la clase completa</button></section>`;
     if(c.versiculo)out+=`<section class="verse"><p class="eyebrow">Versículo para memorizar</p><blockquote>${esc(c.versiculo)}</blockquote>${c.versiculoCita?`<cite>${esc(c.versiculoCita)}</cite>`:""}<div class="row"><button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(c.id)}">🎮 Practicar el versículo</button>${c.versiculoCita?`<button class="link-btn small" style="color:#5A3600" data-act="leerRef" data-ref="${esc(c.versiculoCita)}">Leerlo en la Biblia ›</button>`:""}</div></section>`;
     const extras=[];
     if(c.tarea)extras.push(`<div class="card"><p class="eyebrow">Tarea para la casa</p><p>${esc(c.tarea)}</p></div>`);
@@ -832,8 +845,9 @@ function vClases(){
   if(ui.clase){const c=S.clases.find(x=>x.id===ui.clase);if(c)return ui.juego?vJuego(c):vClase(c);ui.clase=null;}
   const h=hoyISO();const prox=S.clases.filter(c=>(c.fecha||"")>=h).sort((a,b)=>a.fecha<b.fecha?-1:1);const pas=clasesOrd().filter(c=>(c.fecha||"")<h);
   let out=guia("santiago","La sabiduría de Dios es para todos. Aquí están las lecciones de cada domingo con su material y tarea.");
-  if(ed())out+=`<div class="seg" role="group" aria-label="Vista de clases"><button aria-pressed="${ui.claseSeg==="lecciones"}" data-act="claseSeg" data-k="lecciones">Lecciones</button><button aria-pressed="${ui.claseSeg==="libro"}" data-act="claseSeg" data-k="libro">Libro de clases</button></div>`;
+  if(ed())out+=`<div class="seg" role="group" aria-label="Vista de clases"><button aria-pressed="${ui.claseSeg==="lecciones"}" data-act="claseSeg" data-k="lecciones">Lecciones</button><button aria-pressed="${ui.claseSeg==="biblioteca"}" data-act="claseSeg" data-k="biblioteca">Biblioteca de clases</button><button aria-pressed="${ui.claseSeg==="libro"}" data-act="claseSeg" data-k="libro">Libro de clases</button></div>`;
   if(ed()&&ui.claseSeg==="libro")return out+vLibro();
+  if(ed()&&ui.claseSeg==="biblioteca")return out+vBibliotecaClases();
   out+=`<div class="sec-h"><h2>Clases dominicales</h2>${ed()?`<button class="btn sm" data-act="nuevaClase">Nueva clase</button>`:""}</div>`;
   if(!S.clases.length)return out+emptyBox("Sin clases todavía",ed()?"Crea la primera lección: fecha, pasaje, versículo, material y tarea.":"Aquí aparecerá el calendario de lecciones.","");
   const row=(c,past)=>{const f=fCorta(c.fecha);const a=S.asistencia[c.id];const n=a&&a.presente?a.presente.length:0;
@@ -845,10 +859,12 @@ function vClases(){
 
 function vClase(c){
   const a=S.asistencia[c.id]||{};
-  let out=`<button class="back" data-act="volver">‹ Todas las clases</button>
-  <section class="card"><p class="eyebrow">${esc(fLarga(c.fecha))}</p>${pillOculta(c)}<h2 style="font-size:1.6rem">${esc(c.titulo)}</h2>${c.cita?`<p><b>${esc(c.cita)}</b></p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}
+  let out=`<button class="back" data-act="volver">‹ Todas las clases</button>${vPortadaClase(c)}
+  <section class="card"><p class="eyebrow">${esc(fLarga(c.fecha))}${c.numero!=null&&c.base?" · Clase N°"+esc(c.numero):""}</p>${pillOculta(c)}<h2 style="font-size:1.6rem">${esc(c.titulo)}</h2>${c.subtitulo?`<p class="cl-sub">${esc(c.subtitulo)}</p>`:""}${c.cita?`<p><b>${esc(c.cita)}</b></p>`:""}${c.resumen?`<p style="white-space:pre-line">${esc(c.resumen)}</p>`:""}
   ${ed()?`<div class="row"><button class="btn ghost sm" data-act="editClase" data-id="${esc(c.id)}">Editar clase</button><button class="btn sm" data-act="qrAsis" data-id="${esc(c.id)}">📱 QR de asistencia</button></div>`:""}</section>`;
   if(c.versiculo){if(ed())cargarPractica(c);out+=`<section class="verse"><p class="eyebrow">Versículo para memorizar</p><blockquote>${esc(c.versiculo)}</blockquote>${c.versiculoCita?`<cite>${esc(c.versiculoCita)}</cite>`:""}<div class="row"><button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(c.id)}">🎮 Practicar el versículo</button>${ed()&&PV[c.id]!=null?`<span class="small">${PV[c.id]} familia${PV[c.id]===1?"":"s"} lo practicaron en la app</span>`:""}</div></section>`;}
+  out+=vArchivosClase(c);
+  if(ed()&&(c.objetivo||c.guia||c.preguntasRepaso))out+=`<details class="card cl-guia" open><summary><b>Guía para el maestro</b> <span class="muted small">(solo la ve el equipo)</span></summary>${c.objetivo?`<p><b>Objetivo:</b> ${esc(c.objetivo)}</p>`:""}${c.guia?`<div class="cl-guia-txt">${esc(c.guia)}</div>`:""}${c.preguntasRepaso?`<p class="eyebrow" style="margin-top:8px">Preguntas de repaso</p><ul>${String(c.preguntasRepaso).split("\n").filter(Boolean).map(q=>`<li>${esc(q)}</li>`).join("")}</ul>`:""}</details>`;
   const mats=(c.material||[]).filter(m=>safeUrl(m.url)||m.titulo);
   if(mats.length)out+=`<section class="card"><p class="eyebrow">Material de la semana</p><div class="materials">${mats.map(m=>safeUrl(m.url)?`<a href="${esc(safeUrl(m.url))}" target="_blank" rel="noopener noreferrer">${esc(m.titulo)} ↗</a>`:`<p>${esc(m.titulo)}</p>`).join("")}</div></section>`;
   const ligados=S.materiales.filter(m=>m.claseId===c.id).map(m=>[m,"materiales"]).concat(ed()?S.matprofes.filter(m=>m.claseId===c.id).map(m=>[m,"matprofes"]):[]);
@@ -1456,6 +1472,33 @@ function marcar(claseId,ninoId,k){
   },600);
 }
 
+/* ---------- clases modelo de la biblioteca central ---------- */
+const srcDe=x=>!x?"":(/^img\//.test(x)?"/"+x:blobUrl(x));
+const programadas=m=>S.clases.filter(c=>c.base===m.id).sort((a,b)=>a.fecha<b.fecha?-1:1);
+function vBibliotecaClases(){
+  const ms=[...S.maestras].sort((a,b)=>(a.numero||0)-(b.numero||0));
+  let out=`<p class="muted">Clases listas de la biblioteca central de Eterno Pacto Kids: el texto para las familias, la guía para el maestro, la portada y los archivos en orden. Elige una y ponle la fecha en que la harán en tu congregación.</p>`;
+  if(!ms.length)return out+emptyBox("Aún no hay clases en la biblioteca","Pronto estarán aquí las clases listas para usar.","");
+  return out+`<div class="bclases">${ms.map(m=>{const pr=programadas(m);const bl=m._bloqueado&&!(window.EPK&&EPK.super);
+    return `<article class="bclase${bl?" bloq":""}"><img src="${esc(srcDe(m.portadaMini||m.portada||m.thumb))}" alt="" loading="lazy" width="120" height="180" onerror="this.style.visibility='hidden'">
+    <div class="grow"><p class="eyebrow">Clase N°${esc(m.numero??"")}${m.parabola?" · "+esc(m.parabola.split("·")[0].trim()):""}</p><h3>${esc(m.titulo||"")}</h3>${m.subtitulo?`<p class="small">${esc(m.subtitulo)}</p>`:""}${m.cita?`<p class="small"><b>${esc(m.cita)}</b></p>`:""}
+    ${pr.length?`<p class="small">${pr.map(c=>`<span class="pill leaf">📅 ${esc(fLarga(c.fecha))}</span>`).join(" ")}</p>`:""}
+    <div class="row">${bl?LOCK+btnPedir(m,"maestras"):`<button class="btn sm" data-act="adoptar" data-id="${esc(m.id)}">${pr.length?"Programar otra fecha":"Usar en mi congregación"}</button>${pr[0]?`<button class="btn ghost sm" data-act="verClase" data-id="${esc(pr[0].id)}">Ver</button>`:""}`}</div></div></article>`;}).join("")}</div>`;}
+function adoptarClase(m){
+  openForm({titulo:"Clase N°"+(m.numero??"")+": "+(m.titulo||""),ayuda:"Elige el domingo en que harán esta clase en tu congregación. Se copia el texto, la portada y los archivos; después puedes editarla como cualquier otra clase.",
+    datos:{fecha:proximoDomingo(),visible:"si"},
+    campos:[{k:"fecha",label:"Fecha de la clase en tu congregación",type:"date",req:true},
+      {k:"visible",label:"¿Las familias pueden verla?",type:"select",opts:[["si","Sí"],["no","Todavía no, solo el equipo"]]},
+      {k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date",hint:"Déjalo vacío para mostrarla de inmediato."}],
+    guardarTxt:"Programar clase",
+    onSave:async v=>{const campos=["numero","titulo","subtitulo","parabola","cita","portada","portadaMini","objetivo","resumen","versiculo","versiculoCita","guia","preguntasRepaso","tarea","consideraciones","archivos"];
+      const d={base:m.id};campos.forEach(k=>{if(m[k]!=null)d[k]=m[k];});Object.assign(d,v);
+      const id=await guardar("clases",null,d);ui.claseSeg="lecciones";ui.clase=id;marcarVista(id);setTimeout(()=>{render();window.scrollTo(0,0);},0);}});}
+function vPortadaClase(c){return c.portada?`<figure class="cl-portada"><img src="${esc(srcDe(c.portada))}" alt="Portada: ${esc(c.titulo||"")}" loading="lazy"></figure>`:"";}
+function vArchivosClase(c){const as=(c.archivos||[]).filter(a=>a&&(a.asset||a.url));if(!as.length)return "";
+  return `<section class="card"><p class="eyebrow">Archivos de la clase</p><ol class="cl-archivos">${as.map((a,i)=>`<li><span class="cl-num">${i+1}</span><span class="grow"><b>${esc(a.nombre||a.archivo||"Archivo")}</b>${a.para?`<span class="pill">${esc(a.para)}</span>`:""}</span>
+    <span class="acts">${a.asset?`<button class="btn sm" data-act="abrirArch" data-id="${esc(c.id)}" data-i="${i}">Ver</button><button class="btn line sm" data-act="bajar" data-asset="${esc(a.asset)}" data-n="${esc(a.archivo||a.nombre||"archivo")}">Descargar</button>`:`<a class="btn sm" href="${esc(safeUrl(a.url)||"#")}" target="_blank" rel="noopener">Abrir ↗</a>`}</span></li>`).join("")}</ol></section>`;}
+
 /* ---------- juego del versículo ---------- */
 let JV={};
 const normW=w=>String(w).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ]/gi,"").toLowerCase();
@@ -1597,6 +1640,8 @@ document.addEventListener("click",async e=>{
       onSave:async v=>{try{unirFamilia(v.c);}catch(e){throw "Ese código no es válido. Cópialo de nuevo completo.";}render();}});break;
     case "leerCuento":{const c=S.cuentos.find(x=>x.id===id);if(c)abrirLector({titulo:"Cuento "+(c.numero??"")+": "+(c.titulo||""),asset:c.asset,archivo:c.archivo||"x.pdf",onDone:()=>{terminar("cuentos",c.id);if(preguntasDe(c).length)setTimeout(()=>iniciarQuiz(c.id),400);}});break;}
     case "jugarVerso":iniciarJuego(id);break;
+    case "adoptar":{const m=S.maestras.find(x=>x.id===id);if(m)adoptarClase(m);break;}
+    case "abrirArch":{const c=S.clases.find(x=>x.id===id);const a=c&&(c.archivos||[])[Number(b.dataset.i)];if(a)abrirLector({titulo:a.nombre||c.titulo,asset:a.asset,archivo:a.archivo||a.asset});break;}
     case "jvFicha":jvFicha(Number(b.dataset.i));break;
     case "salirJuego":ui.juego=false;render();window.scrollTo(0,0);break;
     case "quiz":iniciarQuiz(id);break;

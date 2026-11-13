@@ -260,6 +260,62 @@
         <td><button class="btn line sm" data-act="verCom" data-id="${esc(c.id)}">Excepciones ›</button></td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay congregaciones.</p>`}</section>`;
   }
 
+  /* ---------- clases modelo ---------- */
+  const srcDe = (x) => !x ? "" : (/^img\//.test(x) ? "/" + x : blobUrl(x));
+  const CAMPOS_M = [["numero", "Número de la clase", "number"], ["titulo", "Título", "text"], ["subtitulo", "Frase o subtítulo", "text"], ["parabola", "Referencia del museo (opcional)", "text"], ["cita", "Pasaje bíblico", "text"],
+    ["objetivo", "Objetivo (lo ve el equipo)", "area"], ["resumen", "Texto para las familias", "area"], ["versiculo", "Versículo para memorizar", "area"], ["versiculoCita", "Cita del versículo", "text"],
+    ["guia", "Guía para el maestro (paso a paso)", "area"], ["preguntasRepaso", "Preguntas de repaso (una por línea)", "area"], ["tarea", "Tarea para la casa", "area"], ["consideraciones", "Consideraciones / materiales", "area"]];
+  function vMaestras(seg) {
+    const ms = docsDe(CENTRAL, "maestras").sort((a, b) => (a.data.numero || 0) - (b.data.numero || 0));
+    const head = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
+    <button class="btn sm" data-act="nuevaMaestra">+ Nueva clase</button></div>
+    <p class="muted">Clases listas para usar: texto para las familias, guía para el maestro, portada y archivos en orden. Cada congregación la programa en su app (Clases → Biblioteca de clases) con la fecha de su propia clase.</p>`;
+    const d = ui.maestra && ms.find((x) => x.id === ui.maestra);
+    if (d) return head + editorMaestra(d);
+    return head + (ms.length ? `<div class="tbl"><table><thead><tr><th></th><th class="num">N°</th><th>Clase</th><th>Plan</th><th class="num">Archivos</th><th class="num">Congregaciones</th><th></th></tr></thead><tbody>
+      ${ms.map((m) => { const usos = new Set(D.docs.filter((x) => x.col === "clases" && x.data.base === m.id).map((x) => x.comunidad_id)).size;
+        return `<tr><td>${m.data.portadaMini || m.data.portada ? `<img class="thumb" src="${esc(srcDe(m.data.portadaMini || m.data.portada))}" alt="">` : ""}</td><td class="num"><b>${esc(m.data.numero ?? "")}</b></td>
+        <td><b>${esc(m.data.titulo || "")}</b><div class="small muted">${esc(m.data.cita || "")}${m.data.subtitulo ? " · " + esc(m.data.subtitulo) : ""}</div></td>
+        <td>${planSelect(`data-mplan="${esc(m.id)}" aria-label="Plan"`, m.data.plan)}</td><td class="num">${(m.data.archivos || []).length}</td><td class="num">${usos}</td>
+        <td><button class="btn line sm" data-act="editMaestra" data-id="${esc(m.id)}">Editar</button></td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">Aún no hay clases modelo.</p>`);
+  }
+  function editorMaestra(d) {
+    const x = d.data; const as = x.archivos || []; const pg = ui.subida;
+    return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarMaestra">‹ Todas las clases</button><button class="btn danger sm" data-act="borrarMaestra" data-id="${esc(d.id)}">Eliminar clase</button></div>
+      <div class="mae-grid"><div class="mae-portada">${x.portada ? `<img src="${esc(srcDe(x.portada))}" alt="Portada">` : `<div class="empty">Sin portada</div>`}
+        <label class="btn line sm" for="mPortada">Cambiar portada (imagen)</label><input type="file" id="mPortada" accept="image/*" hidden></div>
+      <form class="form" id="fMaestra">${CAMPOS_M.map(([k, l, t]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="m_${k}">${l}</label>${t === "area" ? `<textarea class="inp" id="m_${k}" rows="${k === "guia" ? 12 : 4}">${esc(x[k] || "")}</textarea>` : `<input class="inp" id="m_${k}" type="${t}" value="${esc(x[k] ?? "")}">`}</div>`).join("")}
+        <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar textos</button></div></form></div></section>
+    <section class="card"><h2>Archivos de la clase (en orden)</h2><p class="muted small">Se muestran a las familias numerados en este orden. Usa ↑ ↓ para ordenarlos. "Para" indica a quién va dirigido (niños, familias, maestro).</p>
+      <label class="drop" for="mFiles"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">PDF, imágenes o MP4 de hasta 25 MB</span><input type="file" id="mFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4" hidden></label>
+      ${pg ? `<p class="small"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} subidos`}</b> ${pg.errores.map(esc).join(" · ")}</p>` : ""}
+      ${as.length ? `<div class="tbl"><table><tbody>${as.map((a, i) => `<tr><td class="num"><b>${i + 1}</b></td>
+        <td><input class="inp" data-anombre="${i}" value="${esc(a.nombre || "")}" aria-label="Nombre del archivo" style="width:100%;min-width:180px"><div class="small muted"><a href="${esc(blobUrl(a.asset))}" target="_blank" rel="noopener">${esc(a.archivo || "")}</a></div></td>
+        <td><select class="inp" data-apara="${i}" aria-label="Para quién">${["Niños", "Familias", "Maestro"].map((o) => `<option ${a.para === o ? "selected" : ""}>${o}</option>`).join("")}</select></td>
+        <td class="row"><button class="btn ghost sm" data-amov="${i}" data-d="-1" ${i ? "" : "disabled"} aria-label="Subir">↑</button><button class="btn ghost sm" data-amov="${i}" data-d="1" ${i < as.length - 1 ? "" : "disabled"} aria-label="Bajar">↓</button><button class="btn danger sm" data-aborrar="${i}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Esta clase aún no tiene archivos.</p>`}</section>`;
+  }
+  async function guardarMaestra(d, data) {
+    const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: "maestras", id: d.id, data, actualizado: new Date().toISOString() });
+    if (error) throw error; d.data = data;
+  }
+  async function subirArchivoCentral(f) {
+    const ext = (f.name.split(".").pop() || "").toLowerCase(); if (!TIPOS[ext]) throw new Error("formato no permitido"); if (f.size > 25 * 1024 * 1024) throw new Error("pesa más de 25 MB");
+    const path = CENTRAL + "/" + crypto.randomUUID() + "." + ext;
+    const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: TIPOS[ext], cacheControl: "31536000" }); if (error) throw error;
+    return { path, ext };
+  }
+  async function subirArchivosMaestra(files) {
+    const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
+    files = [...files]; ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
+    for (const f of files) {
+      try { const { path } = await subirArchivoCentral(f); const archivos = (d.data.archivos || []).concat([{ nombre: f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim(), archivo: f.name, asset: path, tamano: f.size, para: "Niños" }]);
+        await guardarMaestra(d, { ...d.data, archivos }); }
+      catch (e) { ui.subida.errores.push(f.name + ": " + (e.message || e)); }
+      ui.subida.hecho++; render();
+    }
+  }
+
   function vSolicitudes() {
     const pend = D.solicitudes.filter((x) => x.estado === "pendiente"); const otras = D.solicitudes.filter((x) => x.estado !== "pendiente").slice(0, 10);
     const fila = (x) => { const u = usuario(x.user_id) || {}; return `<tr><td><b>${esc(x.titulo || x.doc_id)}</b><div class="muted small">${esc(COLN[x.col] || x.col || "")}</div>${x.mensaje ? `<div class="small">"${esc(x.mensaje)}"</div>` : ""}</td>
@@ -308,7 +364,8 @@
   }
 
   function vBiblioteca() {
-    const seg = [["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"]];
+    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"]];
+    if (ui.bib === "maestras") return vMaestras(seg);
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
@@ -426,12 +483,32 @@
     a.download = "usuarios-eterno-pacto-kids-" + new Date().toISOString().slice(0, 10) + ".csv"; document.body.appendChild(a); a.click(); a.remove();
   }
 
+  const act0 = (b) => b.dataset.act || "";
   document.addEventListener("click", async (e) => {
     const b = e.target.closest("button,tr[data-com]"); if (!b) return;
     try {
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
-      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; render(); return; }
+      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; render(); return; }
+      if (act0(b) === "nuevaMaestra") {
+        const ms = docsDe(CENTRAL, "maestras"); const n = Math.max(0, ...ms.map((m) => Number(m.data.numero) || 0)) + 1; const id = "clase-" + String(n).padStart(3, "0");
+        const data = { numero: n, titulo: "Nueva clase", archivos: [], plan: "gratis" };
+        const { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); if (error) throw error;
+        D.docs.push({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); ui.maestra = id; render(); return;
+      }
+      if (act0(b) === "editMaestra") { ui.maestra = b.dataset.id; ui.subida = null; render(); window.scrollTo(0, 0); return; }
+      if (act0(b) === "cerrarMaestra") { ui.maestra = null; ui.subida = null; render(); return; }
+      if (act0(b) === "borrarMaestra") {
+        if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Eliminar? (las congregaciones conservan sus copias)"; return; }
+        await borrarDoc(CENTRAL, "maestras", b.dataset.id); ui.maestra = null; toast("Clase eliminada"); render(); return;
+      }
+      if (b.dataset.amov !== undefined || b.dataset.aborrar !== undefined) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
+        const as = (d.data.archivos || []).slice();
+        if (b.dataset.aborrar !== undefined) { if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Quitar?"; return; } as.splice(Number(b.dataset.aborrar), 1); }
+        else { const i = Number(b.dataset.amov), j = i + Number(b.dataset.d); if (j < 0 || j >= as.length) return; [as[i], as[j]] = [as[j], as[i]]; }
+        await guardarMaestra(d, { ...d.data, archivos: as }); render(); return;
+      }
       if (b.dataset.preg !== undefined) { ui.preg = b.dataset.preg || null; render(); return; }
       if (b.dataset.guardarpreg) {
         const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "cuentos" && x.id === b.dataset.guardarpreg); if (!d) return;
@@ -490,6 +567,22 @@
     const t = e.target;
     try {
       if (t.id === "files") { const fs = [...t.files]; t.value = ""; subir(fs); return; }
+      if (t.id === "mFiles") { const fs = [...t.files]; t.value = ""; subirArchivosMaestra(fs); return; }
+      if (t.id === "mPortada") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
+        toast("Subiendo portada…"); const { path } = await subirArchivoCentral(f); const mini = await miniatura(f, (f.name.split(".").pop() || "").toLowerCase());
+        await guardarMaestra(d, { ...d.data, portada: path, portadaMini: mini || path }); toast("Portada actualizada"); render(); return;
+      }
+      if (t.dataset.anombre !== undefined || t.dataset.apara !== undefined) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
+        const as = (d.data.archivos || []).map((a) => ({ ...a })); const i = Number(t.dataset.anombre ?? t.dataset.apara);
+        if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else as[i].para = t.value;
+        await guardarMaestra(d, { ...d.data, archivos: as }); toast("Guardado"); return;
+      }
+      if (t.dataset.mplan) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === t.dataset.mplan); if (!d) return;
+        await guardarMaestra(d, { ...d.data, plan: t.value }); toast("Plan: " + planNombre(t.value)); return;
+      }
       if (t.id === "foroCom") { ui.foroCom = t.value; render(); return; }
       if (t.dataset.vence) {
         const { error } = await sb.rpc("super_set_vence", { p_comunidad: t.dataset.vence, p_hasta: t.value || null }); if (error) throw error;
@@ -560,6 +653,12 @@
         const { error } = await sb.from("comunidades").update(upd).eq("id", ui.com); if (error) throw error;
         Object.assign(D.comunidades.find((c) => c.id === ui.com), upd); toast("Datos guardados"); render(); return;
       }
+      if (f.id === "fMaestra") {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
+        const data = { ...d.data }; CAMPOS_M.forEach(([k, , t]) => { const v = $("#m_" + k).value; data[k] = t === "number" ? Number(v) || null : v.trim(); });
+        if (!data.titulo) return toast("Escribe el título");
+        await guardarMaestra(d, data); toast("Clase guardada"); render(); return;
+      }
       if (f.id === "fForo") {
         const nombre = $("#foroNom").value.trim(); if (nombre.length < 2) return toast("Escribe el nombre del foro");
         const padre = $("#foroPadre").value || null; const pf = padre && D.foros.find((x) => x.id === padre);
@@ -588,6 +687,8 @@
   ["dragover", "dragenter"].forEach((ev) => document.addEventListener(ev, (e) => { const d = e.target.closest && e.target.closest("#drop"); if (d) { e.preventDefault(); d.classList.add("over"); } }));
   document.addEventListener("dragleave", (e) => { const d = e.target.closest && e.target.closest("#drop"); if (d) d.classList.remove("over"); });
   document.addEventListener("drop", (e) => { const d = e.target.closest && e.target.closest("#drop"); if (!d) return; e.preventDefault(); d.classList.remove("over"); subir(e.dataTransfer.files); });
+  document.addEventListener("drop", (e) => { const d = e.target.closest && e.target.closest('label[for="mFiles"]'); if (!d) return; e.preventDefault(); subirArchivosMaestra(e.dataTransfer.files); });
+  document.addEventListener("dragover", (e) => { if (e.target.closest && e.target.closest('label[for="mFiles"]')) e.preventDefault(); });
   $("#recargar").addEventListener("click", cargar);
   $("#salir").addEventListener("click", async () => { await sb.auth.signOut(); location.href = "/"; });
   iniciar();
