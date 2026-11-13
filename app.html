@@ -1493,10 +1493,21 @@ function adoptarClase(m){
     guardarTxt:"Programar clase",
     onSave:async v=>{const campos=["numero","titulo","subtitulo","parabola","cita","portada","portadaMini","objetivo","resumen","versiculo","versiculoCita","guia","preguntasRepaso","tarea","consideraciones","archivos"];
       const d={base:m.id};campos.forEach(k=>{if(m[k]!=null)d[k]=m[k];});Object.assign(d,v);
+      d.archivos=(m.archivos||[]).filter(verNinosA);
       const id=await guardar("clases",null,d);ui.claseSeg="lecciones";ui.clase=id;marcarVista(id);setTimeout(()=>{render();window.scrollTo(0,0);},0);}});}
 function vPortadaClase(c){return c.portada?`<figure class="cl-portada"><img src="${esc(srcDe(c.portada))}" alt="Portada: ${esc(c.titulo||"")}" loading="lazy"></figure>`:"";}
-function vArchivosClase(c){const as=(c.archivos||[]).filter(a=>a&&(a.asset||a.url));if(!as.length)return "";
-  return `<section class="card"><p class="eyebrow">Archivos de la clase</p><ol class="cl-archivos">${as.map((a,i)=>`<li><span class="cl-num">${i+1}</span><span class="grow"><b>${esc(a.nombre||a.archivo||"Archivo")}</b>${a.para?`<span class="pill">${esc(a.para)}</span>`:""}</span>
+const verNinosA=a=>a&&(a.ninos!==undefined?!!a.ninos:a.para!=="Maestro");
+const verMaestrosA=a=>a&&(a.maestros!==undefined?!!a.maestros:true);
+function archivosDe(c){
+  const propios=(c.archivos||[]).filter(a=>a&&(a.asset||a.url));
+  if(!ed())return propios.filter(verNinosA);
+  const m=c.base&&S.maestras.find(x=>x.id===c.base);
+  if(!m)return propios;
+  const delModelo=(m.archivos||[]).filter(a=>a&&(a.asset||a.url)&&(verMaestrosA(a)||verNinosA(a)));
+  const ya=new Set(delModelo.map(a=>a.asset||a.url));
+  return delModelo.concat(propios.filter(a=>!ya.has(a.asset||a.url)));}
+function vArchivosClase(c){const as=archivosDe(c);if(!as.length)return "";
+  return `<section class="card"><p class="eyebrow">Archivos de la clase${ed()?` <span class="muted small" style="text-transform:none;letter-spacing:0">· las familias solo ven los de niños</span>`:""}</p><ol class="cl-archivos">${as.map((a,i)=>`<li><span class="cl-num">${i+1}</span><span class="grow"><b>${esc(a.nombre||a.archivo||"Archivo")}</b>${ed()?(verNinosA(a)?`<span class="pill leaf">👧 Niños y familias</span>`:`<span class="pill sun">🧑‍🏫 Solo maestros</span>`):""}</span>
     <span class="acts">${a.asset?`<button class="btn sm" data-act="abrirArch" data-id="${esc(c.id)}" data-i="${i}">Ver</button><button class="btn line sm" data-act="bajar" data-asset="${esc(a.asset)}" data-n="${esc(a.archivo||a.nombre||"archivo")}">Descargar</button>`:`<a class="btn sm" href="${esc(safeUrl(a.url)||"#")}" target="_blank" rel="noopener">Abrir ↗</a>`}</span></li>`).join("")}</ol></section>`;}
 
 /* ---------- juego del versículo ---------- */
@@ -1641,7 +1652,7 @@ document.addEventListener("click",async e=>{
     case "leerCuento":{const c=S.cuentos.find(x=>x.id===id);if(c)abrirLector({titulo:"Cuento "+(c.numero??"")+": "+(c.titulo||""),asset:c.asset,archivo:c.archivo||"x.pdf",onDone:()=>{terminar("cuentos",c.id);if(preguntasDe(c).length)setTimeout(()=>iniciarQuiz(c.id),400);}});break;}
     case "jugarVerso":iniciarJuego(id);break;
     case "adoptar":{const m=S.maestras.find(x=>x.id===id);if(m)adoptarClase(m);break;}
-    case "abrirArch":{const c=S.clases.find(x=>x.id===id);const a=c&&(c.archivos||[])[Number(b.dataset.i)];if(a)abrirLector({titulo:a.nombre||c.titulo,asset:a.asset,archivo:a.archivo||a.asset});break;}
+    case "abrirArch":{const c=S.clases.find(x=>x.id===id);const a=c&&archivosDe(c)[Number(b.dataset.i)];if(a)abrirLector({titulo:a.nombre||c.titulo,asset:a.asset,archivo:a.archivo||a.asset});break;}
     case "jvFicha":jvFicha(Number(b.dataset.i));break;
     case "salirJuego":ui.juego=false;render();window.scrollTo(0,0);break;
     case "quiz":iniciarQuiz(id);break;

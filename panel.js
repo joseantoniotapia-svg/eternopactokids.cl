@@ -263,8 +263,8 @@
   /* ---------- clases modelo ---------- */
   const srcDe = (x) => !x ? "" : (/^img\//.test(x) ? "/" + x : blobUrl(x));
   const CAMPOS_M = [["numero", "Número de la clase", "number"], ["titulo", "Título", "text"], ["subtitulo", "Frase o subtítulo", "text"], ["parabola", "Referencia del museo (opcional)", "text"], ["cita", "Pasaje bíblico", "text"],
-    ["objetivo", "Objetivo (lo ve el equipo)", "area"], ["resumen", "Texto para las familias", "area"], ["versiculo", "Versículo para memorizar", "area"], ["versiculoCita", "Cita del versículo", "text"],
-    ["guia", "Guía para el maestro (paso a paso)", "area"], ["preguntasRepaso", "Preguntas de repaso (una por línea)", "area"], ["tarea", "Tarea para la casa", "area"], ["consideraciones", "Consideraciones / materiales", "area"]];
+    ["objetivo", "Objetivo de la clase (solo lo ve el equipo)", "area"], ["resumen", "Texto para niños y familias (lo ven todos)", "area"], ["versiculo", "Versículo para memorizar", "area"], ["versiculoCita", "Cita del versículo", "text"],
+    ["guia", "Guía para el maestro (solo la ve el equipo; opcional si subes la guía en PDF)", "area"], ["preguntasRepaso", "Preguntas de repaso para el cierre de la clase (una pregunta por línea; solo las ve el equipo)", "area"], ["tarea", "Tarea para la casa (la ven todos)", "area"], ["consideraciones", "Qué traer / consideraciones (lo ven todos)", "area"]];
   function vMaestras(seg) {
     const ms = docsDe(CENTRAL, "maestras").sort((a, b) => (a.data.numero || 0) - (b.data.numero || 0));
     const head = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
@@ -287,14 +287,16 @@
         <label class="btn line sm" for="mPortada">Cambiar portada (imagen)</label><input type="file" id="mPortada" accept="image/*" hidden></div>
       <form class="form" id="fMaestra">${CAMPOS_M.map(([k, l, t]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="m_${k}">${l}</label>${t === "area" ? `<textarea class="inp" id="m_${k}" rows="${k === "guia" ? 12 : 4}">${esc(x[k] || "")}</textarea>` : `<input class="inp" id="m_${k}" type="${t}" value="${esc(x[k] ?? "")}">`}</div>`).join("")}
         <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar textos</button></div></form></div></section>
-    <section class="card"><h2>Archivos de la clase (en orden)</h2><p class="muted small">Se muestran a las familias numerados en este orden. Usa ↑ ↓ para ordenarlos. "Para" indica a quién va dirigido (niños, familias, maestro).</p>
+    <section class="card"><h2>Archivos de la clase (en orden)</h2><p class="muted small">Se muestran numerados en este orden (usa ↑ ↓). Marca quién puede verlos: <b>Niños y familias</b> los ven y descargan todos; los que marques <b>solo para Maestros</b> no se copian a las familias, solo los ve el equipo de cada congregación.</p>
       <label class="drop" for="mFiles"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">PDF, imágenes o MP4 de hasta 25 MB</span><input type="file" id="mFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4" hidden></label>
       ${pg ? `<p class="small"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} subidos`}</b> ${pg.errores.map(esc).join(" · ")}</p>` : ""}
       ${as.length ? `<div class="tbl"><table><tbody>${as.map((a, i) => `<tr><td class="num"><b>${i + 1}</b></td>
         <td><input class="inp" data-anombre="${i}" value="${esc(a.nombre || "")}" aria-label="Nombre del archivo" style="width:100%;min-width:180px"><div class="small muted"><a href="${esc(blobUrl(a.asset))}" target="_blank" rel="noopener">${esc(a.archivo || "")}</a></div></td>
-        <td><select class="inp" data-apara="${i}" aria-label="Para quién">${["Niños", "Familias", "Maestro"].map((o) => `<option ${a.para === o ? "selected" : ""}>${o}</option>`).join("")}</select></td>
+        <td class="ticks"><label><input type="checkbox" data-aver="${i}" data-k="ninos" ${verNinos(a) ? "checked" : ""}> 👧 Niños y familias</label><label><input type="checkbox" data-aver="${i}" data-k="maestros" ${verMaestros(a) ? "checked" : ""}> 🧑‍🏫 Maestros</label></td>
         <td class="row"><button class="btn ghost sm" data-amov="${i}" data-d="-1" ${i ? "" : "disabled"} aria-label="Subir">↑</button><button class="btn ghost sm" data-amov="${i}" data-d="1" ${i < as.length - 1 ? "" : "disabled"} aria-label="Bajar">↓</button><button class="btn danger sm" data-aborrar="${i}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Esta clase aún no tiene archivos.</p>`}</section>`;
   }
+  const verNinos = (a) => a.ninos !== undefined ? !!a.ninos : a.para !== "Maestro";
+  const verMaestros = (a) => a.maestros !== undefined ? !!a.maestros : true;
   async function guardarMaestra(d, data) {
     const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: "maestras", id: d.id, data, actualizado: new Date().toISOString() });
     if (error) throw error; d.data = data;
@@ -309,7 +311,7 @@
     const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
     files = [...files]; ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
     for (const f of files) {
-      try { const { path } = await subirArchivoCentral(f); const archivos = (d.data.archivos || []).concat([{ nombre: f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim(), archivo: f.name, asset: path, tamano: f.size, para: "Niños" }]);
+      try { const { path } = await subirArchivoCentral(f); const archivos = (d.data.archivos || []).concat([{ nombre: f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim(), archivo: f.name, asset: path, tamano: f.size, ninos: true, maestros: true }]);
         await guardarMaestra(d, { ...d.data, archivos }); }
       catch (e) { ui.subida.errores.push(f.name + ": " + (e.message || e)); }
       ui.subida.hecho++; render();
@@ -573,10 +575,10 @@
         toast("Subiendo portada…"); const { path } = await subirArchivoCentral(f); const mini = await miniatura(f, (f.name.split(".").pop() || "").toLowerCase());
         await guardarMaestra(d, { ...d.data, portada: path, portadaMini: mini || path }); toast("Portada actualizada"); render(); return;
       }
-      if (t.dataset.anombre !== undefined || t.dataset.apara !== undefined) {
+      if (t.dataset.anombre !== undefined || t.dataset.aver !== undefined) {
         const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
-        const as = (d.data.archivos || []).map((a) => ({ ...a })); const i = Number(t.dataset.anombre ?? t.dataset.apara);
-        if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else as[i].para = t.value;
+        const as = (d.data.archivos || []).map((a) => ({ ...a, ninos: verNinos(a), maestros: verMaestros(a) })); const i = Number(t.dataset.anombre ?? t.dataset.aver);
+        if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else { as[i][t.dataset.k] = t.checked; if (!as[i].ninos && !as[i].maestros) { as[i].maestros = true; toast("Al menos un grupo debe verlo"); } delete as[i].para; }
         await guardarMaestra(d, { ...d.data, archivos: as }); toast("Guardado"); return;
       }
       if (t.dataset.mplan) {
