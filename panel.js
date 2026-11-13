@@ -288,7 +288,8 @@
       <form class="form" id="fMaestra">${CAMPOS_M.map(([k, l, t]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="m_${k}">${l}</label>${t === "area" ? `<textarea class="inp" id="m_${k}" rows="${k === "guia" ? 12 : 4}">${esc(x[k] || "")}</textarea>` : `<input class="inp" id="m_${k}" type="${t}" value="${esc(x[k] ?? "")}">`}</div>`).join("")}
         <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar textos</button></div></form></div></section>
     <section class="card"><h2>Archivos de la clase (en orden)</h2><p class="muted small">Se muestran numerados en este orden (usa ↑ ↓). Marca quién puede verlos: <b>Niños y familias</b> los ven y descargan todos; los que marques <b>solo para Maestros</b> no se copian a las familias, solo los ve el equipo de cada congregación.</p>
-      <label class="drop" for="mFiles"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">PDF, imágenes o MP4 de hasta 25 MB</span><input type="file" id="mFiles" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4" hidden></label>
+      <div class="drop" id="dropM"><b>Arrastra aquí los archivos</b><span class="muted small">PDF, Word, PowerPoint, Excel, imágenes, audio o video de hasta ${MAXMB} MB</span>
+        <label class="btn" for="mFiles" style="align-self:center">📎 Elegir archivos para subir</label><input type="file" id="mFiles" multiple accept="${ACEPTA}" hidden></div>
       ${pg ? `<p class="small"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} subidos`}</b> ${pg.errores.map(esc).join(" · ")}</p>` : ""}
       ${as.length ? `<div class="tbl"><table><tbody>${as.map((a, i) => `<tr><td class="num"><b>${i + 1}</b></td>
         <td><input class="inp" data-anombre="${i}" value="${esc(a.nombre || "")}" aria-label="Nombre del archivo" style="width:100%;min-width:180px"><div class="small muted"><a href="${esc(blobUrl(a.asset))}" target="_blank" rel="noopener">${esc(a.archivo || "")}</a></div></td>
@@ -302,20 +303,22 @@
     if (error) throw error; d.data = data;
   }
   async function subirArchivoCentral(f) {
-    const ext = (f.name.split(".").pop() || "").toLowerCase(); if (!TIPOS[ext]) throw new Error("formato no permitido"); if (f.size > 25 * 1024 * 1024) throw new Error("pesa más de 25 MB");
+    const ext = (f.name.split(".").pop() || "").toLowerCase(); if (!TIPOS[ext]) throw new Error("ese formato no se puede subir (usa PDF, Word, PowerPoint, Excel, imagen, audio o video)"); if (f.size > MAXMB * 1024 * 1024) throw new Error(`pesa más de ${MAXMB} MB`);
     const path = CENTRAL + "/" + crypto.randomUUID() + "." + ext;
     const { error } = await sb.storage.from(BUCKET).upload(path, f, { contentType: TIPOS[ext], cacheControl: "31536000" }); if (error) throw error;
     return { path, ext };
   }
   async function subirArchivosMaestra(files) {
     const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === ui.maestra); if (!d) return;
-    files = [...files]; ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
+    files = [...files]; if (!files.length) { toast("No llegó ningún archivo. Prueba con el botón \"Elegir archivos\"."); return; }
+    ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
     for (const f of files) {
       try { const { path } = await subirArchivoCentral(f); const archivos = (d.data.archivos || []).concat([{ nombre: f.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").trim(), archivo: f.name, asset: path, tamano: f.size, ninos: true, maestros: true }]);
         await guardarMaestra(d, { ...d.data, archivos }); }
       catch (e) { ui.subida.errores.push(f.name + ": " + (e.message || e)); }
       ui.subida.hecho++; render();
     }
+    if (ui.subida.errores.length) toast("Algunos archivos no se subieron: revisa el detalle");
   }
 
   function vSolicitudes() {
@@ -374,8 +377,8 @@
     <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con "Libera desde" puedes dejar programado que un material se abra solo en una fecha. Con la columna "Plan" decides qué permiso lo libera: lo <b>Inicial</b> lo ven todas; lo <b>Avanzado</b> o <b>Completo</b> aparece con candado en las congregaciones con un permiso menor. En cada congregación puedes hacer excepciones.</p>
     <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
     <button class="btn ghost sm" data-act="miniaturas">Crear miniaturas que faltan (${D.docs.filter((d) => d.comunidad_id === CENTRAL && ["cuentos", "materiales", "matprofes"].includes(d.col) && d.data.asset && !d.data.thumb).length})</button></div>
-    <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 25 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, imágenes o videos MP4 de hasta 25 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
-      <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4"}" hidden></label>
+    <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 50 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, Word, PowerPoint, Excel, imágenes, audio o video de hasta 50 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
+      <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ACEPTA}" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir archivos para subir</span></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `${pg.txt || "Subiendo"} ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} ${pg.txt ? "con miniatura" : "subidos"}`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
     ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Libera desde</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
     ${items.map((d) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"></td>` : ""}
@@ -445,14 +448,18 @@
       ui.subida.hecho++; render();
     }
   }
-  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4" };
+  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation", xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mp3: "audio/mpeg", m4a: "audio/mp4", mov: "video/quicktime" };
+  const ACEPTA = Object.keys(TIPOS).map((k) => "." + k).join(",");
+  const MAXMB = 50;
   async function subir(files) {
-    files = [...files].filter((f) => TIPOS[(f.name.split(".").pop() || "").toLowerCase()] && (ui.bib !== "cuentos" || /\.pdf$/i.test(f.name)));
-    if (!files.length) { toast("Elige archivos " + (ui.bib === "cuentos" ? "PDF" : "PDF, imagen o MP4")); return; }
+    const todos = [...files];
+    files = todos.filter((f) => TIPOS[(f.name.split(".").pop() || "").toLowerCase()] && (ui.bib !== "cuentos" || /\.pdf$/i.test(f.name)));
+    if (!files.length) { toast("Esos archivos no se pueden subir aquí. " + (ui.bib === "cuentos" ? "Los cuentos deben ser PDF." : "Usa PDF, Word, PowerPoint, Excel, imagen, audio o video.")); return; }
+    if (files.length < todos.length) toast((todos.length - files.length) + " archivo(s) se omitieron por formato");
     ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
     for (const f of files) {
       try {
-        if (f.size > 25 * 1024 * 1024) throw new Error("pesa más de 25 MB");
+        if (f.size > MAXMB * 1024 * 1024) throw new Error(`pesa más de ${MAXMB} MB`);
         const ext = f.name.split(".").pop().toLowerCase(); const path = CENTRAL + "/" + crypto.randomUUID() + "." + ext;
         const { error: e1 } = await sb.storage.from(BUCKET).upload(path, f, { contentType: TIPOS[ext], cacheControl: "31536000" });
         if (e1) throw e1;
@@ -686,11 +693,15 @@
       }
     } catch (x) { err(x); }
   });
-  ["dragover", "dragenter"].forEach((ev) => document.addEventListener(ev, (e) => { const d = e.target.closest && e.target.closest("#drop"); if (d) { e.preventDefault(); d.classList.add("over"); } }));
+  ["dragover", "dragenter"].forEach((ev) => document.addEventListener(ev, (e) => { e.preventDefault(); const d = e.target.closest && e.target.closest(".drop"); document.querySelectorAll(".drop.over").forEach((x) => { if (x !== d) x.classList.remove("over"); }); if (d) { d.classList.add("over"); if (e.dataTransfer) e.dataTransfer.dropEffect = "copy"; } }));
   document.addEventListener("dragleave", (e) => { const d = e.target.closest && e.target.closest("#drop"); if (d) d.classList.remove("over"); });
-  document.addEventListener("drop", (e) => { const d = e.target.closest && e.target.closest("#drop"); if (!d) return; e.preventDefault(); d.classList.remove("over"); subir(e.dataTransfer.files); });
-  document.addEventListener("drop", (e) => { const d = e.target.closest && e.target.closest('label[for="mFiles"]'); if (!d) return; e.preventDefault(); subirArchivosMaestra(e.dataTransfer.files); });
-  document.addEventListener("dragover", (e) => { if (e.target.closest && e.target.closest('label[for="mFiles"]')) e.preventDefault(); });
+  document.addEventListener("drop", (e) => {
+    e.preventDefault(); document.querySelectorAll(".drop.over").forEach((x) => x.classList.remove("over"));
+    const d = e.target.closest && e.target.closest(".drop"); if (!d) { toast("Suelta los archivos dentro del recuadro punteado"); return; }
+    const fs = [...((e.dataTransfer && e.dataTransfer.files) || [])];
+    if (!fs.length) { toast("No llegó ningún archivo. Si lo arrastras desde un correo o WhatsApp, guárdalo primero en tu computador o usa el botón."); return; }
+    if (d.id === "dropM") subirArchivosMaestra(fs); else subir(fs);
+  });
   $("#recargar").addEventListener("click", cargar);
   $("#salir").addEventListener("click", async () => { await sb.auth.signOut(); location.href = "/"; });
   iniciar();

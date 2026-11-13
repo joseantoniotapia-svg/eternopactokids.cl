@@ -106,13 +106,13 @@
     return api;
   }
 
-  const TIPOS_EXT = { "application/pdf": "pdf", "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm", "text/plain": "txt", "text/csv": "csv" };
+  const TIPOS_EXT = { "application/pdf": "pdf", "image/png": "png", "image/jpeg": "jpg", "image/gif": "gif", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm", "text/plain": "txt", "text/csv": "csv", "application/msword": "doc", "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx", "application/vnd.ms-powerpoint": "ppt", "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx", "application/vnd.ms-excel": "xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx", "audio/mpeg": "mp3", "audio/mp4": "m4a", "video/quicktime": "mov" };
   function crearAssets(cid) {
     return {
       async upload(blob, opts) {
         const type = (opts && opts.type) || blob.type;
         const ext = TIPOS_EXT[type]; if (!ext) throw { code: "unsupported_type" };
-        if (blob.size > 25 * 1024 * 1024) throw { code: "too_large" };
+        if (blob.size > 50 * 1024 * 1024) throw { code: "too_large" };
         const id = cid + "/" + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2)) + "." + ext;
         const { error } = await sb.storage.from(BUCKET).upload(id, blob, { contentType: type, upsert: false, cacheControl: "31536000" });
         if (error) {

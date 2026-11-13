@@ -1020,10 +1020,10 @@ function setLibro(claseId,ninoId,campo,valor){
 /* ---------- recursos: cuentos y materiales ---------- */
 const fmtMB=b=>b?(b>=1048576?(b/1048576).toFixed(1).replace(".",",")+" MB":Math.max(1,Math.round(b/1024))+" KB"):"";
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const TIPOS={pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",mp4:"video/mp4",webm:"video/webm",txt:"text/plain",csv:"text/csv"};
+const TIPOS={pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",gif:"image/gif",webp:"image/webp",mp4:"video/mp4",webm:"video/webm",txt:"text/plain",csv:"text/csv",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",ppt:"application/vnd.ms-powerpoint",pptx:"application/vnd.openxmlformats-officedocument.presentationml.presentation",xls:"application/vnd.ms-excel",xlsx:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",mp3:"audio/mpeg",m4a:"audio/mp4",mov:"video/quicktime"};
 const extDe=n=>(String(n||"").match(/\.([a-z0-9]+)$/i)||[])[1]?.toLowerCase()||"";
 function upErr(e){const c=e&&e.code;
-  if(c==="too_large")return "pesa más de 20 MB. Comprímelo o divídelo.";
+  if(c==="too_large")return "pesa más de 50 MB. Comprímelo o divídelo.";
   if(c==="unsupported_type")return "ese tipo de archivo no se puede subir. Guarda los Word o PowerPoint como PDF.";
   if(c==="quota_or_state")return "se llenó el espacio de archivos de la app.";
   if(c==="not_granted"||c==="capability_disabled")return "solo maestros y administradores pueden subir archivos.";
@@ -1084,7 +1084,7 @@ function vRecursos(){
   if(ui.rec!=="profes")out+=lectorBar("Agrega tu nombre: cada cuento y actividad que termines te acerca a una insignia.");
   if(ui.rec==="cuentos"){
     out+=`<div class="sec-h"><h2>Cuentos semanales</h2>${ed()?`<button class="btn sm" data-act="subirCuentos" ${ui.progreso&&ui.progreso.hecho<ui.progreso.total?"disabled":""}>Subir PDF</button>`:""}</div>
-    ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 20 MB cada uno). Si el nombre trae un número, ese será el número del cuento; si ya existe, se reemplaza el archivo.</p>`:""}
+    ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 50 MB cada uno). Si el nombre trae un número, ese será el número del cuento; si ya existe, se reemplaza el archivo.</p>`:""}
     ${S.cuentos.length?`<input class="search" id="buscarCuento" type="search" placeholder="Buscar por número o título" value="${esc(ui.buscar)}" aria-label="Buscar cuento">`:""}
     <div id="listaCuentos">${listaCuentosHTML()}</div>`;
   }else{
@@ -1128,10 +1128,10 @@ function formCuento(c){
 function formMaterial(col,m){
   const opts=[["","Sin clase asociada"]].concat(clasesOrd().map(c=>[c.id,fLarga(c.fecha)+" · "+c.titulo]));
   openForm({titulo:(m?"Editar":"Subir")+(col==="matprofes"?" material para profes":" material para niños"),
-    ayuda:"Formatos: PDF o imagen, hasta 20 MB. Para Word o PowerPoint, guárdalos como PDF o pega un enlace de Drive.",datos:m||{},
+    ayuda:"Formatos: PDF, Word, PowerPoint, Excel, imagen, audio o video, hasta 50 MB.",datos:m||{},
     campos:[{k:"titulo",label:"Nombre",req:true,ph:"Hoja para colorear: el arca de Noé"},{k:"desc",label:"Descripción",type:"textarea"},{k:"claseId",label:"Clase",type:"select",opts},
       ...(col==="materiales"?[{k:"visible",label:"¿Las familias lo ven?",type:"select",opts:[["si","Sí"],["no","No, por ahora oculto"]]},{k:"publicar",label:"Mostrar desde (opcional)",type:"date"}]:[]),
-      {k:"archivo_nuevo",label:m&&m.asset?"Reemplazar archivo (opcional)":"Archivo",type:"file",accept:".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4"},{k:"url",label:"O un enlace",type:"url",ph:"https://drive.google.com/…"}],
+      {k:"archivo_nuevo",label:m&&m.asset?"Reemplazar archivo (opcional)":"Archivo",type:"file",accept:Object.keys(TIPOS).map(k=>"."+k).join(",")},{k:"url",label:"O un enlace",type:"url",ph:"https://drive.google.com/…"}],
     onSave:async v=>{const f=v.archivo_nuevo;delete v.archivo_nuevo;const d={...(m||{}),...v,fecha:(m&&m.fecha)||hoyISO()};
       if(v.url&&!safeUrl(v.url))throw "El enlace debe comenzar con https://";
       if(!f&&!d.asset&&!safeUrl(v.url))throw "Elige un archivo o pega un enlace.";
@@ -1384,6 +1384,8 @@ async function abrirLector({titulo,asset,archivo,url,onDone}){
     if(ext==="pdf"){const lib=await pdfjs();const r=await fetch(blobUrl(asset));if(!r.ok)throw 0;RD.doc=await lib.getDocument({data:await r.arrayBuffer()}).promise;RD.total=RD.doc.numPages;await pintarPagina();return;}
     if(["png","jpg","jpeg","gif","webp"].includes(ext))body.innerHTML=`<img src="${esc(blobUrl(asset))}" alt="${esc(titulo)}">`;
     else if(["mp4","webm"].includes(ext))body.innerHTML=`<video src="${esc(blobUrl(asset))}" controls playsinline></video>`;
+    else if(["mp3","m4a"].includes(ext))body.innerHTML=`<audio src="${esc(blobUrl(asset))}" controls style="width:100%;max-width:520px;margin-top:40px"></audio>`;
+    else if(["doc","docx","ppt","pptx","xls","xlsx"].includes(ext)){const full=new URL(blobUrl(asset),location.href).href;body.innerHTML=`<iframe title="${esc(titulo)}" src="https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(full)}" style="width:100%;height:100%;min-height:70vh;border:0;background:#fff;border-radius:8px"></iframe><a class="btn line sm" style="margin-top:8px" href="${esc(blobUrl(asset))}" target="_blank" rel="noopener noreferrer">Descargar el archivo</a>`;}
     else body.innerHTML=`<a class="btn" href="${esc(blobUrl(asset))}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>`;
     navLector();
   }catch(e){body.innerHTML=`<div class="empty"><h3>No se pudo abrir aquí</h3><p class="muted">Ábrelo en otra pestaña y vuelve para marcarlo como leído.</p><a class="btn" href="${esc(blobUrl(asset))}" target="_blank" rel="noopener noreferrer">Abrir el archivo</a></div>`;RD.total=1;RD.page=1;navLector();}
