@@ -317,7 +317,7 @@
   }
   let PDFLIB = null;
   const cargarScript = (src) => new Promise((ok, mal) => { const t = document.createElement("script"); t.src = src; t.onload = ok; t.onerror = mal; document.head.appendChild(t); });
-  async function pdfjs() { if (PDFLIB) return PDFLIB; const B = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/"; await cargarScript(B + "pdf.min.js"); window.pdfjsLib.GlobalWorkerOptions.workerSrc = B + "pdf.worker.min.js"; PDFLIB = window.pdfjsLib; return PDFLIB; }
+  async function pdfjs() { if (PDFLIB) return PDFLIB; const B = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/"; await cargarScript(B + "pdf.min.js"); await cargarScript(B + "pdf.worker.min.js"); PDFLIB = window.pdfjsLib; return PDFLIB; }
   async function miniatura(buf, ext) {
     try {
       if (buf instanceof Blob) buf = await buf.arrayBuffer();
