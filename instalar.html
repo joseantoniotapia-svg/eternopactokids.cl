@@ -32,6 +32,8 @@ ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
 .tabs button{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-weight:700;font-size:.9rem;cursor:pointer}
 .tabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 [hidden]{display:none!important}
+.aviso{background:#FFEFB8;color:#5A3600;border-radius:12px;padding:10px 12px;font-size:.92rem}
+ol ul{padding-left:18px;margin:6px 0 0;display:flex;flex-direction:column;gap:4px}
 </style>
 </head>
 <body>
@@ -43,11 +45,15 @@ ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
     <button class="btn" id="instalar" hidden>Instalar la app</button>
     <p id="instalada" hidden><b>¡Listo! La app ya está instalada.</b> Búscala en tu pantalla de inicio.</p>
     <div class="tabs" role="group" aria-label="Tu dispositivo"><button data-d="iphone">iPhone o iPad</button><button data-d="android">Android</button><button data-d="pc">Computador</button></div>
-    <div class="paso" data-p="iphone" hidden><h2>En iPhone o iPad</h2><ol>
-      <li>Abre esta página en <b>Safari</b>.</li>
-      <li>Toca el botón <b>Compartir</b> <span class="ico">⬆︎</span>, abajo o arriba de la pantalla.</li>
-      <li>Elige <b>"Agregar a pantalla de inicio"</b>.</li>
-      <li>Toca <b>"Agregar"</b>. Aparecerá el ícono de Eterno Pacto Kids.</li></ol></div>
+    <div class="paso" data-p="iphone" hidden><h2>En iPhone o iPad</h2>
+    <p class="aviso" id="noSafari" hidden><b>Estás dentro de otra app (WhatsApp, Instagram o Chrome).</b> Copia el enlace y ábrelo en <b>Safari</b>, o toca el menú de esta pantalla y elige "Abrir en Safari".</p>
+    <ol>
+      <li>Abre esta página en <b>Safari</b> (la brújula azul).</li>
+      <li>Busca el botón <b>Compartir</b> <span class="ico">⬆︎</span>:
+        <ul><li><b>iPhone con iOS 26:</b> toca los <b>tres puntos</b> <span class="ico">•••</span> junto a la barra de dirección, abajo, y luego <b>Compartir</b>.</li>
+        <li><b>iOS anteriores:</b> el cuadrado con flecha <span class="ico">⬆︎</span> está en la barra de abajo (en iPad, arriba).</li></ul></li>
+      <li>Desliza hacia abajo y elige <b>"Agregar a pantalla de inicio"</b>. Si no aparece, toca <b>"Ver más"</b> o <b>"Editar acciones"</b>.</li>
+      <li>Deja activado <b>"Abrir como app web"</b> si aparece, y toca <b>"Agregar"</b>.</li></ol></div>
     <div class="paso" data-p="android" hidden><h2>En Android</h2><ol>
       <li>Abre esta página en <b>Chrome</b>.</li>
       <li>Toca <b>"Instalar la app"</b> arriba, o el menú <span class="ico">⋮</span> y luego <b>"Instalar aplicación"</b> o <b>"Agregar a la pantalla principal"</b>.</li>
@@ -70,6 +76,7 @@ ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
   }
   document.querySelectorAll(".tabs button").forEach(function(b){ b.addEventListener("click", function(){ ver(b.dataset.d); }); });
   ver(d);
+  if (d === "iphone" && /CriOS|FxiOS|EdgiOS|FBAN|FBAV|Instagram|WhatsApp|Line\//.test(ua)) document.getElementById("noSafari").hidden = false;
   var ev = null, btn = document.getElementById("instalar");
   window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); ev = e; btn.hidden = false; });
   btn.addEventListener("click", function(){ if (!ev) return; ev.prompt(); ev.userChoice.then(function(){ ev = null; btn.hidden = true; }); });
