@@ -213,9 +213,94 @@
     }
   }
 
+  /* =================== PERMISO, SOLICITUDES Y AVISOS =================== */
+  const P = { com: null, info: null, pedidas: null, pref: null, push: null };
+  function cargarPermiso() {
+    if (P.com === cid() && P.info) return; P.com = cid(); P.info = {}; P.pedidas = new Set();
+    Promise.all([
+      sb().from("comunidades").select("plan_id,plan_hasta").eq("id", cid()).maybeSingle(),
+      sb().from("planes").select("id,nombre"),
+      admin() ? sb().from("solicitudes").select("col,doc_id").eq("comunidad_id", cid()).eq("estado", "pendiente") : Promise.resolve({ data: [] })
+    ]).then(([c, pl, so]) => {
+      const pn = Object.fromEntries((pl.data || []).map((x) => [x.id, x.nombre]));
+      P.info = { ...(c.data || {}), nombre: pn[(c.data || {}).plan_id || "gratis"] || "Inicial" };
+      (so.data || []).forEach((x) => P.pedidas.add(x.col + "/" + x.doc_id));
+      A().render();
+    }).catch(() => {});
+  }
+  function avisoPermiso() {
+    if (!admin() || window.EPK.super) return "";
+    cargarPermiso(); const i = P.info || {}; if (!i.plan_hasta) return "";
+    const dias = Math.round((new Date(i.plan_hasta + "T12:00:00") - new Date(hoy() + "T12:00:00")) / 864e5);
+    if (dias > 14) return "";
+    const f = new Date(i.plan_hasta + "T12:00:00").toLocaleDateString("es-CL", { day: "numeric", month: "long" });
+    return `<p class="aviso-permiso" role="status">${dias < 0 ? `El permiso ${esc(i.nombre)} de tu congregación venció el ${f}. El material de ese nivel quedó con candado.` : `El permiso ${esc(i.nombre)} de tu congregación vence ${dias === 0 ? "hoy" : "el " + f}. Contacta al administrador de Eterno Pacto Kids para renovarlo.`}</p>`;
+  }
+  const pedido = (col, id) => { cargarPermiso(); return P.pedidas && P.pedidas.has(col + "/" + String(id).replace(/^c_/, "")); };
+  function pedir(col, x) {
+    const id = String(x.id).replace(/^c_/, "");
+    A().openForm({ titulo: "Pedir acceso", ayuda: "Le llegará tu solicitud al súper administrador de Eterno Pacto Kids. Te avisará cuando lo libere.",
+      datos: {}, campos: [{ k: "mensaje", label: "Mensaje (opcional)", type: "textarea", ph: "Nos gustaría usar este material con los niños desde el próximo mes." }],
+      guardarTxt: "Enviar solicitud",
+      onSave: async (v) => {
+        const { error } = await sb().from("solicitudes").insert({ comunidad_id: cid(), col, doc_id: id, titulo: x.titulo || x.nombre || ("Cuento " + (x.numero || "")), mensaje: (v.mensaje || "").trim() || null });
+        if (error) throw errTxt(error); P.pedidas.add(col + "/" + id); setTimeout(() => A().render(), 0);
+      } });
+  }
+
+  const VAPID_PUBLIC = "BEouliY8VS3uiHD8aQqesSYXAd6M7H2-7e0NLiEUnI7gdi2DKtQxReVNwQO2O7YhzZ-DLq0djn6UO89R28DitKk";
+  const b64u = (s) => { const p = "=".repeat((4 - (s.length % 4)) % 4); const r = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from([...r].map((c) => c.charCodeAt(0))); };
+  const esIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+  const instalada = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  async function estadoPush() {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) return esIOS() && !instalada() ? "instalar" : "no";
+    if (Notification.permission === "denied") return "bloqueado";
+    try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); return sub ? "on" : "off"; } catch (e) { return "off"; }
+  }
+  async function cargarAvisos() {
+    if (P.pref && P.pushUid === yo()) return; P.pushUid = yo();
+    P.pref = { push: true, correo: true, recordatorio: true };
+    const [{ data }, est] = await Promise.all([sb().from("notif_pref").select("*").eq("user_id", yo()).maybeSingle(), estadoPush()]);
+    if (data) P.pref = data; P.push = est; A().render();
+  }
+  async function activarPush() {
+    const est = await estadoPush();
+    if (est === "instalar") { A().toast("En iPhone, primero instala la app en la pantalla de inicio y ábrela desde su ícono."); return; }
+    if (est === "no") { A().toast("Este navegador no permite avisos. Prueba con Chrome o instala la app."); return; }
+    if (est === "bloqueado") { A().toast("Los avisos están bloqueados. Actívalos en los ajustes del navegador para esta página."); return; }
+    const perm = await Notification.requestPermission(); if (perm !== "granted") { A().toast("No se activaron los avisos"); return; }
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(VAPID_PUBLIC) });
+    const j = sub.toJSON();
+    const { error } = await sb().from("push_subs").upsert({ endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, user_id: yo() });
+    if (error) { A().toast(errTxt(error)); return; }
+    P.push = "on"; A().toast("¡Listo! Te avisaremos en este dispositivo."); A().render();
+  }
+  async function desactivarPush() {
+    try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) { await sb().from("push_subs").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe(); } } catch (e) {}
+    P.push = "off"; A().render();
+  }
+  async function guardarPref(k, v) {
+    P.pref = { ...P.pref, [k]: v };
+    const { error } = await sb().from("notif_pref").upsert({ user_id: yo(), push: P.pref.push !== false, correo: P.pref.correo !== false, recordatorio: P.pref.recordatorio !== false });
+    if (error) A().toast(errTxt(error)); else A().toast("Preferencia guardada"); A().render();
+  }
+  function vAvisos() {
+    cargarAvisos(); const p = P.pref || {}; const st = P.push;
+    const pushTxt = { on: "Activados en este dispositivo", off: "Desactivados en este dispositivo", bloqueado: "Bloqueados en el navegador", instalar: "En iPhone: instala la app primero", no: "Este navegador no los permite" }[st] || "Revisando…";
+    return `<section class="card avisos"><div class="sec-h"><h2>Avisos</h2></div>
+      <p class="muted small">Te avisamos cuando hay una clase nueva, cuando otra familia te reta y cuando se publica el mensaje de tu hijo.</p>
+      <div class="av-fila"><span class="grow"><b>📱 Avisos en el celular</b><span class="muted small">${pushTxt}</span></span>${st === "on" ? `<button class="btn line sm" data-act="fx_pushOff">Desactivar</button>` : `<button class="btn sm" data-act="fx_pushOn">Activar</button>`}</div>
+      <label class="av-fila"><span class="grow"><b>✉️ Avisos por correo</b><span class="muted small">Clase nueva disponible</span></span><input type="checkbox" data-pref="correo" ${p.correo !== false ? "checked" : ""}></label>
+      <label class="av-fila"><span class="grow"><b>⏰ Recordatorio del sábado</b><span class="muted small">"Mañana es la escuela dominical"</span></span><input type="checkbox" data-pref="recordatorio" ${p.recordatorio !== false ? "checked" : ""}></label></section>`;
+  }
+  document.addEventListener("change", (e) => { const t = e.target; if (t.dataset && t.dataset.pref) guardarPref(t.dataset.pref, t.checked); });
+
   window.EPKX = {
+    avisoPermiso, pedido, pedir, vAvisos,
     vForo, vRetos,
-    async accion(act, b) { try { if (/^fx_(retar|desafio|responder|cancelarReto|recargarRetos)$/.test(act)) await accionRetos(act, b); else await accionForo(act, b); } catch (e) { A().toast(errTxt(e)); } },
+    async accion(act, b) { try { if (act === "fx_pushOn") return await activarPush(); if (act === "fx_pushOff") return await desactivarPush(); if (/^fx_(retar|desafio|responder|cancelarReto|recargarRetos)$/.test(act)) await accionRetos(act, b); else await accionForo(act, b); } catch (e) { A().toast(errTxt(e)); } },
     pendientes: () => (R.lista || []).filter((r) => r.estado === "pendiente" && r.retado === yo()).length
   };
 })();

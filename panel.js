@@ -19,7 +19,7 @@
   const COLN = { clases: "Clases", cuentos: "Cuentos", materiales: "Material niños", matprofes: "Material profes", muro: "Muro", biblicos: "Personajes bíblicos", links: "Enlaces", contactos: "Contactos", premios: "Premios", compromisos: "Cartas", parabolas: "Parábolas", ninos: "Niños", asistencia: "Asistencia", bonos: "Estrellas", libro: "Libro de clases", config: "Configuración" };
   const MODERABLES = ["muro", "materiales", "matprofes", "cuentos", "biblicos", "links", "contactos", "clases", "premios", "compromisos", "parabolas"];
 
-  const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [] };
+  const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [], solicitudes: [] };
   const NIVN = { todos: "Todos los usuarios", miembros: "Miembros", equipo: "Maestros y admins", admins: "Solo administradores", super: "Solo súper admin" };
   const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"]];
   const ui = { tab: "resumen", com: null, buscar: "", bib: "cuentos", modCol: "", modCom: "", subida: null, matCol: "cuentos", foroCom: "" };
@@ -60,12 +60,14 @@
   async function cargar() {
     $("#main").innerHTML = `<p class="muted">Cargando datos…</p>`;
     try {
-      const [pl, ex, fo, me] = await Promise.all([
+      const [pl, ex, fo, me, so] = await Promise.all([
         sb.from("planes").select("*").order("orden"),
         sb.from("excepciones").select("*"),
         sb.from("foros").select("*").order("orden"),
-        sb.from("mensajes").select("id,tema_id,autor,como,es_nino,texto,estado,reportes,creado,temas(titulo,foro_id)").or("estado.eq.pendiente,reportes.gt.0").order("creado", { ascending: false }).limit(300)
+        sb.from("mensajes").select("id,tema_id,autor,como,es_nino,texto,estado,reportes,creado,temas(titulo,foro_id)").or("estado.eq.pendiente,reportes.gt.0").order("creado", { ascending: false }).limit(300),
+        sb.from("solicitudes").select("*").order("creado", { ascending: false }).limit(300)
       ]);
+      D.solicitudes = (so && so.data) || [];
       D.planes = pl.data || []; D.excepciones = ex.data || []; D.foros = fo.data || []; D.mensajes = me.data || [];
       if (pl.error) console.warn("Falta ejecutar supabase/plataforma.sql:", pl.error.message);
       const [c, u, d, f, m] = await Promise.all([
@@ -109,14 +111,20 @@
   const planOrden = (id) => ((D.planes.find((p) => p.id === (id || "gratis")) || {}).orden) || 0;
   const planNombre = (id) => (D.planes.find((p) => p.id === (id || "gratis")) || {}).nombre || "Inicial";
   const excepcion = (cid, col, id) => D.excepciones.find((e) => e.comunidad_id === cid && e.col === col && e.doc_id === id);
-  function liberado(c, d) { const e = excepcion(c.id, d.col, d.id); return e ? e.liberado : planOrden(d.data.plan) <= planOrden(c.plan_id); }
+  const hoyCL = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+  const vencido = (c) => !!(c.plan_hasta && c.plan_hasta < hoyCL());
+  function liberado(c, d) {
+    const e = excepcion(c.id, d.col, d.id);
+    if (e && (!e.desde || e.desde <= hoyCL())) return e.liberado;
+    return planOrden(d.data.plan) <= (vencido(c) ? 0 : planOrden(c.plan_id)) && (!d.data.libera_desde || d.data.libera_desde <= hoyCL());
+  }
   const planSelect = (attrs, val) => `<select class="inp" ${attrs}>${(D.planes.length ? D.planes : [{ id: "gratis", nombre: "Inicial" }]).map((p) => `<option value="${esc(p.id)}" ${p.id === (val || "gratis") ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}</select>`;
   const semana = (d) => { const t = new Date(d); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t; };
 
   /* ---------- vistas ---------- */
   const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
-    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null };
+    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
     const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
@@ -147,11 +155,27 @@
     });
     const barras = (obj) => { const arr = Object.entries(obj).sort((a, b) => b[1].u - a[1].u || b[1].c - a[1].c); const mx = Math.max(1, ...arr.map((x) => x[1].u));
       return arr.length ? `<div class="bars">${arr.map(([n, v]) => `<div class="bar" title="${esc(n)}: ${v.c} congregaciones, ${v.u} usuarios"><span class="lbl">${esc(n)}</span><span class="track"><span class="fill" style="width:${(v.u / mx) * 100}%;display:block"></span></span><span class="n">${v.u}</span></div>`).join("")}</div><p class="muted small">Usuarios por ${obj === porPais ? "país" : "región"} según la ubicación de su congregación.</p>` : `<p class="empty">Aún no hay congregaciones.</p>`; };
+    // cuentos más leídos (lecturas registradas por los perfiles de las familias)
+    const lecturas = {}; let versos = 0, quizzes = 0;
+    D.familias.forEach((f) => Object.values((f.data && f.data.lectores) || {}).forEach((o) => {
+      Object.keys((o && o.cuentos) || {}).forEach((id) => { lecturas[id] = (lecturas[id] || 0) + 1; });
+      versos += Object.keys((o && o.versos) || {}).length; quizzes += Object.keys((o && o.quiz) || {}).length;
+    }));
+    const tituloCuento = (id) => { const cid = id.replace(/^c_/, ""); const d = D.docs.find((x) => x.col === "cuentos" && x.id === cid && (id.startsWith("c_") ? x.comunidad_id === CENTRAL : true)); return d ? `${d.data.numero != null ? d.data.numero + ". " : ""}${d.data.titulo || ""}` : id; };
+    const top = Object.entries(lecturas).sort((a, b) => b[1] - a[1]).slice(0, 10); const maxT = Math.max(1, ...top.map((x) => x[1]));
+    const hace30 = new Date(Date.now() - 30 * 864e5).toISOString();
+    const actividad = coms.map((c) => { const ult = [ultimaActividad(c.id), ...miembrosDe(c.id).map((m) => (usuario(m.user_id) || {}).ultimo_ingreso)].filter(Boolean).sort().pop() || null;
+      const activos = miembrosDe(c.id).filter((m) => ((usuario(m.user_id) || {}).ultimo_ingreso || "") >= hace30).length; return { c, ult, activos }; })
+      .sort((a, b) => (a.ult || "") < (b.ult || "") ? 1 : -1);
+    k.push(["Versículos practicados", versos], ["Cuestionarios respondidos", quizzes]);
+    const extra = `<section class="card"><h2>Cuentos más leídos</h2>${top.length ? `<div class="bars">${top.map(([id, n]) => `<div class="bar"><span class="lbl">${esc(tituloCuento(id))}</span><span class="track"><span class="fill" style="width:${(n / maxT) * 100}%;display:block"></span></span><span class="n">${n}</span></div>`).join("")}</div>` : `<p class="empty">Aún no hay lecturas registradas.</p>`}</section>
+      <section class="card"><h2>Actividad de las congregaciones</h2>${actividad.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th class="num">Activos (30 días)</th><th>Último movimiento</th><th></th></tr></thead><tbody>${actividad.map((x) => `<tr><td>${esc(x.c.nombre)}</td><td class="num">${x.activos} / ${miembrosDe(x.c.id).length}</td><td class="small">${fmtFechaHora(x.ult)}</td><td>${!x.ult || x.ult < hace30 ? '<span class="pill bad">Inactiva</span>' : '<span class="pill ok">Activa</span>'}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Sin congregaciones.</p>`}</section>`;
     const recientes = D.docs.filter((d) => d.comunidad_id !== CENTRAL && MODERABLES.includes(d.col)).sort((a, b) => (a.actualizado < b.actualizado ? 1 : -1)).slice(0, 8);
     return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Resumen general</h1></div><span class="muted small">Datos al ${fmtFechaHora(new Date())}</span></div>
     <div class="kpis">${k.map(([n, v]) => `<div class="kpi"><b>${v.toLocaleString("es-CL")}</b><span>${n}</span></div>`).join("")}</div>
     <div class="grid">
       <section class="card"><h2>Nuevos usuarios por semana</h2><div class="cols" role="img" aria-label="Nuevos usuarios en las últimas 12 semanas">${weeks.map((x, i) => `<div class="c" tabindex="0"><span class="tip">Semana del ${x.w.toLocaleDateString("es-CL", { day: "numeric", month: "short" })}: ${x.n}</span><i class="${x.n ? "" : "zero"}" style="height:${x.n ? Math.max(4, (x.n / maxW) * 100) : 2}%"></i>${i % 2 === 1 ? `<span>${x.w.toLocaleDateString("es-CL", { day: "numeric", month: "short" })}</span>` : ""}</div>`).join("")}</div><p class="muted small">Últimas 12 semanas · máximo ${maxW} en una semana.</p></section>
+      ${extra}
       <section class="card"><h2>Distribución por región</h2>${barras(porRegion)}</section>
       <section class="card"><h2>Distribución por país</h2>${barras(porPais)}</section>
       <section class="card"><h2>Actividad reciente</h2>${recientes.length ? `<div class="tbl"><table><tbody>${recientes.map((d) => `<tr><td>${esc(resumenDoc(d))}<div class="muted small">${esc(COLN[d.col] || d.col)} · ${esc(nombreCom(d.comunidad_id))}</div></td><td class="num small muted">${fmtFechaHora(d.actualizado)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Sin actividad todavía.</p>`}</section>
@@ -210,7 +234,7 @@
       <div class="seg" role="group" aria-label="Tipo de material">${CENTRAL_COLS.map(([k, n]) => `<button aria-pressed="${ui.matCol === k}" data-matcol="${k}">${n} (${docsDe(CENTRAL, k).length})</button>`).join("")}</div>
       ${items.length ? `<p class="small"><b>${lib}</b> de ${items.length} liberados para esta congregación.</p><div class="tbl"><table><thead><tr><th></th><th>Material</th><th>Permiso del material</th><th>Acceso</th><th>Estado</th></tr></thead><tbody>
       ${items.map((d) => { const e = excepcion(c.id, d.col, d.id); const ok = liberado(c, d); return `<tr><td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : ""}</td><td><b>${d.data.numero != null ? esc(d.data.numero) + ". " : ""}${esc(d.data.titulo || d.data.nombre || d.id)}</b></td><td>${esc(planNombre(d.data.plan))}</td>
-        <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el permiso</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select></td>
+        <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el permiso</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select>${e ? `<div class="small muted" style="margin-top:4px">desde <input class="inp" type="date" data-excdesde="${esc(d.id)}" data-col="${esc(d.col)}" value="${esc(e.desde || "")}" aria-label="Aplicar desde"></div>` : ""}</td>
         <td>${ok ? '<span class="pill ok">Liberado</span>' : '<span class="pill warn">🔒 Bloqueado</span>'}</td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay material de este tipo en la biblioteca central.</p>`}</section>`;
   }
 
@@ -219,18 +243,30 @@
     const porPlan = (id) => central.filter((d) => (d.data.plan || "gratis") === id).length;
     const coms = congregaciones().filter((c) => !ui.buscar || [c.nombre, c.ciudad, c.region].join(" ").toLowerCase().includes(ui.buscar.toLowerCase()));
     return `<div class="head"><div><p class="eyebrow">Súper administrador</p><h1>Permisos</h1></div><input class="search" id="buscar" type="search" placeholder="Buscar congregación" value="${esc(ui.buscar)}" aria-label="Buscar congregación"></div>
-    <p class="muted">Cada congregación tiene un permiso. Con él ve abierto todo el material de la biblioteca central de ese nivel o menor; lo demás le aparece con candado. Las excepciones puntuales se hacen dentro de cada congregación.</p>
+    <p class="muted">Cada congregación tiene un permiso. Con él ve abierto todo el material de la biblioteca central de ese nivel o menor; lo demás le aparece con candado. Las excepciones puntuales se hacen dentro de cada congregación. Si pones una fecha en "Vence", al pasar esa fecha la congregación vuelve a Inicial sola, y su administrador ve un aviso desde 14 días antes.</p>
     <section class="card"><h2>Niveles de permiso</h2><div class="tbl"><table><thead><tr><th>Nivel</th><th>Nombre</th><th>Descripción</th><th class="num">Material de este nivel</th><th class="num">Congregaciones</th></tr></thead><tbody>
       ${D.planes.map((p) => `<tr><td><span class="pill acc">${p.orden + 1}</span></td><td><input class="inp" data-plann="${esc(p.id)}" data-k="nombre" value="${esc(p.nombre)}" maxlength="30" aria-label="Nombre del permiso" style="width:130px"></td>
         <td><input class="inp" data-plann="${esc(p.id)}" data-k="descripcion" value="${esc(p.descripcion || "")}" maxlength="120" aria-label="Descripción" style="width:100%;min-width:220px"></td>
         <td class="num">${porPlan(p.id)}</td><td class="num">${congregaciones().filter((c) => (c.plan_id || "gratis") === p.id).length}</td></tr>`).join("")}</tbody></table></div>
       <p class="muted small">Los cambios de nombre y descripción se guardan al salir de la casilla.</p></section>
+    ${vSolicitudes()}
     <section class="card"><h2>Permiso de cada congregación (${coms.length})</h2>
-      ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th>Permiso</th><th class="num">Material liberado</th><th class="num">Excepciones</th><th></th></tr></thead><tbody>
+      ${coms.length ? `<div class="tbl"><table><thead><tr><th>Congregación</th><th>Ubicación</th><th>Permiso</th><th>Vence</th><th class="num">Material liberado</th><th class="num">Excepciones</th><th></th></tr></thead><tbody>
       ${coms.map((c) => { const lib = central.filter((d) => liberado(c, d)).length; const ex = D.excepciones.filter((e) => e.comunidad_id === c.id).length;
         return `<tr><td><b>${esc(c.nombre)}</b><div class="muted small">${miembrosDe(c.id).length} miembros</div></td><td class="small">${esc([c.ciudad, c.region].filter(Boolean).join(", ") || "–")}</td>
-        <td>${planSelect(`data-plancom="${esc(c.id)}" aria-label="Permiso de ${esc(c.nombre)}"`, c.plan_id)}</td><td class="num">${lib} / ${central.length}</td><td class="num">${ex || "–"}</td>
+        <td>${planSelect(`data-plancom="${esc(c.id)}" aria-label="Permiso de ${esc(c.nombre)}"`, c.plan_id)}</td>
+        <td><input class="inp" type="date" data-vence="${esc(c.id)}" value="${esc(c.plan_hasta || "")}" aria-label="Vencimiento del permiso de ${esc(c.nombre)}">${vencido(c) ? ' <span class="pill bad">Vencido</span>' : (c.plan_hasta && c.plan_hasta <= new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) ? ' <span class="pill warn">Por vencer</span>' : "")}</td>
+        <td class="num">${lib} / ${central.length}</td><td class="num">${ex || "–"}</td>
         <td><button class="btn line sm" data-act="verCom" data-id="${esc(c.id)}">Excepciones ›</button></td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay congregaciones.</p>`}</section>`;
+  }
+
+  function vSolicitudes() {
+    const pend = D.solicitudes.filter((x) => x.estado === "pendiente"); const otras = D.solicitudes.filter((x) => x.estado !== "pendiente").slice(0, 10);
+    const fila = (x) => { const u = usuario(x.user_id) || {}; return `<tr><td><b>${esc(x.titulo || x.doc_id)}</b><div class="muted small">${esc(COLN[x.col] || x.col || "")}</div>${x.mensaje ? `<div class="small">"${esc(x.mensaje)}"</div>` : ""}</td>
+      <td class="small">${esc(nombreCom(x.comunidad_id))}<br><span class="muted">${esc(u.nombre || u.email || "")}</span></td><td class="small">${fmtFechaHora(x.creado)}</td>
+      <td>${x.estado === "pendiente" ? `<div class="row"><button class="btn sm" data-sol="${esc(x.id)}" data-v="aprobar">Liberar</button><button class="btn ghost sm" data-sol="${esc(x.id)}" data-v="rechazar">Rechazar</button></div>` : `<span class="pill ${x.estado === "aprobada" ? "ok" : ""}">${x.estado === "aprobada" ? "Liberado" : "Rechazada"}</span>`}</td></tr>`; };
+    return `<section class="card"><h2>Solicitudes de acceso (${pend.length})</h2><p class="muted small">Los administradores de cada congregación pueden pedir material que les aparece con candado. "Liberar" lo abre solo para esa congregación.</p>
+      ${pend.length + otras.length ? `<div class="tbl"><table><thead><tr><th>Material</th><th>Congregación</th><th>Fecha</th><th></th></tr></thead><tbody>${pend.concat(otras).map(fila).join("")}</tbody></table></div>` : `<p class="empty">No hay solicitudes.</p>`}</section>`;
   }
 
   function vForos() {
@@ -276,19 +312,24 @@
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
-    <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con la columna "Plan" decides qué permiso lo libera: lo <b>Inicial</b> lo ven todas; lo <b>Avanzado</b> o <b>Completo</b> aparece con candado en las congregaciones con un permiso menor. En cada congregación puedes hacer excepciones.</p>
+    <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con "Libera desde" puedes dejar programado que un material se abra solo en una fecha. Con la columna "Plan" decides qué permiso lo libera: lo <b>Inicial</b> lo ven todas; lo <b>Avanzado</b> o <b>Completo</b> aparece con candado en las congregaciones con un permiso menor. En cada congregación puedes hacer excepciones.</p>
     <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
     <button class="btn ghost sm" data-act="miniaturas">Crear miniaturas que faltan (${D.docs.filter((d) => d.comunidad_id === CENTRAL && ["cuentos", "materiales", "matprofes"].includes(d.col) && d.data.asset && !d.data.thumb).length})</button></div>
     <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 25 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, imágenes o videos MP4 de hasta 25 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
       <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4"}" hidden></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `${pg.txt || "Subiendo"} ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} ${pg.txt ? "con miniatura" : "subidos"}`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
-    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
+    ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Libera desde</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
     ${items.map((d) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"></td>` : ""}
       <td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : '<span class="thumb vacio">PDF</span>'}</td>
       <td><input class="inp" style="width:100%;min-width:200px" data-edit="titulo" data-id="${esc(d.id)}" value="${esc(d.data.titulo || "")}" aria-label="Título"></td>
-      <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}</td>
+      <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}${ui.bib === "cuentos" ? `<div><button class="link" data-preg="${esc(d.id)}">Preguntas (${(d.data.preguntas || []).length})</button></div>` : ""}</td>
+      <td><input class="inp" type="date" data-libdesde="${esc(d.id)}" value="${esc(d.data.libera_desde || "")}" aria-label="Liberar desde"></td>
       <td class="small">${d.data.asset ? `<a href="${esc(blobUrl(d.data.asset))}" target="_blank" rel="noopener">${esc(d.data.archivo || "Abrir")}</a> <span class="muted">${fmtMB(d.data.tamano)}</span>` : (d.data.url ? `<a href="${esc(d.data.url)}" target="_blank" rel="noopener">Enlace</a>` : "–")}</td>
-      <td class="small">${fmtFecha(d.actualizado)}</td><td><button class="btn danger sm" data-borrar="${esc(d.id)}" data-col="${esc(ui.bib)}" data-com="${CENTRAL}">Eliminar</button></td></tr>`).join("")}
+      <td class="small">${fmtFecha(d.actualizado)}</td><td><button class="btn danger sm" data-borrar="${esc(d.id)}" data-col="${esc(ui.bib)}" data-com="${CENTRAL}">Eliminar</button></td></tr>
+      ${ui.preg === d.id ? `<tr><td colspan="9"><div class="preg-ed"><label for="pregTxt"><b>Preguntas para después de leer "${esc(d.data.titulo || "")}"</b></label>
+        <textarea class="inp" id="pregTxt" rows="6" placeholder="¿Quién encontró a la ovejita? | Sara | Simón | Mateo">${esc((d.data.preguntas || []).map((q) => [q.p, q.ok, ...(q.malas || [])].join(" | ")).join("\n"))}</textarea>
+        <p class="muted small">Una pregunta por línea: pregunta | respuesta correcta | respuestas incorrectas (hasta 3), separadas por |</p>
+        <div class="row"><button class="btn sm" data-guardarpreg="${esc(d.id)}">Guardar preguntas</button><button class="btn ghost sm" data-preg="">Cerrar</button></div></div></td></tr>` : ""}`).join("")}
     </tbody></table></div><p class="muted small">Los cambios de número o título se guardan al salir de la casilla.</p>` : `<p class="empty">Aún no hay ${ui.bib === "cuentos" ? "cuentos" : "material"} en la biblioteca central.</p>`}`;
   }
 
@@ -391,6 +432,22 @@
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; render(); return; }
+      if (b.dataset.preg !== undefined) { ui.preg = b.dataset.preg || null; render(); return; }
+      if (b.dataset.guardarpreg) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "cuentos" && x.id === b.dataset.guardarpreg); if (!d) return;
+        const preguntas = $("#pregTxt").value.split("\n").map((l) => l.split("|").map((x) => x.trim())).filter((a) => a.length >= 3 && a[0] && a[1]).map((a) => ({ p: a[0].slice(0, 200), ok: a[1].slice(0, 100), malas: a.slice(2).filter(Boolean).slice(0, 3).map((x) => x.slice(0, 100)) }));
+        const data = { ...d.data, preguntas };
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", "cuentos").eq("id", d.id); if (error) throw error;
+        d.data = data; ui.preg = null; toast(preguntas.length + " preguntas guardadas"); render(); return;
+      }
+      if (b.dataset.sol) {
+        const x = D.solicitudes.find((y) => y.id === b.dataset.sol); if (!x) return;
+        if (b.dataset.v === "aprobar") { const { error } = await sb.from("excepciones").upsert({ comunidad_id: x.comunidad_id, col: x.col, doc_id: x.doc_id, liberado: true, desde: null }); if (error) throw error;
+          D.excepciones = D.excepciones.filter((e) => !(e.comunidad_id === x.comunidad_id && e.col === x.col && e.doc_id === x.doc_id)).concat([{ comunidad_id: x.comunidad_id, col: x.col, doc_id: x.doc_id, liberado: true }]); }
+        const estado = b.dataset.v === "aprobar" ? "aprobada" : "rechazada";
+        const { error } = await sb.from("solicitudes").update({ estado, respondido: new Date().toISOString() }).eq("id", x.id); if (error) throw error;
+        x.estado = estado; toast(estado === "aprobada" ? "Material liberado para " + nombreCom(x.comunidad_id) : "Solicitud rechazada"); render(); return;
+      }
       if (b.dataset.matcol) { ui.matCol = b.dataset.matcol; render(); return; }
       if (b.dataset.borrarforo) {
         if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Eliminar con sus temas?"; return; }
@@ -434,6 +491,21 @@
     try {
       if (t.id === "files") { const fs = [...t.files]; t.value = ""; subir(fs); return; }
       if (t.id === "foroCom") { ui.foroCom = t.value; render(); return; }
+      if (t.dataset.vence) {
+        const { error } = await sb.rpc("super_set_vence", { p_comunidad: t.dataset.vence, p_hasta: t.value || null }); if (error) throw error;
+        D.comunidades.find((c) => c.id === t.dataset.vence).plan_hasta = t.value || null; toast(t.value ? "Vencimiento guardado" : "Sin vencimiento"); render(); return;
+      }
+      if (t.dataset.libdesde) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.libdesde); if (!d) return;
+        const data = { ...d.data }; if (t.value) data.libera_desde = t.value; else delete data.libera_desde;
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", ui.bib).eq("id", d.id); if (error) throw error;
+        d.data = data; toast(t.value ? "Se liberará el " + t.value.split("-").reverse().join("-") : "Sin fecha de liberación"); return;
+      }
+      if (t.dataset.excdesde) {
+        const e = excepcion(ui.com, t.dataset.col, t.dataset.excdesde); if (!e) return;
+        const { error } = await sb.from("excepciones").update({ desde: t.value || null }).match({ comunidad_id: ui.com, col: t.dataset.col, doc_id: t.dataset.excdesde }); if (error) throw error;
+        e.desde = t.value || null; toast("Fecha guardada"); render(); return;
+      }
       if (t.dataset.plancom) {
         const { error } = await sb.rpc("super_set_plan", { p_comunidad: t.dataset.plancom, p_plan: t.value }); if (error) throw error;
         D.comunidades.find((c) => c.id === t.dataset.plancom).plan_id = t.value; toast("Permiso actualizado: " + planNombre(t.value)); render(); return;

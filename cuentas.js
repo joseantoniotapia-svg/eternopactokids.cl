@@ -42,10 +42,17 @@
           CON_CENTRAL.includes(col) ? sb.rpc("central_para", { p_comunidad: cid, p_col: col }) : Promise.resolve({ data: [] })
         ]);
         cargando[col] = null;
-        if (propio.error) throw propio.error;
+        const ck = "epk_cache_" + cid + "_" + col;
+        if (propio.error) {
+          const guardado = LS.get(ck);
+          if (guardado) { try { cache[col] = JSON.parse(guardado); window.EPK_OFFLINE = true; emitir(col); return; } catch (e) {} }
+          throw propio.error;
+        }
         if (central.error) console.warn("biblioteca central", central.error.message);
         cache[col] = (propio.data || []).map((r) => ({ id: r.id, data: r.data }))
-          .concat((central.data || []).map((r) => ({ id: "c_" + r.id, data: { ...r.data, _central: true, _bloqueado: !!r.bloqueado } })));
+          .concat((central.data || []).map((r) => ({ id: "c_" + r.id, data: { ...r.data, _central: true, _bloqueado: !!r.bloqueado, _vis: r.visible !== false, _desde: r.desde || null } })));
+        window.EPK_OFFLINE = false;
+        try { LS.set(ck, JSON.stringify(cache[col])); } catch (e) {}
         emitir(col);
       })();
       return cargando[col];
@@ -92,8 +99,10 @@
           }
         };
       },
-      doc(path) { const [col, id] = String(path).split("/"); return ref(col, id); }
+      doc(path) { const [col, id] = String(path).split("/"); return ref(col, id); },
+      recargar: (col) => cargar(col).catch(() => {})
     };
+    CTX.db = api;
     return api;
   }
 
@@ -139,6 +148,7 @@
   window.EPK = {
     get user() { return CTX.user; }, get comunidad() { return CTX.comunidad; }, get rol() { return CTX.rol; },
     get sb() { return sb; }, get super() { return !!CTX.super; },
+    recargar: (col) => CTX.db && CTX.db.recargar(col),
     async cargarFamilia() {
       const { data, error } = await sb.from("familias").select("data").eq("user_id", CTX.user.id).maybeSingle();
       if (error) return null; return data ? data.data : null;
@@ -242,12 +252,14 @@
 
   async function misComunidades() {
     const { data, error } = await sb.from("miembros").select("rol, comunidades(id,nombre,codigo)").eq("user_id", CTX.user.id);
-    if (error) throw error;
+    const ckc = "epk_coms_" + CTX.user.id;
+    if (error) { const g = LS.get(ckc); if (g) { try { return JSON.parse(g); } catch (e) {} } throw error; }
     const lista = (data || []).filter((m) => m.comunidades && m.comunidades.id !== CENTRAL).map((m) => ({ ...m.comunidades, rol: m.rol }));
     if (CTX.super) {
       const { data: todas } = await sb.from("comunidades").select("id,nombre,codigo").neq("id", CENTRAL).order("nombre");
       (todas || []).forEach((c) => { const x = lista.find((l) => l.id === c.id); if (x) x.rol = "admin"; else lista.push({ ...c, rol: "admin", externa: true }); });
     }
+    try { LS.set(ckc, JSON.stringify(lista)); } catch (e) {}
     return lista;
   }
 
