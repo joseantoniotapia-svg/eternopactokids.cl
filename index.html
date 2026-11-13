@@ -1,6 +1,6 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Eterno Pacto Kids: la escuela dominical en casa. Clases, cuentos, la Biblia para niños e insignias para toda la familia.">
-<meta name="theme-color" content="#2B58C9"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="img/icono-192.png">
+<meta name="theme-color" content="#5B3DF5"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="img/icono-192.png">
 <link rel="apple-touch-icon" href="img/icono-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="EP Kids">
 <meta property="og:title" content="Eterno Pacto Kids"><meta property="og:description" content="La escuela dominical en casa para toda la familia."><meta property="og:image" content="https://eternopactokids.cl/img/sara-poster.jpg">
 <title>Eterno Pacto Kids</title>
@@ -317,10 +317,161 @@ button.item:hover{border-color:var(--accent)}
 .ac-det form{margin-top:6px}
 
 </style>
+<style id="tema-vivo">
+/* ===== Tema "Patio de juegos": colores vivos, bordes de sticker, formas asimétricas ===== */
+:root{
+  --bg:#FFF4E4; --surface:#FFFFFF; --sunk:#FFEBD0; --ink:#1E1548; --muted:#5F5680; --line:#EFDDC2; --edge:#2A1E5C;
+  --accent:#5B3DF5; --accent-ink:#FFFFFF; --accent-soft:#ECE6FF;
+  --sun:#FFB400; --sun-soft:#FFEFB8; --sun-ink:#6A4100;
+  --leaf:#14A05A; --leaf-soft:#D6F7E3; --rose:#F0306B; --rose-soft:#FFE0EA;
+  --c1:#5B3DF5; --c2:#14A05A; --c3:#F0306B; --c4:#1E7BFF; --c5:#FF7A1A; --c6:#16B3A3;
+  --p-sara:#FF7A1A; --p-simon:#16B3A3; --p-santiago:#1E7BFF; --p-maria:#FF3D8B; --p-mateo:#7A4DFF;
+  --pop-pink:#FF3D8B; --pop-orange:#FF7A1A; --pop-yellow:#FFD23F; --pop-blue:#1E7BFF; --pop-teal:#16B3A3; --pop-violet:#7A4DFF;
+  --sh:4px 4px 0 var(--edge); --sh-sm:3px 3px 0 var(--edge); --bd:2.5px solid var(--edge);
+  --r:22px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#130E2C; --surface:#211947; --sunk:#1A143B; --ink:#F4F0FF; --muted:#B9B0DA; --line:#3A2F70; --edge:#06041A;
+  --accent:#9D88FF; --accent-ink:#130E2C; --accent-soft:#2F2566; --sun-soft:#3D3215; --sun-ink:#FFDD80;
+  --leaf-soft:#123A27; --rose-soft:#43172A; --bd:2.5px solid #4A3D8F; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#130E2C; --surface:#211947; --sunk:#1A143B; --ink:#F4F0FF; --muted:#B9B0DA; --line:#3A2F70; --edge:#06041A;
+  --accent:#9D88FF; --accent-ink:#130E2C; --accent-soft:#2F2566; --sun-soft:#3D3215; --sun-ink:#FFDD80; --leaf-soft:#123A27; --rose-soft:#43172A; --bd:2.5px solid #4A3D8F; color-scheme:dark}
+
+html,body{background:var(--bg)}
+body{background-image:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--pop-yellow) 30%,transparent) 0 70px,transparent 71px),
+  radial-gradient(circle at 96% 30%,color-mix(in srgb,var(--pop-pink) 18%,transparent) 0 90px,transparent 91px),
+  radial-gradient(circle at 4% 70%,color-mix(in srgb,var(--pop-blue) 14%,transparent) 0 80px,transparent 81px),
+  radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--pop-teal) 18%,transparent) 0 60px,transparent 61px);background-attachment:fixed}
+h1,h2,h3{letter-spacing:-.01em}
+.marca{display:inline;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--pop-yellow) 80%,transparent) 58% 92%,transparent 92%);padding:0 4px}
+
+/* cabecera */
+.top{background:var(--surface);border-bottom:var(--bd);box-shadow:0 3px 0 var(--edge)}
+.logo{width:44px;height:53px;object-fit:contain;background:none;border-radius:0;transform:rotate(-6deg);filter:drop-shadow(2px 2px 0 rgba(0,0,0,.15))}
+.brand b{background:linear-gradient(90deg,var(--pop-pink),var(--pop-orange),var(--pop-violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.menu-btn,.mode,.perfil{border:var(--bd);box-shadow:2px 2px 0 var(--edge)}
+.menu-btn{border-radius:14px 6px 14px 14px;background:var(--pop-yellow);color:#1E1548}
+
+/* barra de pestañas flotante */
+.tabs{left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom,0px));padding:4px;border:var(--bd);border-radius:26px 26px 30px 18px;box-shadow:var(--sh);max-width:740px;margin:0 auto}
+.tab{border-radius:18px;transition:transform .15s}
+.tab[aria-current="page"]{color:#fff;transform:translateY(-3px) rotate(-2deg)}
+.tab[aria-current="page"] svg{background:none;padding:0;width:24px}
+.tabs-in .tab:nth-child(1)[aria-current="page"]{background:var(--pop-pink)}
+.tabs-in .tab:nth-child(2)[aria-current="page"]{background:var(--pop-blue)}
+.tabs-in .tab:nth-child(3)[aria-current="page"]{background:var(--pop-violet)}
+.tabs-in .tab:nth-child(4)[aria-current="page"]{background:var(--pop-orange)}
+.tabs-in .tab:nth-child(5)[aria-current="page"]{background:var(--pop-teal)}
+.tabs-in .tab:nth-child(6)[aria-current="page"]{background:#E0247A}
+main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));gap:22px}
+
+/* tarjetas tipo sticker */
+.card,.post,.empty,.prize,.badge,.bcard,.miembro,.letter,.biblia,.reco,.plaque,.historia{border:var(--bd);box-shadow:var(--sh);border-radius:22px 10px 24px 18px}
+.empty{border-style:dashed;box-shadow:none}
+.item{border:2px solid var(--edge);box-shadow:var(--sh-sm);border-radius:16px 8px 16px 14px}
+button.item:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge)}
+.list>.item:nth-child(3n+2){border-radius:8px 16px 14px 16px}
+.btn{border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge);font-family:var(--display);font-weight:600;letter-spacing:.01em}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.btn.ghost{background:var(--accent-soft)}
+.btn.line{border:2px solid var(--edge)}
+.pill{border:1.5px solid color-mix(in srgb,var(--edge) 40%,transparent)}
+.seg{gap:8px}
+.seg button{border:2px solid var(--edge);box-shadow:2px 2px 0 var(--edge);font-family:var(--display);font-weight:600;border-radius:14px 18px 12px 16px}
+.seg button[aria-pressed="true"]{background:var(--pop-violet);color:#fff;transform:rotate(-2deg)}
+.seg button:nth-child(5n+2)[aria-pressed="true"]{background:var(--pop-pink)}
+.seg button:nth-child(5n+3)[aria-pressed="true"]{background:var(--pop-blue)}
+.seg button:nth-child(5n+4)[aria-pressed="true"]{background:var(--pop-orange)}
+.seg button:nth-child(5n+5)[aria-pressed="true"]{background:var(--pop-teal)}
+.note{border:2px dashed var(--accent);border-radius:18px 8px 18px 18px}
+.sec-h h2{font-size:1.5rem}
+
+/* clase del domingo y versículo */
+.hero{background:linear-gradient(125deg,var(--pop-violet) 0%,var(--pop-pink) 55%,var(--pop-orange) 100%);color:#fff;border:var(--bd);box-shadow:6px 6px 0 var(--edge);border-radius:30px 12px 34px 20px;padding:24px 22px;transform:rotate(-.6deg)}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:var(--pop-yellow);opacity:.35}
+.hero .btn{background:#fff;color:var(--pop-violet)}
+.verse{background:var(--pop-yellow);color:#1E1548;border:var(--bd);box-shadow:var(--sh);border-radius:8px 26px 10px 24px;transform:rotate(.8deg);margin-inline:6px}
+.verse .eyebrow,.verse cite{color:#5A3600}
+.datechip{background:var(--pop-blue);color:#fff;border-radius:14px 6px 14px 14px;border:2px solid var(--edge)}
+.datechip.past{background:var(--sunk);color:var(--muted)}
+
+/* guías de cuerpo entero */
+.guia{align-items:flex-end;gap:4px;margin-top:6px}
+.guia-fig{flex:none;border:0;background:none;padding:0;width:92px;height:128px;display:grid;place-items:end center;position:relative}
+.guia-fig::before{content:"";position:absolute;inset:auto 2px 0 2px;height:70%;border-radius:46% 54% 40% 60%/60% 50% 50% 40%;background:var(--pc);opacity:.9;border:2px solid var(--edge)}
+.guia .guia-fig img{width:auto;height:128px;border:0;border-radius:0;background:none;position:relative;max-width:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.18));transition:transform .2s}
+.guia-fig:hover img{transform:rotate(-4deg) scale(1.04)}
+.bubble{border:var(--bd);box-shadow:var(--sh);border-radius:22px 22px 22px 6px;margin-bottom:22px;background:var(--surface)}
+.bubble::before{content:"";position:absolute;left:-12px;bottom:10px;width:16px;height:16px;background:var(--surface);border-left:var(--bd);border-bottom:var(--bd);transform:skewY(-30deg) rotate(10deg)}
+.bubble b{color:var(--pc)}
+
+/* banda de inicio con la foto grupal */
+.pandilla{position:relative;margin:6px 4px 10px}
+.pandilla-foto{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:50% 30%;border:var(--bd);border-radius:34px 14px 40px 18px;box-shadow:6px 6px 0 var(--edge);transform:rotate(-1deg);background:var(--sunk)}
+.pandilla-txt{position:absolute;left:-4px;bottom:-14px;display:flex;align-items:flex-end;gap:8px;max-width:92%}
+.pandilla-logo{width:clamp(78px,20vw,120px);height:auto;transform:rotate(-8deg);filter:drop-shadow(3px 3px 0 rgba(0,0,0,.25))}
+.pandilla-txt p{background:var(--pop-yellow);color:#1E1548;font-family:var(--display);font-weight:600;font-size:clamp(.85rem,3.4vw,1.05rem);padding:6px 12px;border:2px solid var(--edge);border-radius:14px 4px 14px 14px;box-shadow:var(--sh-sm);transform:rotate(2deg);margin-bottom:10px}
+
+/* tarjetas de personajes */
+.tira{display:flex;gap:14px;overflow-x:auto;padding:28px 6px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.tira::-webkit-scrollbar{height:6px}.tira::-webkit-scrollbar-thumb{background:var(--line);border-radius:9px}
+.pj-card{position:relative;flex:none;width:138px;scroll-snap-align:start;border:var(--bd);background:var(--pc);color:#fff;border-radius:26px 12px 28px 16px;box-shadow:var(--sh);padding:118px 10px 12px;display:flex;flex-direction:column;gap:2px;text-align:left;transform:rotate(var(--rot,0deg));transition:transform .2s}
+.pj-card:hover,.pj-card:focus-visible{transform:rotate(0) translateY(-4px)}
+.pj-card .pj-blob{position:absolute;left:10px;right:10px;top:16px;height:96px;border-radius:50% 46% 40% 56%/58% 50% 46% 42%;background:rgba(255,255,255,.28)}
+.pj-card .fig{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);height:150px;max-width:118%;object-fit:contain;object-position:bottom;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.25))}
+.pj-card b{font-family:var(--display);font-weight:600;font-size:1.25rem;line-height:1.1;position:relative}
+.pj-card span{font-size:.78rem;font-weight:700;opacity:.95;position:relative;line-height:1.25}
+.pj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:30px 16px;padding-top:34px}
+.pj-card.big{width:auto;padding-top:168px}
+.pj-card.big .pj-blob{height:140px}
+.pj-card.big .fig{height:208px;bottom:auto;top:-30px}
+.pj-leer{margin-top:6px;background:rgba(255,255,255,.9);color:var(--edge)!important;align-self:flex-start;border-radius:999px;padding:3px 10px;border:2px solid var(--edge)}
+
+/* ficha de un personaje */
+.pj-hero{position:relative;display:grid;grid-template-columns:minmax(120px,42%) 1fr;align-items:end;gap:6px;background:var(--pc);color:#fff;border:var(--bd);box-shadow:6px 6px 0 var(--edge);border-radius:36px 14px 40px 20px;padding:18px 18px 0;overflow:hidden;margin-top:6px}
+.pj-hero .pj-blob{position:absolute;left:-30px;bottom:-40px;width:62%;aspect-ratio:1;border-radius:46% 54% 42% 58%/55% 45% 55% 45%;background:rgba(255,255,255,.25)}
+.pj-hero::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:var(--pop-yellow);opacity:.45}
+.pj-full{position:relative;z-index:1;max-height:330px;width:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.25))}
+.pj-txt{position:relative;z-index:1;padding-bottom:22px;display:flex;flex-direction:column;gap:6px}
+.pj-txt .eyebrow{color:#fff;opacity:.9}
+.pj-txt h1{font-size:clamp(2.3rem,10vw,3.6rem);line-height:.95;text-shadow:3px 3px 0 var(--edge)}
+.pj-tit{font-family:var(--display);font-weight:600;font-size:1.15rem;background:#fff;color:var(--edge);align-self:flex-start;padding:2px 12px;border-radius:12px 4px 12px 12px;transform:rotate(-2deg);border:2px solid var(--edge)}
+.pj-frase{font-weight:700;font-size:1.02rem}
+.pj-rasgos{display:flex;flex-wrap:wrap;gap:10px;padding:4px}
+.rasgo{background:var(--surface);border:2px solid var(--edge);box-shadow:var(--sh-sm);border-radius:16px 6px 18px 12px;padding:8px 12px;transform:rotate(var(--rot,0deg));max-width:250px}
+.rasgo b{display:block;font-family:var(--display);font-weight:600;color:var(--pc);font-size:1.05rem}
+.rasgo span{font-size:.85rem}
+.historia{background:var(--surface);padding:22px 20px;display:flex;flex-direction:column;gap:12px}
+.historia h2{font-size:1.6rem;color:var(--pc)}
+.historia p{font-size:1.08rem;line-height:1.65;max-width:62ch}
+.historia p.h-p1::first-letter{font-family:var(--display);font-weight:600;font-size:3.1em;float:left;line-height:.85;margin:6px 8px 0 0;color:var(--pc)}
+.oir-h{align-self:flex-start;background:var(--pc)}
+.h-verso{margin:4px 0;background:var(--pop-yellow);color:#1E1548;border:2px solid var(--edge);border-radius:8px 22px 10px 20px;padding:14px 16px;font-family:var(--display);font-weight:500;font-size:1.2rem;transform:rotate(-.8deg)}
+.h-verso cite{display:block;font-style:normal;font-weight:700;font-size:.95rem;margin-top:4px}
+.h-preg{border:2px dashed var(--pc);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.h-preg b{font-family:var(--display);font-weight:600;color:var(--pc)}
+.pj-afiche summary{cursor:pointer;font-family:var(--display);font-weight:600;color:var(--accent);padding:6px 0}
+.pj-afiche img{display:block;width:100%;max-width:420px;height:auto;margin:8px auto 0;border:var(--bd);border-radius:20px;box-shadow:var(--sh)}
+
+/* insignias con personajes de cuerpo entero */
+.medal{width:92px;height:108px;border-radius:44% 56% 30px 30px/40% 40% 30px 30px;padding:0;background:var(--pc);border:2px solid var(--edge);display:grid;place-items:end center;overflow:hidden}
+.medal img{width:100%;height:104%;border:0;border-radius:0;object-fit:contain;object-position:bottom}
+.badge.off .medal{background:var(--sunk)}
+.cel-fig{height:180px;width:auto;object-fit:contain;filter:drop-shadow(3px 4px 0 rgba(0,0,0,.2))}
+
+/* pantalla de ingreso */
+#acceso{background:linear-gradient(150deg,var(--pop-violet) 0%,var(--pop-pink) 55%,var(--pop-orange) 100%)}
+.ac-card{border:var(--bd);box-shadow:6px 6px 0 var(--edge);border-radius:28px 12px 30px 18px}
+.ac-grupo{width:100%;border-radius:28px 12px 32px 16px;border:var(--bd);box-shadow:6px 6px 0 var(--edge);transform:rotate(-1.5deg)}
+.ac-logo{width:120px;height:auto;margin-bottom:-36px;position:relative;z-index:1;transform:rotate(-6deg);filter:drop-shadow(3px 3px 0 rgba(0,0,0,.3))}
+
+@media (prefers-reduced-motion:reduce){.hero,.verse,.pj-card,.rasgo,.pandilla-foto,.h-verso,.seg button[aria-pressed="true"],.tab[aria-current="page"]{transform:none!important}}
+@media (min-width:700px){.pj-full{max-height:400px}.guia-fig{width:104px;height:144px}.guia .guia-fig img{height:144px}}
+</style>
 </head>
 <body>
 <header class="top"><div class="top-in">
-  <img class="logo" src="img/logo.jpg" alt="Logo Eterno Pacto Kids" width="68" height="40">
+  <img class="logo" src="img/logo-kids.webp" alt="Logo Eterno Pacto Kids" width="44" height="53">
   <div class="brand"><b>Eterno Pacto Kids</b><span id="iglesia">Escuela Dominical</span></div>
   <button class="perfil" id="perfilBtn" aria-label="Mi familia"></button>
   <button class="mode" id="modeBtn" hidden></button>
@@ -411,8 +562,43 @@ const PERS={
  maria:{nombre:"María",titulo:"El corazón del grupo",frase:"El amor también se demuestra.",area:"Recursos y comunidad",
   rasgos:[["Empática","Siente el corazón de los demás"],["Protectora","Cuida y acompaña a sus amigos"],["Creativa","Dibuja las maravillas de la creación"],["Amorosa","Muestra el amor de Dios cada día"]]}
 };
-const ORDEN_PERS=["sara","santiago","simon","mateo","maria"];
-function guia(k,msg){const p=PERS[k];return `<div class="guia" style="--pc:var(--p-${k})"><img src="img/${k}.jpg" alt="${esc(p.nombre)}" width="76" height="76"><div class="bubble"><b>${esc(p.nombre)} · ${esc(p.titulo)}</b><p>${msg}</p></div></div>`;}
+const HISTORIAS={"santiago": {"titulo": "Santiago y la noche de la tormenta", "p": ["Era sábado en la noche y los amigos estaban en la casa del árbol preparando la clase del domingo. De pronto, ¡BUM!, sonó un trueno enorme y la lluvia empezó a golpear el techo.", "Sara se tapó los oídos y abrazó fuerte a Zanahoria. Simón se escondió debajo de una manta y solo se le veía la cola temblando. Hasta Mateo dejó de comer su galleta.", "Santiago respiró hondo, se sentó junto a ellos y abrió su Biblia. «¿Saben qué? Los amigos de Jesús también tuvieron miedo una vez», dijo con calma. Y les leyó cómo Jesús iba en una barca, se levantó en medio de la tormenta y le dijo al viento: «¡Calla, enmudece!». Y todo quedó en calma.", "«Pero el trueno sigue sonando», susurró Sara. Santiago sonrió: «Jesús no siempre quita la tormenta de inmediato, pero siempre está con nosotros en la barca». María tomó la mano de Sara, Mateo apoyó su cabeza en el hombro de Santiago y juntos oraron.", "Poco a poco la lluvia se volvió suave, como una canción. Simón salió de la manta, se estiró y se quedó dormido sobre la Biblia abierta. Sara ya no tenía miedo: había aprendido que la Palabra de Dios es como una linterna en la noche."], "verso": "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.", "cita": "Salmo 119:105", "pregunta": "¿Qué te da miedo a ti? ¿Qué versículo podrías recordar cuando sientas miedo?"}, "maria": {"titulo": "María y el niño nuevo", "p": ["Un domingo llegó a la escuela dominical un niño que nadie conocía. Se llamaba Tomás. Se sentó en la última silla, miraba el suelo y no hablaba con nadie.", "Los demás estaban tan entretenidos con el juego de preguntas que no se dieron cuenta. Pero María sí. Ella siempre se da cuenta cuando alguien está triste, porque siente con el corazón.", "María tomó su cuaderno de dibujo y, en silencio, dibujó un árbol enorme con muchas ramas, y en cada rama un niño sonriendo. En la rama más grande escribió: «Tomás». Se acercó y le regaló el dibujo.", "«¿Por qué estoy yo en el árbol?», preguntó Tomás. «Porque en la familia de Dios hay espacio para todos, y ahora tú también eres parte de la nuestra», respondió María. Después lo invitó a su equipo. Santiago le explicó las reglas, Mateo le prestó su lupa y Sara le dejó abrazar a Zanahoria.", "Al final de la clase, Tomás estaba riendo con todos. Esa noche, María escribió en su cuaderno: «El amor también se demuestra». Y le dio gracias a Dios por su nuevo amigo."], "verso": "Amados, amémonos unos a otros; porque el amor es de Dios.", "cita": "1 Juan 4:7", "pregunta": "¿Conoces a alguien que esté solo en tu curso o en tu iglesia? ¿Cómo podrías demostrarle el amor de Dios esta semana?"}, "mateo": {"titulo": "Mateo y la semilla diminuta", "p": ["Mateo estaba agachado en el jardín con su lupa, como siempre. «¡Encontré algo!», gritó. En la palma de su mano había una semilla tan pequeña que casi no se veía.", "«¿Cómo puede algo tan chiquitito convertirse en un árbol gigante?», preguntó. Y siguió: «¿Y quién le dice a la semilla que crezca? ¿Y por qué Dios hizo las semillas tan pequeñas?». Mateo es así: una pregunta lleva a otra pregunta.", "Santiago abrió la Biblia y le mostró que Jesús habló justamente de eso: el Reino de Dios es como una semilla de mostaza, la más pequeña de todas, que crece hasta ser un árbol donde los pájaros hacen sus nidos.", "Mateo se quedó pensando mientras mordía su galleta. «Entonces… ¿la fe también puede empezar chiquitita y crecer?». «¡Exacto!», dijo María. Ese mismo día plantaron la semilla en un macetero y Mateo anotó en su libreta: «Día 1: semilla. Pregunta: ¿cuánto crecerá mi fe?».", "Cada mañana, Mateo revisaba el macetero con su lupa. Al décimo día apareció un brote verde. Mateo descubrió que hacer preguntas no es malo: cada pregunta lo ayudaba a conocer mejor a Dios."], "verso": "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", "cita": "Jeremías 33:3", "pregunta": "¿Qué pregunta te gustaría hacerle a Dios? Escríbela y conversa con tu familia o tu maestro sobre ella."}, "sara": {"titulo": "Sara y la ovejita perdida", "p": ["En un paseo al campo, Sara caminaba feliz con Zanahoria bajo el brazo y su jugo en la mano. De pronto escuchó un sonido muy suave: «Beee…».", "Detrás de unos arbustos encontró una ovejita blanca enredada entre las ramas. Estaba asustada y sola. «No tengas miedo, pequeñita», le dijo Sara con su voz más dulce. «Jesús es el Buen Pastor y no se olvida de ninguna oveja».", "Sara cerró los ojos y oró: «Señor, ayúdanos a llevarla a casa». Luego llamó a sus amigos. Santiago apartó las ramas con cuidado, Mateo encontró con su lupa las huellas que llevaban al corral, María acarició a la ovejita para calmarla y Simón saltó adelante mostrando el camino.", "Al llegar, Don Elías, el pastor, corrió a abrazar a su ovejita. «¡La busqué toda la tarde!», dijo con lágrimas de alegría. «Así de feliz se pone Jesús cuando encuentra a alguien que estaba perdido», le explicó Santiago a Sara.", "Esa noche, Sara le contó todo a Zanahoria antes de dormir: «¿Sabes? Si alguna vez me pierdo, Jesús también me va a buscar». Y se durmió sonriendo, con el corazón lleno de fe."], "verso": "Gozaos conmigo, porque he encontrado mi oveja que se había perdido.", "cita": "Lucas 15:6", "pregunta": "¿Cómo crees que se sintió la ovejita cuando la encontraron? ¿Cómo te cuida Jesús a ti?"}, "simon": {"titulo": "Simón y la travesura de Zanahoria", "p": ["Simón es un gatito que no puede quedarse quieto. Salta, trepa, da volteretas… ¡y siempre tiene una idea divertida! Ese día, su idea fue jugar con Zanahoria, el peluche favorito de Sara, sin pedirlo prestado.", "Corrió con Zanahoria en la boca, saltó a una rama, después a otra más alta, y otra más… hasta que miró hacia abajo y se dio cuenta de que estaba muy, muy alto. «¡Miau!», maulló asustado. No sabía cómo bajar.", "Sara llegó llorando: «¡Zanahoria no está!». Pero cuando vio a Simón temblando en la rama, se le olvidó el enojo. «¡Hay que ayudarlo!». Santiago trajo una escalera, Mateo calculó la rama más segura y María abrió los brazos abajo por si acaso.", "Simón bajó con cuidado y dejó a Zanahoria en las manos de Sara. Luego bajó las orejas: «Perdón, Sara. Debí pedírtela». Sara lo abrazó: «Te perdono, Simón. ¡Y la próxima vez jugamos los tres juntos!».", "Desde ese día, Simón sigue siendo travieso, pero aprendió algo importante: entre amigos se pide permiso, se pide perdón y se perdona. Y como siempre dice él: «¡Miau! Aprender también puede ser divertido»."], "verso": "Sed benignos unos con otros, misericordiosos, perdonándoos unos a otros.", "cita": "Efesios 4:32", "pregunta": "¿Alguna vez tuviste que pedir perdón o perdonar a alguien? ¿Cómo te sentiste después?"}};
+const ORDEN_PERS=["santiago","maria","mateo","sara","simon"];
+const VIVO={santiago:"#1E7BFF",maria:"#FF3D8B",mateo:"#7A4DFF",sara:"#FF7A1A",simon:"#16B3A3"};
+function guia(k,msg){const p=PERS[k];return `<div class="guia" style="--pc:${VIVO[k]}"><button class="guia-fig" data-act="verPersonaje" data-id="${k}" aria-label="Conocer a ${esc(p.nombre)}"><img src="img/${k}-full.webp" alt="" loading="lazy"></button><div class="bubble"><b>${esc(p.nombre)} · ${esc(p.titulo)}</b><p>${msg}</p></div></div>`;}
+function figura(k,cls){return `<img class="${cls||"fig"}" src="img/${k}-full.webp" alt="${esc(PERS[k].nombre)}" loading="lazy">`;}
+function pandilla(){
+  return `<section class="pandilla"><img class="pandilla-foto" src="img/grupo.webp" alt="Santiago, Mateo, Sara, María y el gatito Simón en un jardín" width="1536" height="1024"><div class="pandilla-txt"><img class="pandilla-logo" src="img/logo-kids.webp" alt="Eterno Pacto Kids" width="160" height="193"><p>Aprendiendo juntos las maravillas de Dios</p></div></section>`;}
+function tiraPersonajes(){
+  return `<section class="tira-wrap"><div class="sec-h"><h2 class="marca">Conoce a la pandilla</h2><button class="link-btn" data-act="verPersonaje" data-id="">Ver todos ›</button></div>
+  <div class="tira">${ORDEN_PERS.map((k,i)=>{const p=PERS[k];return `<button class="pj-card" style="--pc:${VIVO[k]};--rot:${[-3,2,-1.5,3,-2][i]}deg" data-act="verPersonaje" data-id="${k}"><span class="pj-blob"></span>${figura(k)}<b>${esc(p.nombre)}</b><span>${esc(p.titulo)}</span></button>`;}).join("")}</div></section>`;}
+function vPersonajes(){
+  const k=ui.personaje;
+  if(!k||!PERS[k]){
+    return `<div class="sec-h"><h2 class="marca">La pandilla de Eterno Pacto Kids</h2></div><p class="muted">Cinco amigos que te acompañan en la app. Toca a cada uno para conocer su historia.</p>
+    <div class="pj-grid">${ORDEN_PERS.map((k,i)=>{const p=PERS[k];return `<button class="pj-card big" style="--pc:${VIVO[k]};--rot:${[-2,1.5,-1,2,-1.5][i]}deg" data-act="verPersonaje" data-id="${k}"><span class="pj-blob"></span>${figura(k)}<b>${esc(p.nombre)}</b><span>${esc(p.titulo)}</span><span class="pj-leer">Leer su historia ›</span></button>`;}).join("")}</div>`;
+  }
+  const p=PERS[k],h=HISTORIAS[k];const otros=ORDEN_PERS.filter(x=>x!==k);
+  return `<button class="back" data-act="verPersonaje" data-id="">‹ Toda la pandilla</button>
+  <section class="pj-hero" style="--pc:${VIVO[k]}"><span class="pj-blob"></span>${figura(k,"pj-full")}
+    <div class="pj-txt"><p class="eyebrow">Conoce a</p><h1>${esc(p.nombre)}</h1><p class="pj-tit">${esc(p.titulo)}</p><p class="pj-frase">“${esc(p.frase)}”</p></div></section>
+  <div class="pj-rasgos" style="--pc:${VIVO[k]}">${p.rasgos.map((r,i)=>`<div class="rasgo" style="--rot:${[-2,1.5,-1,2.5,-1.5][i%5]}deg"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join("")}</div>
+  <article class="historia" style="--pc:${VIVO[k]}"><p class="eyebrow">Una historia de ${esc(p.nombre)}</p><h2>${esc(h.titulo)}</h2>
+    <button class="btn sm oir-h" data-act="oirHistoria" data-id="${k}">${HABLANDO?"■ Detener":"🔊 Escuchar la historia"}</button>
+    ${h.p.map((t,i)=>`<p${i?"":` class="h-p1"`}>${esc(t)}</p>`).join("")}
+    <blockquote class="h-verso">${esc(h.verso)}<cite>${esc(h.cita)}</cite></blockquote>
+    <div class="h-preg"><b>Para conversar en familia</b><p>${esc(h.pregunta)}</p></div></article>
+  <details class="pj-afiche"><summary>Ver el afiche de ${esc(p.nombre)}</summary><img src="img/${k}-poster.jpg" alt="Afiche de ${esc(p.nombre)}, ${esc(p.titulo)}" width="1024" height="1536" loading="lazy"></details>
+  <div class="sec-h"><h2>Sus amigos</h2></div><div class="tira">${otros.map((o,i)=>`<button class="pj-card" style="--pc:${VIVO[o]};--rot:${[2,-2,1.5,-1][i]}deg" data-act="verPersonaje" data-id="${o}"><span class="pj-blob"></span>${figura(o)}<b>${esc(PERS[o].nombre)}</b></button>`).join("")}</div>`;
+}
+function oirHistoria(k){let ss;try{ss=window.speechSynthesis;}catch(e){}if(!ss){toast("Este dispositivo no puede leer en voz alta");return;}
+  if(HABLANDO){callar();render();return;}
+  const h=HISTORIAS[k];const partes=[h.titulo,...h.p,h.verso,h.cita.replace(":"," versículo ")];
+  const voces=ss.getVoices().filter(v=>/^es/i.test(v.lang));const voz=voces.find(v=>/es[-_](CL|419|MX|US|AR)/i.test(v.lang))||voces[0];
+  HABLANDO=true;render();let i=0;
+  const sig=()=>{if(!HABLANDO||i>=partes.length){if(HABLANDO){HABLANDO=false;render();}return;}
+    const u=new SpeechSynthesisUtterance(partes[i++]);u.lang=voz?voz.lang:"es-ES";if(voz)u.voice=voz;u.rate=0.9;u.pitch=1.05;u.onend=sig;u.onerror=()=>{HABLANDO=false;render();};ss.speak(u);};
+  sig();}
 const COLORS=["var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)","var(--c6)"];
 const colorFor=id=>{let n=0;for(const ch of String(id))n=(n*31+ch.charCodeAt(0))>>>0;return COLORS[n%COLORS.length];};
 
@@ -574,7 +760,7 @@ function formConfig(){
 function emptyBox(t,msg,btn){return `<section class="empty"><h3>${esc(t)}</h3><p class="muted">${esc(msg)}</p>${btn||""}</section>`;}
 
 function vInicio(){
-  const c=claseActual();let out=guia("sara","¡Hola! Jesús ama a los niños. Mira lo que aprenderemos este domingo y el versículo de la semana.");
+  const c=claseActual();let out=pandilla()+guia("sara","¡Hola! Jesús ama a los niños. Mira lo que aprenderemos este domingo y el versículo de la semana.");
   if(!c){
     out+=emptyBox("Aún no hay clases publicadas",ed()?"Agrega la lección del próximo domingo con su versículo, material y tarea. Las familias la verán aquí.":"Los maestros publicarán aquí la lección del domingo, el versículo y la tarea.",ed()?`<button class="btn" data-act="nuevaClase">Agregar la primera clase</button>`:"");
   }else{
@@ -586,6 +772,7 @@ function vInicio(){
     if(c.consideraciones)extras.push(`<div class="card"><p class="eyebrow">Consideraciones</p><p>${esc(c.consideraciones)}</p></div>`);
     if(extras.length)out+=`<div class="grid2">${extras.join("")}</div>`;
   }
+  out+=tiraPersonajes();
   const r=ranking().slice(0,3);
   out+=`<section class="card"><div class="sec-h"><h2>Estrellas de la clase</h2><button class="link-btn" data-act="tab" data-tab="puntos">Ver todos</button></div>`;
   out+=r.length?`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`
@@ -690,8 +877,8 @@ function vParabola(p){
 }
 
 function vMas(){
-  const seg=[["foro","Foro"],["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["personajes","Nuestros personajes"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
-  let out=guia("maria","El amor también se demuestra. Aquí están los avisos, nuestro compromiso, los personajes y a quién escribir.")+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
+  const seg=[["personajes","Personajes"],["foro","Foro"],["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
+  let out=(ui.mas==="personajes"?"":guia("maria","El amor también se demuestra. Aquí están los avisos, nuestro compromiso, los personajes y a quién escribir."))+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
   if(ui.mas==="foro"){out+=window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`;}
   else if(ui.mas==="familia"){out+=vFamilia();}
   else if(ui.mas==="compromiso"){
@@ -708,15 +895,7 @@ function vMas(){
       ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editCompromiso" data-id="${esc(c.id)}">Editar carta</button>`:""}</article>`;
     });
   }else if(ui.mas==="personajes"){
-    if(ui.personaje&&PERS[ui.personaje]){const k=ui.personaje,p=PERS[k];
-      out+=`<button class="back" data-act="verPersonaje" data-id="">‹ Todos los personajes</button><div style="--pc:var(--p-${k});display:flex;flex-direction:column;gap:14px">
-      <img class="poster" src="img/${k}-poster.jpg" alt="Afiche de ${esc(p.nombre)}, ${esc(p.titulo)}" width="720" height="1080">
-      <section class="card"><p class="eyebrow">Acompaña la sección: ${esc(p.area)}</p><h2 style="font-size:1.7rem;color:var(--pc)">${esc(p.nombre)}</h2><p><b>${esc(p.titulo)}</b></p><p class="muted">“${esc(p.frase)}”</p></section>
-      <div class="traits">${p.rasgos.map(r=>`<div class="trait"><b>${esc(r[0])}</b><span class="small">${esc(r[1])}</span></div>`).join("")}</div></div>`;
-    }else{
-      out+=`<div class="sec-h"><h2>Nuestros personajes</h2></div><p class="muted small">Cada personaje acompaña una sección de la app. Toca uno para ver su afiche.</p>
-      <div class="chars">${ORDEN_PERS.map(k=>{const p=PERS[k];return `<button class="char" style="--pc:var(--p-${k})" data-act="verPersonaje" data-id="${k}"><img src="img/${k}.jpg" alt="" width="96" height="96"><b>${esc(p.nombre)}</b><span>${esc(p.titulo)}</span><span class="pill">${esc(p.area.split(":")[0])}</span></button>`;}).join("")}</div>`;
-    }
+    out+=vPersonajes();
   }else if(ui.mas==="muro"){
     out+=`<div class="sec-h"><h2>Muro de la clase</h2>${ed()?`<button class="btn sm" data-act="nuevoPost">Publicar</button>`:""}</div><p class="muted small">Avisos, fotos de actividades descritas y mensajes del equipo. Solo los maestros publican, así el muro es un espacio cuidado para los niños.</p>`;
     const ps=[...S.muro].sort((a,b)=>((b.destacado==="si")-(a.destacado==="si"))||((a.fecha||"")<(b.fecha||"")?1:-1));
@@ -1094,7 +1273,7 @@ function revisarInsignias(nombres){nombres=nombres||[BIB.actual];const nuevas=[]
 function celebrar(lista){const b=lista[0];const p=PERS[b.p];const cols=["var(--sun)","var(--p-sara)","var(--accent)","var(--leaf)","var(--p-santiago)"];
   const conf=Array.from({length:28},(_,i)=>`<i style="left:${(i*37)%100}%;background:${cols[i%cols.length]};animation-delay:${(i%7)*0.12}s"></i>`).join("");
   $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet celebra" style="--pc:var(--p-${b.p})"><div class="confeti">${conf}</div>
-  <p class="eyebrow">¡Nueva insignia${lista.length>1?" (+"+(lista.length-1)+" más)":""}!</p><img src="img/${b.p}.jpg" alt="${esc(p.nombre)}" width="140" height="140"><h2>${esc(b.n)}</h2><p>${esc(b.d)}. ¡Muy bien, ${esc(b.quien||BIB.actual)}!</p><p class="muted">${esc(p.nombre)} dice: “${esc(p.frase)}”</p>
+  <p class="eyebrow">¡Nueva insignia${lista.length>1?" (+"+(lista.length-1)+" más)":""}!</p><img class="cel-fig" src="img/${b.p}-full.webp" alt="${esc(p.nombre)}"><h2>${esc(b.n)}</h2><p>${esc(b.d)}. ¡Muy bien, ${esc(b.quien||BIB.actual)}!</p><p class="muted">${esc(p.nombre)} dice: “${esc(p.frase)}”</p>
   <button class="btn" id="celOk">¡Genial!</button></div></div>`;
   const close=()=>{$("#sheetRoot").innerHTML="";if(lista.length>1)celebrar(lista.slice(1));};
   $("#celOk").onclick=close;$("#celOk").focus();}
@@ -1103,7 +1282,7 @@ function vInsignias(){
   const ok=INSIGNIAS.filter(b=>L.insignias[b.id]).length;
   out+=`<div class="sec-h"><h2>Insignias de ${esc(BIB.actual)}</h2><span class="pill sun">${ok} de ${INSIGNIAS.length}</span></div>
   <div class="badges">${INSIGNIAS.map(b=>{const on=!!L.insignias[b.id];const v=Math.min(b.v(L),b.meta);
-    return `<div class="badge ${on?"on":"off"}" style="--pc:var(--p-${b.p})"><span class="medal"><img src="img/${b.p}.jpg" alt="" width="86" height="86">${on?`<span class="star">${I.starFill}</span>`:""}</span><b>${esc(b.n)}</b><span class="muted small">${esc(b.d)}</span>${on?`<span class="pill sun">Ganada ${esc(fCorta(L.insignias[b.id]).dia+" "+fCorta(L.insignias[b.id]).mes)}</span>`:`<span class="bar"><i style="width:${v/b.meta*100}%"></i></span><span class="muted small">${v} de ${b.meta}</span>`}</div>`;}).join("")}</div>
+    return `<div class="badge ${on?"on":"off"}" style="--pc:var(--p-${b.p})"><span class="medal"><img src="img/${b.p}-full.webp" alt="" loading="lazy">${on?`<span class="star">${I.starFill}</span>`:""}</span><b>${esc(b.n)}</b><span class="muted small">${esc(b.d)}</span>${on?`<span class="pill sun">Ganada ${esc(fCorta(L.insignias[b.id]).dia+" "+fCorta(L.insignias[b.id]).mes)}</span>`:`<span class="bar"><i style="width:${v/b.meta*100}%"></i></span><span class="muted small">${v} de ${b.meta}</span>`}</div>`;}).join("")}</div>
   <p class="muted small">Las insignias se guardan en este dispositivo. ¡Muéstraselas a tu maestro el domingo!</p>`;
   return out;
 }
@@ -1225,7 +1404,8 @@ document.addEventListener("click",async e=>{
     case "verNino":ui.tab="puntos";ui.nino=id;render();window.scrollTo(0,0);break;
     case "verParabola":{const L=lector();if(L&&id&&!L.museo[id]){L.museo[id]=hoyISO();bibSave();setTimeout(revisarInsignias,300);}}ui.tab="biblia";ui.bib="museo";ui.parabola=id;render();window.scrollTo(0,0);break;
     case "mas":ui.mas=b.dataset.k;ui.personaje=null;render();break;
-    case "verPersonaje":ui.tab="mas";ui.mas="personajes";ui.personaje=id||null;render();window.scrollTo(0,0);break;
+    case "verPersonaje":callar();ui.tab="mas";ui.mas="personajes";ui.personaje=id||null;render();window.scrollTo(0,0);break;
+    case "oirHistoria":oirHistoria(id);break;
     case "nuevoCompromiso":formCompromiso(null);break;
     case "editCompromiso":formCompromiso(find("compromisos"));break;
     case "nuevaClase":formClase(null);break;

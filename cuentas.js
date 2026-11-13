@@ -173,7 +173,7 @@
 
   function marco(contenido) {
     root().hidden = false;
-    root().innerHTML = `<div class="ac-wrap"><div class="ac-head"><img src="img/logo.jpg" alt="Eterno Pacto Kids" width="120" height="71"><div class="ac-pers">${["sara", "simon", "santiago", "maria", "mateo"].map((k) => `<img src="img/${k}.jpg" alt="" width="52" height="52">`).join("")}</div></div><div class="ac-card">${contenido}</div>
+    root().innerHTML = `<div class="ac-wrap"><div class="ac-head"><img class="ac-logo" src="img/logo-kids.webp" alt="Eterno Pacto Kids" width="120" height="145"><img class="ac-grupo" src="img/grupo-sm.webp" alt="Santiago, Mateo, Sara, María y el gatito Simón" width="768" height="512"></div><div class="ac-card">${contenido}</div>
     <p class="ac-legal"><a href="privacidad.html">Privacidad</a> · <a href="terminos.html">Términos</a></p></div>`;
   }
   const msg = (t, ok) => { const el = $("#acMsg"); if (el) { el.textContent = t || ""; el.className = "ac-msg" + (ok ? " ok" : ""); el.hidden = !t; } };
