@@ -1,12 +1,12 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/app", "destination": "/index.html" },
-    { "source": "/", "has": [{ "type": "query", "key": "c" }], "destination": "/index.html" },
-    { "source": "/", "has": [{ "type": "query", "key": "com" }], "destination": "/index.html" },
-    { "source": "/", "has": [{ "type": "query", "key": "asis" }], "destination": "/index.html" },
-    { "source": "/", "has": [{ "type": "host", "value": "eternopactokids.cl" }], "destination": "/inicio.html" },
-    { "source": "/", "has": [{ "type": "host", "value": "www.eternopactokids.cl" }], "destination": "/inicio.html" }
+    { "source": "/app", "destination": "/" },
+    { "source": "/", "has": [{ "type": "query", "key": "c" }], "destination": "/" },
+    { "source": "/", "has": [{ "type": "query", "key": "com" }], "destination": "/" },
+    { "source": "/", "has": [{ "type": "query", "key": "asis" }], "destination": "/" },
+    { "source": "/", "has": [{ "type": "host", "value": "eternopactokids.cl" }], "destination": "/inicio" },
+    { "source": "/", "has": [{ "type": "host", "value": "www.eternopactokids.cl" }], "destination": "/inicio" }
   ],
   "headers": [
     { "source": "/bib/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }] },
