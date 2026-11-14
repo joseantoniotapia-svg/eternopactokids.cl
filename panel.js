@@ -502,9 +502,11 @@
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; render(); return; }
       if (act0(b) === "nuevaMaestra") {
-        const ms = docsDe(CENTRAL, "maestras"); const n = Math.max(0, ...ms.map((m) => Number(m.data.numero) || 0)) + 1; const id = "clase-" + String(n).padStart(3, "0");
+        const ms = docsDe(CENTRAL, "maestras"); const n = Math.max(0, ...ms.map((m) => Number(m.data.numero) || 0)) + 1; const usados = new Set(ms.map((m) => m.id)); let id = "clase-" + String(n).padStart(3, "0"); for (let k = 2; usados.has(id); k++) id = "clase-" + String(n).padStart(3, "0") + "-" + k;
         const data = { numero: n, titulo: "Nueva clase", archivos: [], plan: "gratis" };
-        const { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); if (error) throw error;
+        let { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() });
+        if (error && error.code === "23505") { id = "clase-" + String(n).padStart(3, "0") + "-" + Date.now().toString(36); ({ error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() })); }
+        if (error) throw error;
         D.docs.push({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); ui.maestra = id; render(); return;
       }
       if (act0(b) === "editMaestra") { ui.maestra = b.dataset.id; ui.subida = null; render(); window.scrollTo(0, 0); return; }
