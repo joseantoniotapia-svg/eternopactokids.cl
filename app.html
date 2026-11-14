@@ -196,6 +196,27 @@ button.item:hover{border-color:var(--accent)}
 .mh-ini{background:var(--surface);border:var(--bd,1px solid var(--line));box-shadow:var(--sh,none);border-radius:20px 8px 22px 14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .mh-mini{display:flex;align-items:center;gap:8px;border:2px solid var(--edge,var(--line));border-radius:16px 6px 16px 12px;background:var(--bg);padding:6px 12px 6px 6px;text-align:left}.mh-mini>span{display:flex;flex-direction:column}
 .code-nino{font-family:var(--display);letter-spacing:.12em;background:var(--sun-soft);padding:1px 8px;border-radius:8px}
+.diario{position:relative;border:var(--bd,2px solid var(--line));box-shadow:var(--sh,none);border-radius:26px 12px 28px 16px;padding:14px 12px 18px;
+  background-color:#C9925A;background-image:radial-gradient(rgba(90,50,15,.28) 1px,transparent 1.6px),radial-gradient(rgba(255,235,200,.22) 1px,transparent 1.6px);background-size:9px 9px,13px 13px;background-position:0 0,4px 6px}
+.diario::before{content:"";position:absolute;inset:6px;border:5px solid #8A5A2B;border-radius:20px 8px 22px 12px;pointer-events:none;opacity:.55}
+.dm-cab{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 4px 10px}
+.dm-cab h2{background:#fff;color:#1E1548;padding:4px 14px;border:2.5px solid var(--edge,#2A1E5C);border-radius:12px 4px 12px 12px;transform:rotate(-2deg);font-size:1.35rem;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.dm-link{background:rgba(255,255,255,.85);border:2px solid var(--edge,#2A1E5C);border-radius:999px;padding:4px 12px;font-weight:700;color:#1E1548;font-size:.85rem}
+.dm-tablero{position:relative;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px 14px;padding:4px;align-items:start}
+.dm-nota{position:relative;background:var(--nc,#fff);color:#1E1548;border:2px solid rgba(42,30,92,.85);border-radius:4px 4px 10px 4px;padding:18px 14px 12px;box-shadow:4px 6px 0 rgba(0,0,0,.25);display:flex;flex-direction:column;gap:8px;text-align:left}
+.dm-nota:nth-child(4n+1){transform:rotate(-1.6deg)}.dm-nota:nth-child(4n+2){transform:rotate(1.2deg)}.dm-nota:nth-child(4n+3){transform:rotate(-.7deg)}.dm-nota:nth-child(4n){transform:rotate(1.8deg)}
+.dm-chinche{position:absolute;top:-9px;left:50%;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff 0 18%,var(--pin,#F0306B) 22% 100%);border:2px solid rgba(0,0,0,.35);box-shadow:1px 3px 2px rgba(0,0,0,.35)}
+.dm-clase{--nc:#fff}.dm-clase.proxima{--pin:#1E7BFF}.dm-clase.pasada{--nc:#FFF7EA;--pin:#14A05A}
+.dm-eti{font-family:var(--display);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#5F3BCB}
+.dm-cl{display:flex;gap:10px;align-items:flex-start}.dm-cl img{width:66px;height:99px;object-fit:cover;flex:none;border-radius:6px;border:2px solid rgba(42,30,92,.7)}
+.dm-sinimg{width:60px;height:60px;flex:none;display:grid;place-items:center;font-size:1.8rem;background:#FFE45C;border-radius:10px;border:2px solid rgba(42,30,92,.7)}
+.dm-cl h3{font-size:1.15rem;line-height:1.15}.dm-cita{font-weight:700;font-size:.85rem;color:#5F3BCB}
+.dm-nota .btn{align-self:flex-start}
+.dm-verso{--nc:#FFE45C;--pin:#7A4DFF}.dm-verso blockquote{margin:0;font-family:var(--display);font-weight:500;font-size:1.2rem;line-height:1.35}.dm-verso cite{font-style:normal;font-weight:700}
+.dm-tarea{--nc:#C9F2D8;--pin:#FF7A1A}
+.dm-aviso{--pin:#FF7A1A}.dm-firma{font-size:.8rem;font-weight:700;opacity:.8}
+.dm-nuevo{--nc:rgba(255,255,255,.55);border-style:dashed;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:110px;font:inherit}.dm-nuevo>span:first-child{font-size:1.8rem}
+@media (prefers-reduced-motion:reduce){.dm-nota{transform:none!important}}
 .pill.lock{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
 .res.bloq{opacity:.72}
 .pill.leaf{background:var(--leaf-soft);color:var(--leaf)}
@@ -802,8 +823,10 @@ function formParabola(p){
     onDelete:p?async()=>{await borrar("parabolas",p.id);ui.parabola=null;}:null});
 }
 function formPost(p){
-  openForm({titulo:p?"Editar publicación":"Publicar en el muro",ayuda:"Lo publicado aquí lo ven todas las familias.",datos:p||{autor:"Equipo de maestros",destacado:"no"},
-    campos:[{k:"texto",label:"Mensaje",type:"textarea",req:true},{k:"autor",label:"Firma",ph:"Tía Carmen"},{k:"destacado",label:"Destacar",type:"select",opts:[["no","No"],["si","Sí, mostrar arriba"]]}],
+  openForm({titulo:p?"Editar publicación":"Publicar en el muro",ayuda:"Lo publicado aquí lo ven todas las familias.",datos:p||{autor:"Equipo de maestros",destacado:"si",color:"amarillo"},
+    campos:[{k:"texto",label:"Mensaje",type:"textarea",req:true},{k:"autor",label:"Firma",ph:"Tía Carmen"},{k:"destacado",label:"¿Mostrar en el Diario mural del Inicio?",type:"select",opts:[["si","Sí, clavarlo en el Diario mural"],["no","No, solo en el Muro"]]},
+      {k:"color",label:"Color de la nota",type:"select",opts:[["amarillo","Amarillo"],["rosado","Rosado"],["celeste","Celeste"],["verde","Verde"],["lila","Lila"]]},
+      {k:"hasta",label:"Quitar del Diario mural después del (opcional)",type:"date",hint:"Útil para avisos con fecha, como un paseo o un ensayo."}],
     onSave:async v=>{await guardar("muro",p&&p.id,{...(p||{}),...v,fecha:(p&&p.fecha)||new Date().toISOString()});},
     onDelete:p?async()=>borrar("muro",p.id):null});
 }
@@ -836,18 +859,35 @@ function formConfig(){
 /* ---------- vistas ---------- */
 function emptyBox(t,msg,btn){return `<section class="empty"><h3>${esc(t)}</h3><p class="muted">${esc(msg)}</p>${btn||""}</section>`;}
 
+/* ---------- diario mural ---------- */
+const corto=(t,n)=>{t=String(t||"").replace(/\s+/g," ").trim();if(t.length<=n)return t;const p=t.slice(0,n);const f=Math.max(p.lastIndexOf(". "),p.lastIndexOf("! "),p.lastIndexOf("? "));return (f>n*.5?p.slice(0,f+1):p.slice(0,p.lastIndexOf(" "))+"…");};
+function clasesMural(){const h=hoyISO();const vis=S.clases.filter(c=>c.fecha&&(ed()||!claseOculta(c)));
+  const pasada=vis.filter(c=>c.fecha<h).sort((a,b)=>a.fecha<b.fecha?1:-1)[0]||null;
+  const proxima=vis.filter(c=>c.fecha>=h).sort((a,b)=>a.fecha<b.fecha?-1:1)[0]||null;return {pasada,proxima};}
+function notaClase(c,eti,cls){if(!c)return "";const img=c.portadaMini||c.portada;const hoy=c.fecha===hoyISO();
+  return `<article class="dm-nota dm-clase ${cls}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p>
+    <div class="dm-cl">${img?`<img src="${esc(srcDe(img))}" alt="" loading="lazy" width="78" height="117">`:`<span class="dm-sinimg" aria-hidden="true">📖</span>`}<div><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}<p class="small">${esc(corto(c.subtitulo||c.resumen,110))}</p></div></div>
+    ${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">${cls==="pasada"?"Repasar la clase":"Ver la clase"}</button></article>`;}
+function vDiarioMural(){const {pasada,proxima}=clasesMural();const h=hoyISO();
+  const vcl=proxima&&proxima.versiculo?proxima:(pasada&&pasada.versiculo?pasada:null);
+  const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,4);
+  if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed())return "";
+  const COL={amarillo:"#FFE45C",rosado:"#FFC2D9",celeste:"#BFE6FF",verde:"#C9F2D8",lila:"#E2D6FF"};
+  let notas=notaClase(proxima,proxima&&proxima.fecha===h?"Hoy":"Este domingo","proxima")+notaClase(pasada,"El domingo pasado","pasada");
+  if(vcl)notas+=`<article class="dm-nota dm-verso"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Versículo para memorizar</p><blockquote>“${esc(vcl.versiculo)}”</blockquote>${vcl.versiculoCita?`<cite>${esc(vcl.versiculoCita)}</cite>`:""}<button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(vcl.id)}">🎮 Practicar</button></article>`;
+  if(proxima&&proxima.tarea)notas+=`<article class="dm-nota dm-tarea"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Tarea para la casa</p><p class="small">${esc(corto(proxima.tarea,160))}</p></article>`;
+  notas+=avisos.map((p,i)=>`<article class="dm-nota dm-aviso" style="--nc:${COL[p.color]||COL[["rosado","celeste","verde","lila"][i%4]]}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(p.texto,220))}</p><p class="dm-firma">${esc(p.autor||"")}${p.hasta?` · hasta el ${esc(fCorta(p.hasta).dia)} ${esc(fCorta(p.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</article>`).join("");
+  if(ed())notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
+  return `<section class="diario" aria-label="Diario mural"><div class="dm-cab"><h2>📌 Diario mural</h2>${S.muro.length?`<button class="dm-link" data-act="verMuro">Ver todo el muro ›</button>`:""}</div><div class="dm-tablero">${notas}</div></section>`;}
+
 function vInicio(){
-  const c=claseActual();let out=vCheckin()+(window.EPKX&&ed()?EPKX.avisoPermiso():"")+avisoClase()+pandilla()+tarjetaHijosInicio()+vCumples()+guia("sara","¡Hola! Jesús ama a los niños. Mira lo que aprenderemos este domingo y el versículo de la semana.");
-  if(!c){
-    out+=emptyBox("Aún no hay clases publicadas",ed()?"Agrega la lección del próximo domingo con su versículo, material y tarea. Las familias la verán aquí.":"Los maestros publicarán aquí la lección del domingo, el versículo y la tarea.",ed()?`<button class="btn" data-act="nuevaClase">Agregar la primera clase</button>`:"");
+  const c=claseActual();let out=vCheckin()+(window.EPKX&&ed()?EPKX.avisoPermiso():"")+avisoClase()+pandilla()+tarjetaHijosInicio()+vCumples()+guia("sara","¡Hola! Jesús ama a los niños. Mira el Diario mural: la clase de este domingo, la del domingo pasado, el versículo y los avisos.");
+  const dm=vDiarioMural();
+  if(!c&&!ed()&&!dm){
+    out+=emptyBox("Aún no hay clases publicadas","Los maestros publicarán aquí la lección del domingo, el versículo y la tarea.","");
   }else{
-    const prox=(c.fecha||"")>=hoyISO();
-    out+=`<section class="hero">${I.sprout}${c.portadaMini||c.portada?`<img class="hero-portada" src="${esc(srcDe(c.portadaMini||c.portada))}" alt="" loading="lazy">`:""}<p class="eyebrow">${prox?"Próxima clase":"Última clase"} · ${esc(fLarga(c.fecha))}</p><h1>${esc(c.titulo)}</h1>${c.cita?`<p class="cita">${esc(c.cita)}</p>`:""}${c.resumen?`<p>${esc(c.resumen)}</p>`:""}<button class="btn" data-act="verClase" data-id="${esc(c.id)}">Ver la clase completa</button></section>`;
-    if(c.versiculo)out+=`<section class="verse"><p class="eyebrow">Versículo para memorizar</p><blockquote>${esc(c.versiculo)}</blockquote>${c.versiculoCita?`<cite>${esc(c.versiculoCita)}</cite>`:""}<div class="row"><button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(c.id)}">🎮 Practicar el versículo</button>${c.versiculoCita?`<button class="link-btn small" style="color:#5A3600" data-act="leerRef" data-ref="${esc(c.versiculoCita)}">Leerlo en la Biblia ›</button>`:""}</div></section>`;
-    const extras=[];
-    if(c.tarea)extras.push(`<div class="card"><p class="eyebrow">Tarea para la casa</p><p>${esc(c.tarea)}</p></div>`);
-    if(c.consideraciones)extras.push(`<div class="card"><p class="eyebrow">Consideraciones</p><p>${esc(c.consideraciones)}</p></div>`);
-    if(extras.length)out+=`<div class="grid2">${extras.join("")}</div>`;
+    out+=dm;
+    if(!c&&ed())out+=emptyBox("Aún no hay clases publicadas","Agrega la lección del próximo domingo o usa una de la Biblioteca de clases. Las familias la verán en el Diario mural.",`<div class="row"><button class="btn" data-act="nuevaClase">Agregar clase</button><button class="btn line" data-act="irBiblioClases">Biblioteca de clases</button></div>`);
   }
   out+=tiraPersonajes();
   const r=ranking().slice(0,3);
@@ -856,8 +896,6 @@ function vInicio(){
     :`<p class="muted">${ed()?"Agrega a los niños en la pestaña Puntos para empezar a contar estrellas.":"Pronto verás aquí a los niños con más estrellas."}</p>`;
   out+=`</section>`;
   {const L=lector();out+=`<section class="card" style="--pc:var(--p-simon)"><div class="sec-h"><h2>Lee y gana insignias</h2><button class="link-btn" data-act="irInsignias">Ver insignias</button></div><p class="muted">${L?`${esc(BIB.actual)} tiene ${nK(L.insignias)} de ${INSIGNIAS.length} insignias y ha leído ${nK(L.cuentos)} cuentos.`:"Lee cuentos, historias de la Biblia y actividades para ganar insignias con Sara, Simón, Santiago, María y Mateo."}</p><div class="row"><button class="btn sm" data-act="tab" data-tab="recursos">Leer un cuento</button><button class="btn line sm" data-act="irBiblia">Leer la Biblia</button></div></section>`;}
-  const dest=S.muro.filter(p=>p.destacado==="si").sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1)[0];
-  if(dest)out+=`<article class="post dest"><p class="eyebrow">Aviso del muro</p><p>${esc(dest.texto)}</p><p class="muted small">${esc(dest.autor||"")}</p></article>`;
   return out;
 }
 
@@ -1720,6 +1758,8 @@ document.addEventListener("click",async e=>{
       onSave:async v=>{try{unirFamilia(v.c);}catch(e){throw "Ese código no es válido. Cópialo de nuevo completo.";}render();}});break;
     case "leerCuento":{const c=S.cuentos.find(x=>x.id===id);if(c)abrirLector({titulo:"Cuento "+(c.numero??"")+": "+(c.titulo||""),asset:c.asset,archivo:c.archivo||"x.pdf",onDone:()=>{terminar("cuentos",c.id);if(preguntasDe(c).length)setTimeout(()=>iniciarQuiz(c.id),400);}});break;}
     case "jugarVerso":iniciarJuego(id);break;
+    case "verMuro":ui.tab="mas";ui.mas="muro";render();window.scrollTo(0,0);break;
+    case "irBiblioClases":ui.tab="clases";ui.claseSeg="biblioteca";ui.clase=null;render();window.scrollTo(0,0);break;
     case "criterios":formCriterios();break;
     case "reprogramar":{const c=S.clases.find(x=>x.id===id);if(c)formReprogramar(c);break;}
     case "verMisHijos":ui.tab="puntos";ui.pts="hijos";render();window.scrollTo(0,0);break;
