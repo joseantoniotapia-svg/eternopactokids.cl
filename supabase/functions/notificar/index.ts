@@ -155,6 +155,15 @@ Deno.serve(async () => {
         r.push += await enviarPush([m.autor_id], { titulo: "¡Mensaje publicado!", texto: `Ya se ve el mensaje de ${m.como || "tu hijo"} en ${foro.nombre}`, url, tag: "aprob-" + m.id }); r.aprobados++;
       }
     }
+    // 3b. Fotos del domingo: un aviso por álbum, 20 minutos después de la última foto subida
+    const { data: albums } = await sb.from("docs").select("comunidad_id,id,data").eq("col", "fotos")
+      .gte("data->>subido", new Date(Date.now() - 2 * 864e5).toISOString()).lte("data->>subido", new Date(Date.now() - 20 * 60e3).toISOString()).limit(200);
+    for (const al of albums || []) {
+      const d = al.data || {}; const n = (d.fotos || []).length;
+      if (!n || !(await nuevo("fotos", al.comunidad_id + "/" + al.id))) continue;
+      r.push += await enviarPush(await miembros(al.comunidad_id), { titulo: "📸 Ya están las fotos del domingo", texto: `${n} foto${n === 1 ? "" : "s"} de ${d.titulo || "la clase"}`, url: `${APP}/?com=${al.comunidad_id}#inicio`, tag: "fotos-" + al.id });
+      r.fotos = (r.fotos || 0) + 1;
+    }
     // 4. Recordatorio del sábado (desde las 10:00) para las congregaciones con clase el domingo
     if (sabado && hora >= 10) {
       const manana = sumarDias(fecha, 1);

@@ -160,8 +160,37 @@
         if (error) console.warn("familia", error.message);
       }, 1200);
     },
-    abrirMenu: () => abrirMenu()
+    abrirMenu: () => abrirMenu(),
+    fotos: crearFotos()
   };
+
+  /* ---------- fotos de la semana: carpeta PRIVADA con enlaces que caducan ---------- */
+  function crearFotos() {
+    const B = "fotos", URLS = {}, VENCE = 50 * 60 * 1000;
+    const nuevoNombre = () => CTX.comunidad.id + "/" + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2)) + ".jpg";
+    return {
+      async subir(blob) {
+        if (!CTX.comunidad || !equipo()) throw { code: "not_granted" };
+        const p = nuevoNombre();
+        const { error } = await sb.storage.from(B).upload(p, blob, { contentType: "image/jpeg", upsert: false, cacheControl: "3600" });
+        if (error) { const m = String(error.message || ""); throw { code: /row-level|unauthorized|403/i.test(m) ? "not_granted" : /size|large/i.test(m) ? "too_large" : "store_unavailable", message: m }; }
+        return p;
+      },
+      // enlaces firmados (1 hora), con caché de 50 minutos
+      async urls(paths) {
+        const ahora = Date.now(), faltan = [...new Set(paths)].filter((p) => p && !(URLS[p] && URLS[p].t > ahora));
+        for (let i = 0; i < faltan.length; i += 100) {
+          const { data, error } = await sb.storage.from(B).createSignedUrls(faltan.slice(i, i + 100), 3600);
+          if (error) throw error;
+          (data || []).forEach((x) => { if (x.signedUrl) URLS[x.path] = { u: x.signedUrl, t: ahora + VENCE }; });
+        }
+        return Object.fromEntries(paths.map((p) => [p, URLS[p] ? URLS[p].u : null]));
+      },
+      url: (p) => (URLS[p] && URLS[p].t > Date.now() ? URLS[p].u : null),
+      async borrar(paths) { if (!paths.length) return; const { error } = await sb.storage.from(B).remove(paths); if (error) throw error; paths.forEach((p) => delete URLS[p]); },
+      async autorizar(nino, si) { const { data, error } = await sb.rpc("autorizar_fotos", { p_comunidad: CTX.comunidad.id, p_nino: nino, p_si: !!si }); if (error) throw error; return data; }
+    };
+  }
 
   /* runtime con la misma forma que la versión anterior de la app */
   window.claude = {

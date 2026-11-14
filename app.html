@@ -217,6 +217,36 @@ button.item:hover{border-color:var(--accent)}
 .dm-aviso{--pin:#FF7A1A}.dm-firma{font-size:.8rem;font-weight:700;opacity:.8}
 .dm-nuevo{--nc:rgba(255,255,255,.55);border-style:dashed;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:110px;font:inherit}.dm-nuevo>span:first-child{font-size:1.8rem}
 @media (prefers-reduced-motion:reduce){.dm-nota{transform:none!important}}
+/* fotos de la semana */
+.dm-fotos{--nc:#fff;--pin:#F0306B;padding-bottom:14px}
+@media (min-width:560px){.dm-fotos{grid-column:span 2}}
+.dm-tira{display:flex;gap:8px;align-items:center;padding:2px 2px 4px}
+.fx{padding:0;border:0;background:none;cursor:zoom-in;display:block}
+.fx img{display:block;width:100%;height:100%;object-fit:cover;background:var(--sunk,#FFEBD0)}
+.dm-polaroid{width:calc(25% - 6px);min-width:0;flex:none;aspect-ratio:1;background:#fff;padding:4px 4px 12px;border:1.5px solid rgba(42,30,92,.35);box-shadow:2px 3px 0 rgba(0,0,0,.18)}
+.dm-polaroid:nth-child(odd){transform:rotate(-3deg)}.dm-polaroid:nth-child(even){transform:rotate(2.5deg)}
+.dm-polaroid img{background:#F1E4D0}
+.dm-masf{position:relative}.dm-mas{position:absolute;inset:4px 4px 12px;display:grid;place-items:center;background:rgba(30,21,72,.62);color:#fff;font-family:var(--display);font-weight:700;font-size:1.3rem}
+.dm-subirf{--nc:rgba(255,236,245,.7);min-height:96px}
+.fotos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:6px}
+.fotos-grid .fx{aspect-ratio:1;border-radius:12px;overflow:hidden;border:2px solid var(--line)}
+.fotos-it{position:relative}
+.fotos-x{position:absolute;top:4px;right:4px;min-width:28px;height:28px;padding:0 8px;border-radius:999px;border:0;background:rgba(20,12,50,.72);color:#fff;font-weight:700;font-size:.8rem}
+.fotos-x.sure{background:#E5254B}
+.fotos-subir{position:relative;margin-top:10px;align-self:flex-start;overflow:hidden}
+.fotos-subir input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
+.fotos-no{background:#FFE1E8;color:#7A0C2B;border-radius:12px;padding:8px 10px;font-size:.9rem}
+.mh-fotos{display:flex;flex-direction:column;gap:6px;background:var(--sunk);border-radius:14px;padding:10px 12px}
+.visor{position:fixed;inset:0;z-index:90;background:rgba(10,6,28,.94);display:flex;flex-direction:column;color:#fff}
+.visor-top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 14px 8px}
+.visor-top button{width:42px;height:42px;border-radius:50%;border:2px solid rgba(255,255,255,.6);background:rgba(255,255,255,.12);color:#fff;font-size:1.1rem}
+.visor-marco{flex:1;min-height:0;display:grid;place-items:center;padding:6px 10px}
+.visor-marco img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:10px;background:#221a45;min-width:120px;min-height:120px}
+.visor-nav{position:absolute;top:50%;margin-top:-26px;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,.6);background:rgba(255,255,255,.14);color:#fff;font-size:2rem;line-height:1}
+.visor-nav.ant{left:10px}.visor-nav.sig{right:10px}
+.visor-pie{text-align:center;font-size:.8rem;opacity:.75;padding:6px 14px max(12px,env(safe-area-inset-bottom))}
+.f-err{opacity:.3}
+@media (prefers-reduced-motion:reduce){.dm-polaroid{transform:none!important}}
 .pill.lock{background:var(--sunk);color:var(--muted);border:1px dashed var(--line)}
 .res.bloq{opacity:.72}
 .pill.leaf{background:var(--leaf-soft);color:var(--leaf)}
@@ -588,9 +618,9 @@ function criterios(){const c=S.config&&Array.isArray(S.config.criterios)?S.confi
   return base.concat(c?c.filter(y=>y&&y.k&&!CRIT_DEF.some(d=>d.k===y.k)):[]).map(x=>({...x,on:x.on!==false,p:Number(x.p)||0,ico:x.ico||"⭐"}));}
 const MARCASf=()=>criterios().filter(c=>c.on).map(c=>[c.k,c.n,c.ico]);
 const PTS=new Proxy({},{get:(_,k)=>{const c=criterios().find(x=>x.k===k);return c?c.p:0;}});
-const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos"];
+const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos","fotos"];
 const COLS_EQUIPO=["matprofes","libro","maestras"];
-const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},biblicos:[],config:{}};
+const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},biblicos:[],fotos:[],config:{}};
 const loaded={};
 const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
@@ -798,8 +828,9 @@ async function formNino(n){
   openForm({titulo:n?"Editar niño o niña":"Agregar niño o niña",
     ayuda:"Guarda solo lo necesario: nombre y apoderado. Evita apellidos completos, direcciones o datos de salud.",
     datos:{...(n||{}),cumpleF:n&&/^\d{2}-\d{2}$/.test(n.cumple||"")?"2016-"+n.cumple:""},campos:[{k:"nombre",label:"Nombre",req:true,ph:"Sofía M."},{k:"apoderado",label:"Apoderado/a",ph:"Nombre de la mamá, papá o tutor"},{k:"cumpleF",label:"Cumpleaños (opcional)",type:"date",hint:"Solo se guarda el día y el mes, para saludarlo en su semana."},
-      {k:"familia_uid",label:"Familia en la app",type:"select",opts:famOpts,hint:"La familia también puede vincularlo con el código del niño (lo ves en su ficha)."}],
-    onSave:async v=>{v.cumple=v.cumpleF?String(v.cumpleF).slice(5,10):"";delete v.cumpleF;const base={...(n||{})};if(v.familia_uid===""){delete v.familia_uid;delete base.familia_uid;}
+      {k:"familia_uid",label:"Familia en la app",type:"select",opts:famOpts,hint:"La familia también puede vincularlo con el código del niño (lo ves en su ficha)."},
+      {k:"fotos",label:"¿Su familia autoriza fotos en la clase?",type:"select",opts:[["","Sin respuesta todavía"],["si","Sí, autoriza"],["no","No autoriza"]],hint:"La familia también puede responder desde Mis hijos en la app."}],
+    onSave:async v=>{v.cumple=v.cumpleF?String(v.cumpleF).slice(5,10):"";delete v.cumpleF;const base={...(n||{})};if(v.fotos!==(n&&n.fotos||""))v.fotos_fecha=hoyISO();if(!v.fotos){delete v.fotos;delete base.fotos;}if(v.familia_uid===""){delete v.familia_uid;delete base.familia_uid;}
       const id=await guardar("ninos",n&&n.id,{...base,...v,codigo:(n&&n.codigo)||codigoNino(),alta:(n&&n.alta)||hoyISO()});if(n)ui.nino=id;},
     onDelete:n?async()=>{await borrar("ninos",n.id);ui.nino=null;}:null});
 }
@@ -852,7 +883,7 @@ function formCompromiso(c){
     onDelete:c?async()=>borrar("compromisos",c.id):null});
 }
 function formConfig(){
-  openForm({titulo:"Datos de la congregación",datos:S.config,campos:[{k:"iglesia",label:"Nombre de la congregación",ph:"Iglesia …"},{k:"horario",label:"Horario de la escuela dominical",ph:"Domingos 11:00"}],
+  openForm({titulo:"Datos de la congregación",datos:{fotosMeses:"6",...S.config},campos:[{k:"iglesia",label:"Nombre de la congregación",ph:"Iglesia …"},{k:"horario",label:"Horario de la escuela dominical",ph:"Domingos 11:00"},{k:"fotosMeses",label:"Guardar las fotos de la semana por",type:"select",opts:[["3","3 meses"],["6","6 meses"],["12","1 año"]],hint:"Después se borran solas, para cuidar a los niños y el espacio."}],
     onSave:async v=>{const ref=db.doc("config/general");await enqueue(ref.path,()=>ref.set({...S.config,...v}));}});
 }
 
@@ -871,14 +902,87 @@ function notaClase(c,eti,cls){if(!c)return "";const img=c.portadaMini||c.portada
 function vDiarioMural(){const {pasada,proxima}=clasesMural();const h=hoyISO();
   const vcl=proxima&&proxima.versiculo?proxima:(pasada&&pasada.versiculo?pasada:null);
   const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,4);
-  if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed())return "";
+  if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed()&&!notaFotos(pasada))return "";
   const COL={amarillo:"#FFE45C",rosado:"#FFC2D9",celeste:"#BFE6FF",verde:"#C9F2D8",lila:"#E2D6FF"};
-  let notas=notaClase(proxima,proxima&&proxima.fecha===h?"Hoy":"Este domingo","proxima")+notaClase(pasada,"El domingo pasado","pasada");
+  let notas=notaClase(proxima,proxima&&proxima.fecha===h?"Hoy":"Este domingo","proxima")+notaClase(pasada,"El domingo pasado","pasada")+notaFotos(pasada);
   if(vcl)notas+=`<article class="dm-nota dm-verso"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Versículo para memorizar</p><blockquote>“${esc(vcl.versiculo)}”</blockquote>${vcl.versiculoCita?`<cite>${esc(vcl.versiculoCita)}</cite>`:""}<button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(vcl.id)}">🎮 Practicar</button></article>`;
   if(proxima&&proxima.tarea)notas+=`<article class="dm-nota dm-tarea"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Tarea para la casa</p><p class="small">${esc(corto(proxima.tarea,160))}</p></article>`;
   notas+=avisos.map((p,i)=>`<article class="dm-nota dm-aviso" style="--nc:${COL[p.color]||COL[["rosado","celeste","verde","lila"][i%4]]}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(p.texto,220))}</p><p class="dm-firma">${esc(p.autor||"")}${p.hasta?` · hasta el ${esc(fCorta(p.hasta).dia)} ${esc(fCorta(p.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</article>`).join("");
   if(ed())notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
   return `<section class="diario" aria-label="Diario mural"><div class="dm-cab"><h2>📌 Diario mural</h2>${S.muro.length?`<button class="dm-link" data-act="verMuro">Ver todo el muro ›</button>`:""}</div><div class="dm-tablero">${notas}</div></section>`;}
+
+/* ---------- fotos de la semana (carpeta privada, enlaces que caducan) ---------- */
+const MAXF=10;let VF=null,cfgOK=false,limpiado=false;
+function albumDe(c){return c?S.fotos.find(a=>a.id===c.id&&a.fotos&&a.fotos.length)||null:null;}
+function fotosMeses(){return Number(S.config.fotosMeses)||6;}
+function srcFoto(p){const u=window.EPK&&EPK.fotos&&EPK.fotos.url(p);return u?` src="${esc(u)}"`:"";}
+function imgF(p,i,claseId,cls){return `<button class="fx ${cls||""}" data-act="verFoto" data-id="${esc(claseId)}" data-i="${i}" aria-label="Ver foto ${i+1}"><img data-foto="${esc(p)}"${srcFoto(p)} alt="" loading="lazy"></button>`;}
+async function pintarFotos(root){if(!root||!window.EPK||!EPK.fotos)return;const ims=[...root.querySelectorAll("img[data-foto]:not([src])")];if(!ims.length)return;
+  try{const m=await EPK.fotos.urls(ims.map(i=>i.dataset.foto));ims.forEach(i=>{const u=m[i.dataset.foto];if(u)i.src=u;else i.closest(".fx,.visor")&&i.classList.add("f-err");});}catch(e){console.warn("fotos",e);}}
+function comprimir(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file);const im=new Image();
+  im.onload=()=>{const k=Math.min(1,1440/Math.max(im.naturalWidth,im.naturalHeight));const w=Math.round(im.naturalWidth*k),h=Math.round(im.naturalHeight*k);
+    const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(im,0,0,w,h);URL.revokeObjectURL(u);
+    cv.toBlob(b=>b?res({b,w,h}):rej(new Error("canvas")),"image/jpeg",.78);};
+  im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("formato"));};im.src=u;});}
+async function subirFotos(claseId,files){const c=S.clases.find(x=>x.id===claseId);if(!c||!window.EPK||!EPK.fotos)return;
+  const cupo=MAXF-((albumDe(c)||{}).fotos||[]).length;files=files.filter(f=>/^image\//.test(f.type)||/\.(heic|heif|jpe?g|png|webp)$/i.test(f.name));
+  if(!files.length){toast("Elige fotos (JPG o PNG)");return;}
+  if(cupo<=0){toast(`Ya hay ${MAXF} fotos de este domingo. Borra alguna para subir otra.`);return;}
+  if(files.length>cupo){toast(`Solo caben ${cupo} más: se subirán las primeras ${cupo}`);await new Promise(r=>setTimeout(r,1400));}
+  files=files.slice(0,cupo);const nuevas=[];let mal=0,err=null;
+  for(let i=0;i<files.length;i++){toast(`Subiendo foto ${i+1} de ${files.length}…`);
+    try{const {b,w,h}=await comprimir(files[i]);nuevas.push({p:await EPK.fotos.subir(b),w,h});}catch(e){mal++;err=e;}}
+  if(nuevas.length){const lista=(((albumDe(c)||{}).fotos)||[]).concat(nuevas).slice(0,MAXF);
+    try{await guardar("fotos",c.id,{clase:c.id,fecha:c.fecha||"",titulo:c.titulo||"",fotos:lista,subido:new Date().toISOString()});}
+    catch(e){toast(errMsg(e));EPK.fotos.borrar(nuevas.map(x=>x.p)).catch(()=>{});return;}}
+  if(!mal)toast(`¡Listo! ${nuevas.length===1?"1 foto subida":nuevas.length+" fotos subidas"}`);
+  else if(nuevas.length)toast(`Se subieron ${nuevas.length}. ${mal} no se pudieron leer: prueba con JPG.`);
+  else toast(err&&err.code==="not_granted"?"Solo el equipo puede subir fotos":err&&/formato|canvas/.test(String(err.message))?"No se pudo leer la foto: prueba con JPG":"No se pudieron subir las fotos. Revisa tu conexión.");}
+async function borrarFoto(claseId,i){const c=S.clases.find(x=>x.id===claseId);const al=albumDe(c)||S.fotos.find(a=>a.id===claseId);if(!al)return;
+  const f=al.fotos[i];if(!f)return;const resto=al.fotos.filter((_,k)=>k!==i);
+  try{if(resto.length)await guardar("fotos",al.id,{...al,fotos:resto});else await borrar("fotos",al.id);await EPK.fotos.borrar([f.p]);toast("Foto borrada");}catch(e){toast(errMsg(e));}}
+async function permisoFoto(id,si,btn){if(!window.EPK||!EPK.fotos)return;btn.disabled=true;
+  try{await EPK.fotos.autorizar(id,si);const n=S.ninos.find(x=>x.id===id);if(n){n.fotos=si?"si":"no";}render();toast(si?"¡Gracias! Quedó autorizado":"Listo: el maestro sabrá que no autorizas fotos");}
+  catch(e){btn.disabled=false;toast(String(e&&e.message||"No se pudo guardar. Inténtalo otra vez."));}}
+// borra los álbumes antiguos (lo hace el equipo, una vez al día)
+async function limpiarFotos(){if(limpiado||!canEdit||!cfgOK||!loaded.fotos||!loaded.clases||!window.EPK||!EPK.fotos||!EPK.comunidad)return;limpiado=true;
+  const k="epk_limpieza_"+EPK.comunidad.id;try{if(localStorage.getItem(k)===hoyISO())return;localStorage.setItem(k,hoyISO());}catch(e){}
+  const d=new Date(hoyISO()+"T12:00:00");d.setMonth(d.getMonth()-fotosMeses());const lim=d.toISOString().slice(0,10);
+  for(const a of S.fotos.slice()){const c=S.clases.find(x=>x.id===a.id);const f=(c&&c.fecha)||a.fecha||"";
+    if(f&&f<lim){try{await EPK.fotos.borrar((a.fotos||[]).map(x=>x.p));await borrar("fotos",a.id);}catch(e){console.warn("limpieza de fotos",e);}}}}
+function vFotosClase(c){const al=albumDe(c);const fs=(al&&al.fotos)||[];
+  if(!ed()){if(!fs.length)return "";return `<section class="card fotos-cl"><h2>📸 Fotos del domingo</h2><div class="fotos-grid">${fs.map((f,i)=>imgF(f.p,i,c.id)).join("")}</div></section>`;}
+  if(!fs.length&&(c.fecha||"")>hoyISO())return "";
+  const no=S.ninos.filter(n=>n.fotos==="no").sort(byNombre),sin=S.ninos.filter(n=>!n.fotos).sort(byNombre);
+  let out=`<section class="card fotos-cl"><div class="sec-h"><h2>📸 Fotos del domingo</h2><span class="pill">${fs.length} de ${MAXF}</span></div>
+    <p class="muted small">Sube hasta ${MAXF} fotos de la clase. Solo las ven las familias de la congregación con su cuenta, y se borran solas ${fotosMeses()===12?"al año":`a los ${fotosMeses()} meses`}.</p>`;
+  if(no.length)out+=`<p class="fotos-no">🚫 <b>Sin permiso para fotos:</b> ${no.map(n=>esc(n.nombre)).join(", ")}. No los fotografíes o elige fotos donde no se vean.</p>`;
+  if(sin.length)out+=`<p class="small muted">❔ Aún sin respuesta: ${sin.map(n=>esc(n.nombre)).join(", ")}. Su familia responde en «Mis hijos», o anótalo tú en su ficha.</p>`;
+  if(fs.length)out+=`<div class="fotos-grid">${fs.map((f,i)=>{const k=c.id+"/"+i;return `<div class="fotos-it">${imgF(f.p,i,c.id)}<button class="fotos-x${ui.fotoBorrar===k?" sure":""}" data-act="borrarFoto" data-id="${esc(c.id)}" data-i="${i}" aria-label="Borrar foto ${i+1}">${ui.fotoBorrar===k?"¿Borrar?":"✕"}</button></div>`;}).join("")}</div>`;
+  if(fs.length<MAXF)out+=`<label class="btn sm fotos-subir">📷 ${fs.length?"Subir más fotos":"Subir fotos"}<input type="file" accept="image/*" multiple data-fotos="${esc(c.id)}"></label>`;
+  return out+`</section>`;}
+function notaFotos(pasada){const h=hoyISO();const d=new Date(h+"T12:00:00");d.setDate(d.getDate()-13);const lim=d.toISOString().slice(0,10);
+  const x=S.fotos.filter(a=>a.fotos&&a.fotos.length).map(a=>({a,c:S.clases.find(k=>k.id===a.id)}))
+    .filter(x=>x.c&&x.c.fecha&&x.c.fecha<=h&&x.c.fecha>=lim&&(ed()||!claseOculta(x.c))).sort((p,q)=>p.c.fecha<q.c.fecha?1:-1)[0];
+  if(!x){if(ed()&&pasada&&pasada.fecha>=lim)return `<button class="dm-nota dm-nuevo dm-subirf" data-act="verClase" data-id="${esc(pasada.id)}"><span aria-hidden="true">📷</span><b>Sube las fotos del domingo</b><span class="small">Hasta ${MAXF} fotos de «${esc(corto(pasada.titulo,40))}»</span></button>`;return "";}
+  const fs=x.a.fotos;const f=fCorta(x.c.fecha);
+  return `<article class="dm-nota dm-fotos"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📸 Fotos del domingo · ${esc(f.dia)} ${esc(f.mes)}</p>
+    <div class="dm-tira">${fs.slice(0,4).map((p,i)=>i===3&&fs.length>4?imgF(p.p,i,x.c.id,"dm-polaroid dm-masf").replace("</button>",`<span class="dm-mas">+${fs.length-4}</span></button>`):imgF(p.p,i,x.c.id,"dm-polaroid")).join("")}</div>
+    <p class="small"><b>${esc(x.c.titulo)}</b> · ${fs.length} foto${fs.length===1?"":"s"}. Toca una para verla en grande.</p></article>`;}
+function verFoto(claseId,i){const al=S.fotos.find(a=>a.id===claseId);if(!al||!(al.fotos||[]).length)return;VF={id:claseId,i:Number(i)||0};pintarVisor();}
+function pintarVisor(){let el=$("#visorF");const al=VF&&S.fotos.find(a=>a.id===VF.id);
+  if(!VF||!al||!(al.fotos||[]).length){VF=null;if(el){el.remove();document.body.style.overflow="";}return;}
+  const fs=al.fotos;VF.i=((VF.i%fs.length)+fs.length)%fs.length;const f=fs[VF.i];const c=S.clases.find(x=>x.id===VF.id);
+  if(!el){el=document.createElement("div");el.id="visorF";el.className="visor";el.setAttribute("role","dialog");el.setAttribute("aria-modal","true");el.setAttribute("aria-label","Fotos del domingo");document.body.appendChild(el);
+    el.addEventListener("click",ev=>{const b=ev.target.closest("[data-v]");if(!VF)return;if(b){const v=b.dataset.v;if(v==="x")VF=null;else VF.i+=v==="sig"?1:-1;pintarVisor();}else if(ev.target===el||ev.target.classList.contains("visor-marco")){VF=null;pintarVisor();}});
+    let x0=null;el.addEventListener("touchstart",ev=>{x0=ev.touches[0].clientX;},{passive:true});
+    el.addEventListener("touchend",ev=>{if(x0==null||!VF)return;const dx=ev.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>50){VF.i+=dx<0?1:-1;pintarVisor();}},{passive:true});}
+  document.body.style.overflow="hidden";
+  el.innerHTML=`<div class="visor-top"><span><b>${esc(c?c.titulo:al.titulo||"Fotos")}</b> · ${VF.i+1} de ${fs.length}</span><button data-v="x" aria-label="Cerrar">✕</button></div>
+    <div class="visor-marco"><img data-foto="${esc(f.p)}"${srcFoto(f.p)} alt="Foto ${VF.i+1} de ${fs.length}"${f.w?` width="${f.w}" height="${f.h}"`:""}></div>
+    ${fs.length>1?`<button class="visor-nav ant" data-v="ant" aria-label="Foto anterior">‹</button><button class="visor-nav sig" data-v="sig" aria-label="Foto siguiente">›</button>`:""}
+    <p class="visor-pie">Fotos solo para las familias de la congregación. Por favor no las compartas fuera.</p>`;
+  pintarFotos(el);const sig=fs[(VF.i+1)%fs.length];if(sig&&window.EPK&&EPK.fotos)EPK.fotos.urls([sig.p]).catch(()=>{});}
 
 function vInicio(){
   const c=claseActual();let out=vCheckin()+(window.EPKX&&ed()?EPKX.avisoPermiso():"")+avisoClase()+pandilla()+tarjetaHijosInicio()+vCumples()+guia("sara","¡Hola! Jesús ama a los niños. Mira el Diario mural: la clase de este domingo, la del domingo pasado, el versículo y los avisos.");
@@ -921,7 +1025,7 @@ function vClase(c){
   <section class="card"><p class="eyebrow">${esc(fLarga(c.fecha))}${c.numero!=null&&c.base?" · Clase N°"+esc(c.numero):""}</p>${pillOculta(c)}<h2 style="font-size:1.6rem">${esc(c.titulo)}</h2>${c.subtitulo?`<p class="cl-sub">${esc(c.subtitulo)}</p>`:""}${c.cita?`<p><b>${esc(c.cita)}</b></p>`:""}${c.resumen?`<p style="white-space:pre-line">${esc(c.resumen)}</p>`:""}
   ${ed()?`<div class="row"><button class="btn ghost sm" data-act="editClase" data-id="${esc(c.id)}">Editar clase</button><button class="btn ghost sm" data-act="reprogramar" data-id="${esc(c.id)}">📅 Reprogramar</button><button class="btn sm" data-act="qrAsis" data-id="${esc(c.id)}">📱 QR de asistencia</button></div>`:""}</section>`;
   if(c.versiculo){if(ed())cargarPractica(c);out+=`<section class="verse"><p class="eyebrow">Versículo para memorizar</p><blockquote>${esc(c.versiculo)}</blockquote>${c.versiculoCita?`<cite>${esc(c.versiculoCita)}</cite>`:""}<div class="row"><button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(c.id)}">🎮 Practicar el versículo</button>${ed()&&PV[c.id]!=null?`<span class="small">${PV[c.id]} familia${PV[c.id]===1?"":"s"} lo practicaron en la app</span>`:""}</div></section>`;}
-  out+=vArchivosClase(c);
+  out+=vArchivosClase(c)+vFotosClase(c);
   if(ed()&&(c.objetivo||c.guia||c.preguntasRepaso))out+=`<details class="card cl-guia" open><summary><b>Guía para el maestro</b> <span class="muted small">(solo la ve el equipo)</span></summary>${c.objetivo?`<p><b>Objetivo:</b> ${esc(c.objetivo)}</p>`:""}${c.guia?`<div class="cl-guia-txt">${esc(c.guia)}</div>`:""}${c.preguntasRepaso?`<p class="eyebrow" style="margin-top:8px">Preguntas de repaso</p><ul>${String(c.preguntasRepaso).split("\n").filter(Boolean).map(q=>`<li>${esc(q)}</li>`).join("")}</ul>`:""}</details>`;
   const mats=(c.material||[]).filter(m=>safeUrl(m.url)||m.titulo);
   if(mats.length)out+=`<section class="card"><p class="eyebrow">Material de la semana</p><div class="materials">${mats.map(m=>safeUrl(m.url)?`<a href="${esc(safeUrl(m.url))}" target="_blank" rel="noopener noreferrer">${esc(m.titulo)} ↗</a>`:`<p>${esc(m.titulo)}</p>`).join("")}</div></section>`;
@@ -966,7 +1070,7 @@ function vNino(n){
   let out=`<button class="back" data-act="volver">‹ Todos los niños</button>
   <section class="card"><div class="row">${avatar(n,true)}<div class="grow" style="min-width:0;flex:1"><h2 style="font-size:1.6rem">${esc(n.nombre)}</h2>${n.apoderado?`<p class="muted small">Apoderado/a: ${esc(n.apoderado)}</p>`:""}</div><span class="stars" style="font-size:1.6rem">${I.starFill}${p.total}</span></div>
   ${ed()?`<div class="row"><button class="btn sm" data-act="bono" data-id="${esc(n.id)}">Dar estrellas</button><button class="btn line sm" data-act="editNino" data-id="${esc(n.id)}">Editar</button></div>
-  <p class="small">${n.familia_uid?`👪 <b>Vinculado a su familia</b> en la app.`:`👪 Aún sin familia vinculada.`} Código para la familia: <b class="code-nino">${esc(n.codigo||"—")}</b> <button class="copy" data-act="copiar" data-v="${esc(n.codigo||"")}">Copiar</button></p>`:""}</section>
+  <p class="small">${n.familia_uid?`👪 <b>Vinculado a su familia</b> en la app.`:`👪 Aún sin familia vinculada.`} Código para la familia: <b class="code-nino">${esc(n.codigo||"—")}</b> <button class="copy" data-act="copiar" data-v="${esc(n.codigo||"")}">Copiar</button></p><p class="small">${n.fotos==="si"?"📸 La familia <b>autoriza fotos</b>.":n.fotos==="no"?"🚫 La familia <b>no autoriza fotos</b>. No lo fotografíes o elige fotos donde no se vea.":"❔ Aún sin respuesta sobre las fotos."}</p>`:""}</section>
   <section class="stats"><div class="stat"><span class="muted small">Domingos asistidos</span><b>${p.presente}${totalClases?`<span class="muted small"> / ${totalClases}</span>`:""}</b></div><div class="stat"><span class="muted small">Versículos recitados</span><b>${p.versiculo}</b></div><div class="stat"><span class="muted small">Biblia</span><b>${p.biblia}</b></div><div class="stat"><span class="muted small">Tareas</span><b>${p.tarea}</b></div></section>`;
   const pr=[...S.premios].sort((a,b)=>(a.costo||0)-(b.costo||0));
   if(pr.length)out+=`<section class="card"><p class="eyebrow">Camino a los premios</p><div class="list">${pr.map(x=>{const c=Number(x.costo)||1;const ok=p.total>=c;return `<div class="row" style="flex-wrap:nowrap"><span class="grow" style="flex:1;min-width:0"><b>${esc(x.nombre)}</b><span class="bar" style="margin-top:5px;display:block"><i style="width:${Math.min(100,Math.max(0,p.total)/c*100)}%"></i></span></span>${ok?(ed()?`<button class="btn sm" data-act="canjear" data-nino="${esc(n.id)}" data-id="${esc(x.id)}">Canjear</button>`:`<span class="pill sun">¡Alcanzado!</span>`):`<span class="pill">${p.total}/${c}</span>`}</div>`;}).join("")}</div></section>`;
@@ -1518,6 +1622,7 @@ function render(){
   else if(!loaded.clases)html+=`<div class="note">Cargando clases y puntos…</div>`;
   html+=({inicio:vInicio,clases:vClases,recursos:vRecursos,puntos:vPuntos,biblia:vBiblia,museo:vMuseo,mas:vMas}[ui.tab]||vInicio)();
   $("#app").innerHTML=html;
+  pintarFotos($("#app"));if(VF)pintarVisor();
 }
 function irA(tab){callar();ui.juego=false;ui.quiz=false;if(tab==="recursos"&&ed()&&!ui.uso)refrescarUso();ui.tab=tab;ui.clase=null;ui.nino=null;ui.parabola=null;try{history.replaceState(null,"","#"+tab);}catch(e){}render();window.scrollTo(0,0);}
 
@@ -1607,6 +1712,7 @@ function vMisHijos(){const hs=misHijos();cargarObsFamilia();
       ${sig?`<div class="mh-premio"><span class="small">Le faltan <b>${(Number(sig.costo)||0)-pt.total} estrellas</b> para: <b>${esc(sig.nombre)}</b></span><span class="bar"><i style="width:${Math.min(100,pt.total/(Number(sig.costo)||1)*100)}%"></i></span></div>`:""}
       <div class="mh-mes"><p class="eyebrow">Este mes (${esc(mes)})</p><div class="mh-chips">${rm.clases?cr.map(c=>`<span class="mh-chip"><span aria-hidden="true">${c.ico}</span> ${esc(c.n)} <b>${rm[c.k]||0}/${rm.clases}</b></span>`).join(""):`<span class="muted small">Todavía no hay domingos registrados este mes.</span>`}</div></div>
       ${clasesReg.length?`<div class="mh-dom"><p class="eyebrow">Últimos domingos</p>${clasesReg.map(c=>{const a=S.asistencia[c.id];const logros=cr.filter(x=>(a[x.k]||[]).includes(n.id));return `<div class="mh-fila"><span class="small"><b>${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</b> · ${esc(c.titulo)}</span><span class="mh-ico">${logros.length?logros.map(x=>`<span title="${esc(x.n)}">${x.ico}</span>`).join(""):`<span class="muted small">No asistió</span>`}</span></div>`;}).join("")}</div>`:""}
+      <div class="mh-fotos"><span class="small">📸 ¿Autorizas que ${esc(n.nombre)} aparezca en las fotos de la clase? <span class="muted">Solo las ven las familias de la congregación.</span></span><div class="row"><button class="btn sm${n.fotos==="si"?"":" line"}" aria-pressed="${n.fotos==="si"}" data-act="permFoto" data-id="${esc(n.id)}" data-si="1">Sí, autorizo</button><button class="btn sm${n.fotos==="no"?"":" line"}" aria-pressed="${n.fotos==="no"}" data-act="permFoto" data-id="${esc(n.id)}" data-si="0">No autorizo</button></div></div>
       ${obs.length?`<div class="mh-obs"><p class="eyebrow">Mensajes del maestro</p>${obs.map(o=>`<p class="small">💬 <b>${esc(fLarga(o.fecha||""))}:</b> ${esc(o.texto)}</p>`).join("")}</div>`:""}</section>`;}).join("")+out.replace('<h2>Mis hijos en la clase</h2>','<h2>¿Tienes otro hijo en la clase?</h2>');}
 function tarjetaHijosInicio(){const hs=misHijos();if(!hs.length)return "";const p=puntos();
   return `<section class="mh-ini"><p class="eyebrow">Mis hijos en la clase</p><div class="row">${hs.map(n=>`<button class="mh-mini" data-act="verMisHijos">${avatar(n)}<span><b>${esc(n.nombre)}</b><span class="stars small">${I.starFill}${(p[n.id]||{}).total||0}</span></span></button>`).join("")}</div></section>`;}
@@ -1724,6 +1830,9 @@ document.addEventListener("click",async e=>{
     case "volver":ui.juego=false;ui.clase=null;ui.nino=null;ui.parabola=null;render();window.scrollTo(0,0);break;
     case "verClase":marcarVista(id);ui.tab="clases";ui.clase=id;render();window.scrollTo(0,0);break;
     case "cerrarAviso":marcarVista(id);render();break;
+    case "verFoto":verFoto(id,b.dataset.i);break;
+    case "borrarFoto":{const k=id+"/"+b.dataset.i;if(ui.fotoBorrar!==k){ui.fotoBorrar=k;render();setTimeout(()=>{if(ui.fotoBorrar===k){ui.fotoBorrar=null;render();}},4000);break;}ui.fotoBorrar=null;borrarFoto(id,Number(b.dataset.i));break;}
+    case "permFoto":permisoFoto(id,b.dataset.si==="1",b);break;
     case "verNino":ui.tab="puntos";ui.nino=id;render();window.scrollTo(0,0);break;
     case "verParabola":{const L=lector();if(L&&id&&!L.museo[id]){L.museo[id]=hoyISO();bibSave();setTimeout(revisarInsignias,300);}}ui.tab="biblia";ui.bib="museo";ui.parabola=id;render();window.scrollTo(0,0);break;
     case "mas":ui.mas=b.dataset.k;ui.personaje=null;render();break;
@@ -1825,10 +1934,12 @@ $("#rPrev").onclick=()=>{if(RD.doc&&RD.page>1){RD.page--;pintarPagina();}};
 $("#rNext").onclick=()=>{if(RD.doc&&RD.page<RD.total){RD.page++;pintarPagina();}};
 $("#rDone").onclick=()=>{const f=RD.onDone;if(f)f();};
 document.addEventListener("keydown",e=>{const t=e.target;if((e.key==="Enter"||e.key===" ")&&t.classList&&t.classList.contains("vs")){e.preventDefault();t.click();}});
+document.addEventListener("keydown",e=>{if(!VF)return;if(e.key==="Escape"){VF=null;pintarVisor();}else if(e.key==="ArrowRight"){VF.i++;pintarVisor();}else if(e.key==="ArrowLeft"){VF.i--;pintarVisor();}});
 document.addEventListener("keydown",e=>{if($("#reader").hidden)return;if(e.key==="Escape")cerrarLector();if(e.key==="ArrowRight")$("#rNext").hidden||$("#rNext").click();if(e.key==="ArrowLeft")$("#rPrev").hidden||$("#rPrev").click();});
 $("#fileCuentos").addEventListener("change",e=>{const fs=[...e.target.files];e.target.value="";subirCuentos(fs);});
 document.addEventListener("input",e=>{if(e.target.id==="bibVers"){selRef.vers=e.target.value.replace(/[^0-9-]/g,"");actualizarLinks();return;}if(e.target.id==="buscarCuento"){ui.buscar=e.target.value;const l=$("#listaCuentos");if(l)l.innerHTML=listaCuentosHTML();}});
 document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.ck&&checkin){checkin.sel[t.dataset.ck]=t.checked;return;}
+  if(t.dataset&&t.dataset.fotos){const fs=[...t.files];t.value="";subirFotos(t.dataset.fotos,fs);return;}
   if(t.id==="brLibro"){BR.li=Number(t.value);BR.cap=1;BR.sel.clear();t.blur();cargarCap();return;}
   if(t.id==="brCap"){BR.cap=Number(t.value);BR.sel.clear();t.blur();cargarCap();return;}
   if(t.id==="brVer"){BR.ver=t.value;if(BR.cmp===BR.ver)BR.cmp="";t.blur();cargarCap();return;}
@@ -1862,10 +1973,10 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
         else if(c==="asistencia"){const keep={};for(const k in S.asistencia)if(pendingAsis[k])keep[k]=S.asistencia[k];S.asistencia={};arr.forEach(a=>S.asistencia[a.id]=a);Object.assign(S.asistencia,keep);}
         else if(c==="parabolas"&&!arr.length)S[c]=BASE.parabolas.slice();
         else S[c]=arr;
-        loaded[c]=true;dbFailed=false;render();
+        loaded[c]=true;dbFailed=false;render();if(c==="fotos"||c==="clases")limpiarFotos();
       },err=>{console.warn(c,err);loaded[c]=true;render();});
     }
-    db.doc("config/general").onSnapshot(d=>{S.config=d.exists?{...d.data()}:{};render();},()=>{});
+    db.doc("config/general").onSnapshot(d=>{S.config=d.exists?{...d.data()}:{};cfgOK=true;render();limpiarFotos();},()=>{});
   }catch(e){dbFailed=true;render();}
 })();
 })();};
