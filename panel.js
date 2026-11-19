@@ -379,7 +379,7 @@
     <p class="muted">Lo que subas aquí aparece en la app de <b>todas</b> las congregaciones, marcado como "Biblioteca central". El material para profes solo lo ven maestros y administradores. Con "Libera desde" puedes dejar programado que un material se abra solo en una fecha. Con la columna "Plan" decides qué permiso lo libera: lo <b>Inicial</b> lo ven todas; lo <b>Avanzado</b> o <b>Completo</b> aparece con candado en las congregaciones con un permiso menor. En cada congregación puedes hacer excepciones.</p>
     <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
     <button class="btn ghost sm" data-act="miniaturas">Crear miniaturas que faltan (${D.docs.filter((d) => d.comunidad_id === CENTRAL && ["cuentos", "materiales", "matprofes"].includes(d.col) && d.data.asset && !d.data.thumb).length})</button></div>
-    <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 50 MB. Si el nombre trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento y se reemplaza si ya existe." : "PDF, Word, PowerPoint, Excel, imágenes, audio o video de hasta 50 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
+    <label class="drop" id="drop" for="files"><b>Arrastra aquí los archivos o toca para elegirlos</b><span class="muted small">${ui.bib === "cuentos" ? "PDF de hasta 50 MB. Si el nombre es como \"Clase01-Cuento2-Título.pdf\" se ordenan por clase y cuento (Clase 1: 1 y 2, Clase 2: 3 y 4…). Si solo trae un número (\"N°12 - El arca de Noé.pdf\") se usa como número del cuento. Si ese número ya existe, se reemplaza." : "PDF, Word, PowerPoint, Excel, imágenes, audio o video de hasta 50 MB. El nombre del archivo será el título; puedes editarlo después."}</span>
       <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ACEPTA}" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir archivos para subir</span></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `${pg.txt || "Subiendo"} ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} ${pg.txt ? "con miniatura" : "subidos"}`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
     ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Libera desde</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
@@ -469,11 +469,16 @@
         const base = f.name.replace(/\.[^.]+$/, "");
         let id, data;
         if (ui.bib === "cuentos") {
-          const m = base.match(/\d+/); const num = m ? parseInt(m[0], 10) : (Math.max(0, ...docsDe(CENTRAL, "cuentos").map((d) => d.data.numero || 0)) + 1);
-          const titulo = base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i, "").replace(/_+/g, " ").trim() || base;
+          // "Clase01-Cuento2-Título" → número correlativo: Clase 1 Cuento 1 = 1, Clase 1 Cuento 2 = 2, Clase 2 Cuento 1 = 3…
+          const mc = base.match(/^\s*clase\s*[-_ ]*(\d+)\s*[-_ .]*\s*cuento\s*[-_ ]*(\d+)\s*[-_.:)]*\s*/i);
+          let num, titulo, clase = null, parte = null;
+          if (mc) { clase = parseInt(mc[1], 10); parte = parseInt(mc[2], 10); num = Math.max(0, clase - 1) * 2 + parte; titulo = base.slice(mc[0].length); }
+          else { const m = base.match(/\d+/); num = m ? parseInt(m[0], 10) : (Math.max(0, ...docsDe(CENTRAL, "cuentos").map((d) => d.data.numero || 0)) + 1); titulo = base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i, ""); }
+          titulo = titulo.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim() || base;
           id = "cuento-" + String(num).padStart(3, "0");
           const prev = D.docs.find((d) => d.comunidad_id === CENTRAL && d.col === "cuentos" && d.id === id);
-          data = { ...(prev ? prev.data : {}), numero: num, titulo: prev && prev.data.titulo ? prev.data.titulo : titulo, asset: path, thumb, archivo: f.name, tamano: f.size, subido: new Date().toISOString().slice(0, 10) };
+          data = { ...(prev ? prev.data : {}), numero: num, titulo: mc || !(prev && prev.data.titulo) ? titulo : prev.data.titulo, asset: path, thumb, archivo: f.name, tamano: f.size, subido: new Date().toISOString().slice(0, 10) };
+          if (mc) { data.clase = clase; data.parte = parte; }
           const viejos = prev ? [prev.data.asset, prev.data.thumb].filter(Boolean) : []; if (viejos.length) await sb.storage.from(BUCKET).remove(viejos);
         } else {
           id = crypto.randomUUID().replace(/-/g, "").slice(0, 20);
