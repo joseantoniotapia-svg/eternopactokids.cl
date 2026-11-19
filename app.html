@@ -74,8 +74,15 @@ a{color:var(--accent)}
 .brand{min-width:0;flex:1}
 .brand b{font-family:var(--display);font-size:1.3rem;font-weight:600;display:block;line-height:1.1}
 .brand span{color:var(--muted);font-size:.85rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mode{border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:700;white-space:nowrap}
+.mode{border:1px solid var(--line);background:var(--sunk);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:700;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;flex:none}
+.mode svg{width:16px;height:16px;flex:none}
+.mode[data-on="admin"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .mode[data-on="familia"]{background:var(--sun-soft);border-color:var(--sun);color:var(--sun-ink)}
+.vistabar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--sun-soft);border:2px solid var(--sun);color:var(--sun-ink);border-radius:14px;padding:10px 14px}
+.vistabar .btn{background:var(--sun-ink);color:var(--sun-soft)}
+.vista-op[aria-current="true"]{border:2px solid var(--accent)}
+.flecha{min-width:36px;min-height:32px;font-size:.95rem;line-height:1}
+.flecha:disabled{opacity:.3;cursor:default}
 
 main{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px;
   padding-block:18px calc(96px + env(safe-area-inset-bottom,0px));
@@ -630,14 +637,33 @@ const pendingAsis={};
 const BASE={"parabolas": [{"cita": "Lucas 10:25-37", "ensenanza": "Amar al prójimo es ayudar a quien lo necesita, aunque sea diferente a nosotros.", "icono": "camino", "orden": 5, "pregunta": "¿A quién podemos ayudar esta semana en el colegio o en la casa?", "resumen": "Un hombre fue asaltado y quedó herido en el camino. Dos personas pasaron sin ayudarlo, pero un samaritano se detuvo, curó sus heridas y pagó para que lo cuidaran.", "titulo": "El buen samaritano", "id": "buen-samaritano"}, {"cita": "Mateo 25:1-13", "ensenanza": "Debemos estar siempre preparados y atentos a Jesús.", "icono": "lampara", "orden": 9, "pregunta": "¿Cómo podemos estar listos y atentos a Dios cada día?", "resumen": "Diez jóvenes esperaban al novio con sus lámparas. Cinco llevaron aceite extra y estaban listas cuando él llegó; las otras cinco no estaban preparadas.", "titulo": "Las diez jóvenes y sus lámparas", "id": "diez-virgenes"}, {"cita": "Mateo 7:24-27", "ensenanza": "Escuchar a Jesús y obedecer lo que dice nos da un fundamento firme para la vida.", "icono": "casa", "orden": 6, "pregunta": "¿Qué enseñanza de Jesús quieres poner en práctica esta semana?", "resumen": "Un hombre prudente construyó su casa sobre la roca y otro, sobre la arena. Vino la lluvia y el viento: la casa sobre la roca quedó firme y la otra se cayó.", "titulo": "Las dos casas", "id": "dos-casas"}, {"cita": "Lucas 15:11-32", "ensenanza": "Dios es un Padre que perdona y nos recibe con los brazos abiertos cuando volvemos a Él.", "icono": "corazon", "orden": 4, "pregunta": "¿Hay alguien a quien necesitamos perdonar o pedir perdón esta semana?", "resumen": "Un hijo pidió su herencia, se fue lejos y la gastó toda. Arrepentido, volvió a casa pensando en pedir trabajo, pero su padre corrió a abrazarlo y preparó una gran fiesta.", "titulo": "El hijo pródigo", "id": "hijo-prodigo"}, {"cita": "Lucas 15:8-10", "ensenanza": "Dios valora a cada persona y en el cielo hay alegría cuando alguien se arrepiente.", "icono": "moneda", "orden": 3, "pregunta": "¿Alguna vez buscaste algo muy valioso? ¿Qué sentiste al encontrarlo?", "resumen": "Una mujer perdió una de sus diez monedas. Encendió una lámpara, barrió toda la casa y buscó con cuidado hasta encontrarla. Luego invitó a sus vecinas a celebrar.", "titulo": "La moneda perdida", "id": "moneda-perdida"}, {"cita": "Lucas 15:3-7", "ensenanza": "Para Jesús cada uno de nosotros es importante. Él nos busca con amor y se alegra cuando volvemos a Él.", "icono": "oveja", "orden": 2, "pregunta": "¿Cómo te sientes al saber que Jesús te buscaría a ti?", "resumen": "Un pastor tenía cien ovejas y una se perdió. Dejó a las noventa y nueve para buscarla, y cuando la encontró la cargó en sus hombros feliz e hizo fiesta con sus amigos.", "titulo": "La oveja perdida", "id": "oveja-perdida"}, {"cita": "Mateo 13:45-46", "ensenanza": "Conocer a Jesús y su Reino vale más que cualquier tesoro.", "icono": "perla", "orden": 8, "pregunta": "¿Qué es lo más valioso para ti? ¿Por qué Jesús vale todavía más?", "resumen": "Un comerciante buscaba perlas finas. Cuando encontró una de gran valor, vendió todo lo que tenía para comprarla.", "titulo": "La perla de gran precio", "id": "perla"}, {"cita": "Mateo 13:1-23", "ensenanza": "La Palabra de Dios es la semilla. Cuando la escuchamos con un corazón dispuesto, crece y da fruto en nuestra vida.", "icono": "semilla", "orden": 1, "pregunta": "¿Qué podemos hacer esta semana para que nuestro corazón sea buena tierra?", "resumen": "Un sembrador lanzó semillas. Algunas cayeron en el camino y los pájaros se las comieron, otras en piedras o entre espinos y no crecieron. Las que cayeron en buena tierra dieron mucho fruto.", "titulo": "El sembrador", "id": "sembrador"}, {"cita": "Mateo 13:31-32", "ensenanza": "El Reino de Dios empieza pequeño y crece mucho. Nuestra fe también puede crecer cada día.", "icono": "arbol", "orden": 7, "pregunta": "¿Qué cosa pequeña puedes hacer hoy para mostrar el amor de Dios?", "resumen": "La semilla de mostaza es una de las más pequeñas, pero cuando crece se convierte en un árbol grande donde los pájaros hacen sus nidos.", "titulo": "La semilla de mostaza", "id": "semilla-mostaza"}, {"cita": "Mateo 25:14-30", "ensenanza": "Dios nos da dones y habilidades para usarlos y bendecir a otros.", "icono": "talentos", "orden": 10, "pregunta": "¿Qué talento te regaló Dios y cómo puedes usarlo para ayudar?", "resumen": "Un señor dejó dinero a sus siervos antes de viajar. Dos lo hicieron crecer y uno lo escondió bajo tierra por miedo. Al volver, el señor felicitó a los que trabajaron con lo que recibieron.", "titulo": "Los talentos", "id": "talentos"}]};
 S.parabolas=BASE.parabolas.slice();
 
-try{const f=localStorage.getItem("epk_familia");if(f==="1")ui.familia=true;}catch(e){}
+let vistaGuardada="";try{vistaGuardada=localStorage.getItem("epk_vista")||(localStorage.getItem("epk_familia")==="1"?"familia":"");}catch(e){}
 const h=(location.hash||"").slice(1);
 if(h==="museo")ui.tab="biblia";else if(["inicio","clases","recursos","puntos","biblia","mas"].includes(h))ui.tab=h;
 
-const ed=()=>canEdit&&!ui.familia;
+/* ---------- roles y "ver como" ---------- */
+let isOwner=false;
+const ROLES_VISTA={
+ admin:["Administrador","Todo lo del maestro, más invitar, nombrar maestros, los datos de la congregación y el espacio de archivos."],
+ maestro:["Maestro","Crea clases, marca asistencia, pone notas, da estrellas, sube material y publica en el muro."],
+ familia:["Niño / familia","Solo mira y usa: la clase, el versículo, cuentos, estrellas, Biblia, insignias y museo."]};
+function rolReal(){return isOwner?"admin":canEdit?"maestro":"familia";}
+function vistasPosibles(){return isOwner?["admin","maestro","familia"]:canEdit?["maestro","familia"]:["familia"];}
+function vista(){const v=vistasPosibles();return v.includes(vistaGuardada)?vistaGuardada:v[0];}
+const ed=()=>canEdit&&vista()!=="familia";
+const adm=()=>isOwner&&vista()==="admin";
+const OJO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const colorVista=k=>k==="admin"?"var(--accent)":k==="maestro"?"var(--p-santiago)":"var(--p-sara)";
+function elegirVista(){const vs=vistasPosibles();const cur=vista();const real=rolReal();
+  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="vTit"><h2 id="vTit">Ver la app como…</h2><p class="muted small">Revisa cómo ve cada persona cada espacio. Tu permiso real no cambia: puedes volver cuando quieras.</p>
+  <div class="list">${vs.map(k=>`<button class="item vista-op" data-act="vista" data-k="${k}" ${k===cur?'aria-current="true"':""}><span class="avatar" style="background:${colorVista(k)}">${k[0].toUpperCase()}</span><span class="grow"><b>${esc(ROLES_VISTA[k][0])}${k===real?' <span class="pill leaf">Tú</span>':""}</b><span class="muted small">${esc(ROLES_VISTA[k][1])}</span></span>${k===cur?'<span class="pill">Viendo</span>':""}</button>`).join("")}</div>
+  <div class="row" style="justify-content:flex-end"><button class="btn line" id="vCerrar">Cerrar</button></div></div></div>`;
+  const close=()=>$("#sheetRoot").innerHTML="";$("#vCerrar").onclick=close;$("#sheetBg").addEventListener("click",e=>{if(e.target.id==="sheetBg")close();});}
+function ponerVista(k){if(!vistasPosibles().includes(k))return;vistaGuardada=k;try{localStorage.setItem("epk_vista",k);localStorage.removeItem("epk_familia");}catch(e){}
+  $("#sheetRoot").innerHTML="";ui.clase=null;ui.nino=null;render();window.scrollTo(0,0);toast("Ahora ves la app como "+ROLES_VISTA[k][0]);}
 const claseOculta=c=>c&&(c.visible==="no"?"Oculta para las familias":(c.publicar&&c.publicar>hoyISO()?"Visible desde el "+fLarga(c.publicar):""));
 const LOCK=`<span class="pill lock" title="Este material aún no está liberado para tu congregación">🔒 Bloqueado</span>`;
-const pillOculta=c=>{const t=canEdit&&claseOculta(c);return t?`<span class="pill sun">🔒 ${esc(t)}</span>`:"";};
+const pillOculta=c=>{const t=ed()&&claseOculta(c);return t?`<span class="pill sun">🔒 ${esc(t)}</span>`:"";};
 
 /* ---------- iconos ---------- */
 const I={
@@ -1137,8 +1163,8 @@ function vMas(){
       :emptyBox("Sin contactos",ed()?"Agrega a pastores y maestros para que las familias sepan a quién escribir.":"Pronto estarán los contactos del equipo.","");
   }else{
     out+=`<section class="card"><h2>Acerca de Eterno Pacto Kids</h2><p>App de seguimiento de la escuela dominical${S.config.iglesia?" de "+esc(S.config.iglesia):""}.${S.config.horario?" Clases: "+esc(S.config.horario)+".":""}</p>
-    ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="config">Editar datos de la congregación</button>`:""}</section>
-    <section class="card"><p class="eyebrow">Quién puede hacer qué</p><p class="small"><b>Administradores</b>: invitan a las familias y nombran maestros (menú ☰ → Miembros y roles).</p><p class="small"><b>Maestros</b>: crean clases, marcan asistencia, ponen notas, dan estrellas, suben material y publican en el muro.</p><p class="small"><b>Familias</b>: ven la clase, el versículo, los cuentos y las estrellas, y leen la Biblia con su perfil. Los niños usan la app junto a sus padres.</p></section>
+    ${adm()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="config">Editar datos de la congregación</button>`:""}</section>
+    <section class="card"><p class="eyebrow">Quién puede hacer qué</p><p class="small"><b>Administradores</b>: invitan a las familias y nombran maestros (menú ☰ → Miembros y roles). Con el botón del ojo, arriba, pueden ver la app como maestro o como niño.</p><p class="small"><b>Maestros</b>: crean clases, marcan asistencia, ponen notas, dan estrellas, suben material y publican en el muro.</p><p class="small"><b>Familias</b>: ven la clase, el versículo, los cuentos y las estrellas, y leen la Biblia con su perfil. Los niños usan la app junto a sus padres.</p></section>
     <section class="card"><p class="eyebrow">Cuidado de los niños</p><p class="small">Guarda solo nombre y apoderado. No publiques apellidos, direcciones, teléfonos de niños ni datos de salud. El muro es solo para el equipo de maestros.</p></section>
     <section class="card"><p class="eyebrow">Contacto</p><p class="small">¿Dudas, sugerencias o quieres sumar a tu congregación? Escríbenos a <a href="mailto:contacto@eternopactokids.cl">contacto@eternopactokids.cl</a>.</p><p class="small"><a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a></p></section>`;
   }
@@ -1236,9 +1262,9 @@ function listaCuentosHTML(){
   const cs=[...S.cuentos].sort((a,b)=>(a.numero||0)-(b.numero||0)).filter(c=>!q||String(c.numero)===q||String(c.titulo||"").toLowerCase().includes(q));
   if(!S.cuentos.length)return emptyBox("Aún no hay cuentos",ed()?"Sube los PDF de los cuentos. Si el nombre del archivo trae el número (por ejemplo, Cuento 12 - El arca de Noé.pdf), se ordenan solos.":"Pronto estarán aquí los cuentos de cada semana para leer y descargar.","");
   if(!cs.length)return `<p class="muted">Ningún cuento coincide con “${esc(ui.buscar)}”.</p>`;
-  const L=lector();
-  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];if(c._bloqueado&&!(window.EPK&&EPK.super))return `<div class="item res bloq">${c.thumb?thumbHTML(c):`<span class="numchip">${esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span> Cuento ${esc(c.numero??"")}</span></span><span class="acts">${LOCK}${btnPedir(c,"cuentos")}</span></div>`;
-  return `<div class="item res">${c.thumb?`<span class="thumb-w">${thumbHTML(c)}${ok?`<span class="thumb-ok">✓</span>`:""}</span>`:`<span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${pillVis(c)}${c._central?`<span class="pill sun">Biblioteca central</span> `:""}${c._bloqueado?LOCK+" ":""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${btnVis(c,"cuentos")}${preguntasDe(c).length?`<button class="btn ghost sm" data-act="quiz" data-id="${esc(c.id)}">${L&&L.quiz[c.id]?"✓ ":""}Preguntas</button>`:""}${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
+  const L=lector();const propios=ed()&&!q?cs.filter(c=>!c._central):[];
+  return `<div class="list">${cs.map(c=>{const ok=L&&L.cuentos[c.id];const pi=propios.indexOf(c);if(c._bloqueado&&!(window.EPK&&EPK.super))return `<div class="item res bloq">${c.thumb?thumbHTML(c):`<span class="numchip">${esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small"><span class="pill sun">Biblioteca central</span> Cuento ${esc(c.numero??"")}</span></span><span class="acts">${LOCK}${btnPedir(c,"cuentos")}</span></div>`;
+  return `<div class="item res">${c.thumb?`<span class="thumb-w">${thumbHTML(c)}${ok?`<span class="thumb-ok">✓</span>`:""}</span>`:`<span class="numchip ${ok?"leido":""}">${ok?"✓":esc(c.numero??"–")}</span>`}<span class="grow"><b>${esc(c.titulo||"Cuento "+c.numero)}</b><span class="muted small">${pillVis(c)}${c._central?`<span class="pill sun">Biblioteca central</span> `:""}${c._bloqueado?LOCK+" ":""}Cuento ${esc(c.numero??"")}${c.semana?" · "+esc(fLarga(c.semana)):""}${ok?" · Leído":""}</span></span><span class="acts">${btnVis(c,"cuentos")}${preguntasDe(c).length?`<button class="btn ghost sm" data-act="quiz" data-id="${esc(c.id)}">${L&&L.quiz[c.id]?"✓ ":""}Preguntas</button>`:""}${c.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(c.id)}">${ok?"Leer otra vez":"Leer"}</button><button class="btn line sm" data-act="bajar" data-asset="${esc(c.asset)}" data-n="${esc(c.archivo||("Cuento "+c.numero+".pdf"))}">Descargar</button>`:`<span class="pill">Sin archivo</span>`}${pi>=0&&propios.length>1?`<button class="copy flecha" data-act="moverCuento" data-d="-1" data-id="${esc(c.id)}" ${pi===0?"disabled":""} aria-label="${esc("Subir "+(c.titulo||"cuento"))}">▲</button><button class="copy flecha" data-act="moverCuento" data-d="1" data-id="${esc(c.id)}" ${pi===propios.length-1?"disabled":""} aria-label="${esc("Bajar "+(c.titulo||"cuento"))}">▼</button>`:""}${ed()&&!c._central?`<button class="copy" data-act="editCuento" data-id="${esc(c.id)}">Editar</button>`:""}</span></div>`;}).join("")}</div>`;
 }
 function vRecursos(){
   if(ui.quiz){const c=S.cuentos.find(x=>x.id===QZ.cuento);if(c)return vQuiz(c);ui.quiz=false;}
@@ -1246,11 +1272,11 @@ function vRecursos(){
   if(!seg.some(x=>x[0]===ui.rec))ui.rec="cuentos";
   let out=guia("maria","El amor también se demuestra. Aquí están los cuentos de cada semana y los materiales para descargar.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.progreso){const pg=ui.progreso;out+=`<section class="card"><p><b>${pg.hecho<pg.total?`Subiendo cuentos: ${pg.hecho} de ${pg.total}`:`Listo: ${pg.total-pg.errores.length} de ${pg.total} cuentos subidos`}</b></p><div class="prog"><i style="width:${pg.total?pg.hecho/pg.total*100:0}%"></i></div>${pg.hecho<pg.total?`<p class="muted small">No cierres la app hasta que termine.</p>`:""}${pg.errores.length?`<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>`:""}${pg.hecho>=pg.total?`<button class="link-btn" style="align-self:flex-start" data-act="cerrarProg">Ocultar</button>`:""}</section>`;}
-  if(ed()&&ui.uso)out+=`<p class="muted small">Espacio de archivos: ${fmtMB(ui.uso.bytes)} de ${fmtMB(ui.uso.maxBytes)} · ${ui.uso.files} de ${ui.uso.maxFiles} archivos</p>`;
+  if(adm()&&ui.uso)out+=`<p class="muted small">Espacio de archivos: ${fmtMB(ui.uso.bytes)} de ${fmtMB(ui.uso.maxBytes)} · ${ui.uso.files} de ${ui.uso.maxFiles} archivos</p>`;
   if(ui.rec!=="profes")out+=lectorBar("Agrega tu nombre: cada cuento y actividad que termines te acerca a una insignia.");
   if(ui.rec==="cuentos"){
     out+=`<div class="sec-h"><h2>Cuentos semanales</h2>${ed()?`<button class="btn sm" data-act="subirCuentos" ${ui.progreso&&ui.progreso.hecho<ui.progreso.total?"disabled":""}>Subir PDF</button>`:""}</div>
-    ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 50 MB cada uno). Si el nombre trae un número, ese será el número del cuento; si ya existe, se reemplaza el archivo.</p>`:""}
+    ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 50 MB cada uno). Si el nombre es como <b>Clase01-Cuento2-Título</b>, se ordenan por clase y cuento; si solo trae un número, ese será el número del cuento. Si ese cuento ya existe, se reemplaza el archivo. Usa ▲ ▼ para cambiar el orden.</p>`:""}
     ${S.cuentos.length?`<input class="search" id="buscarCuento" type="search" placeholder="Buscar por número o título" value="${esc(ui.buscar)}" aria-label="Buscar cuento">`:""}
     <div id="listaCuentos">${listaCuentosHTML()}</div>`;
   }else{
@@ -1266,13 +1292,17 @@ async function subirCuentos(files){
   if(!files.length){toast("Elige archivos PDF");return;}
   ui.progreso={hecho:0,total:files.length,errores:[]};render();
   for(const f of files){
-    const base=f.name.replace(/\.pdf$/i,"");const m=base.match(/\d+/);const num=m?parseInt(m[0],10):null;
-    const titulo=base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i,"").replace(/_+/g," ").trim()||base;
+    const base=f.name.replace(/\.pdf$/i,"");
+    const mc=base.match(/^\s*clase\s*[-_ ]*(\d+)\s*[-_ .]*\s*cuento\s*[-_ ]*(\d+)\s*[-_.:)]*\s*/i);
+    let num,titulo,clase=null,parte=null;
+    if(mc){clase=parseInt(mc[1],10);parte=parseInt(mc[2],10);num=Math.max(0,clase-1)*2+parte;titulo=base.slice(mc[0].length);}
+    else{const m=base.match(/\d+/);num=m?parseInt(m[0],10):null;titulo=base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i,"");}
+    titulo=titulo.replace(/[-_]+/g," ").replace(/\s+/g," ").trim()||base;
     try{
       const r=await subirArchivo(f);const thumb=await subirMiniatura(f);
       const prev=num!=null?S.cuentos.find(c=>c.numero===num&&!c._central):null;
-      const id=prev?prev.id:(num!=null?"cuento-"+String(num).padStart(3,"0"):null);
-      await guardar("cuentos",id,{...(prev||{}),numero:num!=null?num:(Math.max(0,...S.cuentos.map(c=>c.numero||0))+1),titulo:prev&&prev.titulo?prev.titulo:titulo,asset:r.id,thumb,archivo:f.name,tamano:r.sizeBytes,subido:hoyISO()});
+      let id=prev?prev.id:(num!=null?"cuento-"+String(num).padStart(3,"0"):null);if(!prev&&id){const b3=id;for(let k=2;S.cuentos.some(c=>c.id===id&&!c._central);k++)id=b3+"-"+k;}
+      await guardar("cuentos",id,{...(prev||{}),numero:num!=null?num:(Math.max(0,...S.cuentos.map(c=>c.numero||0))+1),titulo:mc||!(prev&&prev.titulo)?titulo:prev.titulo,...(mc?{clase,parte}:{}),asset:r.id,thumb,archivo:f.name,tamano:r.sizeBytes,subido:hoyISO()});
       if(prev&&prev.asset&&prev.asset!==r.id){try{await assets.delete(prev.asset);}catch(e){}}
       if(prev&&prev.thumb&&prev.thumb!==thumb){try{await assets.delete(prev.thumb);}catch(e){}}
     }catch(e){ui.progreso.errores.push(f.name+": "+upErr(e));}
@@ -1616,8 +1646,10 @@ function render(){
   renderTabs();
   $("#iglesia").textContent=S.config.iglesia||(window.EPK&&EPK.comunidad?EPK.comunidad.nombre:"Escuela Dominical");
   {const pb=$("#perfilBtn");const L=lector();pb.innerHTML=L?`${avatarP(BIB.actual)}<span>${esc(BIB.actual)}</span>`:`<span class="avatar" style="background:var(--p-maria)">+</span><span>Mi familia</span>`;}
-  const mb=$("#modeBtn");mb.hidden=!canEdit;mb.textContent=ui.familia?"Vista familia":"Vista maestro";mb.dataset.on=ui.familia?"familia":"maestro";
+  const v=vista(),real=rolReal();window.EPK_VISTA=v;
+  {const mb=$("#modeBtn");mb.hidden=vistasPosibles().length<2;mb.innerHTML=OJO+`<span>${v==="admin"?"Admin":v==="maestro"?"Maestro":"Niño"}</span>`;mb.setAttribute("aria-label","Ver la app como: "+ROLES_VISTA[v][0]+". Toca para cambiar");mb.dataset.on=v;}
   let html="";
+  if(v!==real)html+=`<div class="vistabar"><span><b>Estás viendo como ${esc(ROLES_VISTA[v][0])}</b><span class="small" style="display:block">${v==="familia"?"Así ven la app los niños y sus familias: sin botones de edición ni espacios del equipo.":"Así ven la app los maestros. Lo que edites aquí se guarda de verdad."}</span></span><button class="btn sm" data-act="vista" data-k="${real}">Volver a ${esc(ROLES_VISTA[real][0])}</button></div>`;
   if(dbFailed)html+=`<div class="note"><b>No se pudieron cargar los datos de tu congregación.</b> Revisa tu conexión y vuelve a abrir la app.</div>`;
   if(window.EPK_OFFLINE)html+=`<div class="note">📶 <b>Sin conexión.</b> Estás viendo lo último que se guardó en este celular. Los cuentos que ya abriste se pueden leer igual.</div>`;
   else if(!loaded.clases)html+=`<div class="note">Cargando clases y puntos…</div>`;
@@ -1811,7 +1843,7 @@ function vCumples(){const cs=cumpleanos();if(!cs.length)return "";
 
 /* ---------- calendario del material para las familias ---------- */
 const ocultoTxt=x=>x._central?(x._vis===false?"Oculto para las familias":(x._desde&&x._desde>hoyISO()?"Visible desde el "+fLarga(x._desde):"")):claseOculta(x);
-const pillVis=x=>{const t=canEdit&&ocultoTxt(x);return t?`<span class="pill sun">👁 ${esc(t)}</span> `:"";};
+const pillVis=x=>{const t=ed()&&ocultoTxt(x);return t?`<span class="pill sun">👁 ${esc(t)}</span> `:"";};
 function formVisCentral(col,x){const id=String(x.id).replace(/^c_/,"");
   openForm({titulo:"Calendario: "+(x.titulo||"material"),ayuda:"Decide si las familias de tu congregación ven este material de la biblioteca central y desde qué día. El equipo siempre lo ve.",
     datos:{visible:x._vis===false?"no":"si",desde:x._desde||""},
@@ -1909,11 +1941,17 @@ document.addEventListener("click",async e=>{
     case "nuevoBiblico":if(!assets){toast("Solo maestros y administradores pueden agregar personajes");break;}formBiblico(null);break;
     case "editBiblico":formBiblico(find("biblicos"));break;
     case "verBiblico":{callar();ui.tab="biblia";ui.bib="biblicos";ui.biblico=id||null;if(id){const L=lector();if(L&&!L.biblicos[id]){L.biblicos[id]=hoyISO();bibSave();setTimeout(revisarInsignias,300);}}render();window.scrollTo(0,0);break;}
+    case "vista":ponerVista(b.dataset.k);break;
     case "claseSeg":ui.claseSeg=b.dataset.k;render();break;
     case "rec":ui.rec=b.dataset.k;render();break;
     case "subirCuentos":if(!assets){toast("Solo maestros y administradores pueden subir archivos");break;}$("#fileCuentos").click();break;
     case "cerrarProg":ui.progreso=null;render();break;
     case "editCuento":formCuento(find("cuentos"));break;
+    case "moverCuento":{if(!ed())break;const d=Number(b.dataset.d);const arr=S.cuentos.filter(x=>!x._central).sort((x,y)=>(x.numero||0)-(y.numero||0));const i=arr.findIndex(x=>x.id===id);const j=i+d;if(i<0||j<0||j>=arr.length)break;
+      const A=arr[i],B=arr[j];let na=B.numero,nb=A.numero;if(na===nb)na=(Number(nb)||0)+d;A.numero=na;B.numero=nb;
+      const l=$("#listaCuentos");if(l)l.innerHTML=listaCuentosHTML();const bt=document.querySelector(`[data-act="moverCuento"][data-d="${d}"][data-id="${CSS.escape(id)}"]`);if(bt&&!bt.disabled)bt.focus();
+      const limpio=o=>{const r={};for(const k in o)if(k[0]!=="_")r[k]=o[k];return r;};
+      try{await Promise.all([guardar("cuentos",A.id,limpio(A)),guardar("cuentos",B.id,limpio(B))]);}catch(err){toast(errMsg(err));}break;}
     case "bajar":descargar(b.dataset.asset,b.dataset.n,b);break;
     case "nuevoMaterial":formMaterial(b.dataset.col,null);break;
     case "editMaterial":{const col=b.dataset.col;formMaterial(col,S[col].find(x=>x.id===id));break;}
@@ -1953,7 +1991,7 @@ document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.
     if(campo==="notas"&&v!==""){const n=Number(v.replace(",","."));if(!isFinite(n)||n<1||n>7){toast("La nota debe estar entre 1,0 y 7,0");const l=S.libro[t.dataset.clase];const o=l&&l.notas&&l.notas[t.dataset.nino];t.value=o!=null?fmtNota(o):"";return;}v=Math.round(n*10)/10;t.value=fmtNota(v);}
     setLibro(t.dataset.clase,t.dataset.nino,campo,v);}
 });
-$("#modeBtn").addEventListener("click",()=>{ui.familia=!ui.familia;try{localStorage.setItem("epk_familia",ui.familia?"1":"0");}catch(e){}render();toast(ui.familia?"Así ven la app las familias":"Vista de maestro");});
+$("#modeBtn").addEventListener("click",elegirVista);
 
 /* ---------- arranque ---------- */
 render();
@@ -1964,7 +2002,7 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
     if(!window.claude||!window.claude.use)throw new Error("sin runtime");
     const[d,u]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
     db=d;
-    if(u){try{canEdit=!!(await u.canEdit());}catch(e){canEdit=false;}}
+    if(u){try{canEdit=!!(await u.canEdit());}catch(e){canEdit=false;}try{isOwner=!!(await u.isOwner());}catch(e){isOwner=false;}}
     if(!db){dbFailed=true;render();return;}
     Promise.all([window.claude.use("assets"),window.claude.use("downloads")]).then(([a,dl])=>{assets=canEdit?a:null;downloads=dl;if(ui.tab==="recursos"&&canEdit)refrescarUso();render();}).catch(()=>{});
     for(const c of COLS.concat(canEdit?COLS_EQUIPO:[])){

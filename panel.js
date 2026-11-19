@@ -383,7 +383,7 @@
       <input type="file" id="files" multiple accept="${ui.bib === "cuentos" ? "application/pdf,.pdf" : ACEPTA}" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir archivos para subir</span></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `${pg.txt || "Subiendo"} ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} ${pg.txt ? "con miniatura" : "subidos"}`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
     ${items.length ? `<div class="tbl"><table><thead><tr>${ui.bib === "cuentos" ? '<th class="num">N°</th>' : ""}<th></th><th>Título</th><th>Plan</th><th>Libera desde</th><th>Archivo</th><th>Subido</th><th></th></tr></thead><tbody>
-    ${items.map((d) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"></td>` : ""}
+    ${items.map((d, i) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><div class="mover"><button class="flecha" data-mover="-1" data-id="${esc(d.id)}" ${i === 0 ? "disabled" : ""} aria-label="Subir ${esc(d.data.titulo || "cuento")}">▲</button><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"><button class="flecha" data-mover="1" data-id="${esc(d.id)}" ${i === items.length - 1 ? "disabled" : ""} aria-label="Bajar ${esc(d.data.titulo || "cuento")}">▼</button></div></td>` : ""}
       <td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : '<span class="thumb vacio">PDF</span>'}</td>
       <td><input class="inp" style="width:100%;min-width:200px" data-edit="titulo" data-id="${esc(d.id)}" value="${esc(d.data.titulo || "")}" aria-label="Título"></td>
       <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}${ui.bib === "cuentos" ? `<div><button class="link" data-preg="${esc(d.id)}">Preguntas (${(d.data.preguntas || []).length})</button></div>` : ""}</td>
@@ -475,8 +475,10 @@
           if (mc) { clase = parseInt(mc[1], 10); parte = parseInt(mc[2], 10); num = Math.max(0, clase - 1) * 2 + parte; titulo = base.slice(mc[0].length); }
           else { const m = base.match(/\d+/); num = m ? parseInt(m[0], 10) : (Math.max(0, ...docsDe(CENTRAL, "cuentos").map((d) => d.data.numero || 0)) + 1); titulo = base.replace(/^\s*(cuento)?\s*(n[°ºo.]*)?\s*[-_#]*\s*\d+\s*[-_.:)]*\s*/i, ""); }
           titulo = titulo.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim() || base;
-          id = "cuento-" + String(num).padStart(3, "0");
-          const prev = D.docs.find((d) => d.comunidad_id === CENTRAL && d.col === "cuentos" && d.id === id);
+          // se busca por número (las flechas ▲ ▼ pueden cambiar números sin cambiar el id)
+          const cuentosC = D.docs.filter((d) => d.comunidad_id === CENTRAL && d.col === "cuentos");
+          const prev = cuentosC.find((d) => d.data.numero === num);
+          if (prev) id = prev.id; else { const base3 = "cuento-" + String(num).padStart(3, "0"); id = base3; for (let k = 2; cuentosC.some((d) => d.id === id); k++) id = base3 + "-" + k; }
           data = { ...(prev ? prev.data : {}), numero: num, titulo: mc || !(prev && prev.data.titulo) ? titulo : prev.data.titulo, asset: path, thumb, archivo: f.name, tamano: f.size, subido: new Date().toISOString().slice(0, 10) };
           if (mc) { data.clase = clase; data.parte = parte; }
           const viejos = prev ? [prev.data.asset, prev.data.thumb].filter(Boolean) : []; if (viejos.length) await sb.storage.from(BUCKET).remove(viejos);
@@ -506,6 +508,21 @@
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; render(); return; }
+      if (b.dataset.mover) {
+        // ▲ ▼ en Cuentos: intercambia el número con el cuento vecino
+        const dir = Number(b.dataset.mover); const arr = docsDe(CENTRAL, "cuentos").sort((x, y) => (x.data.numero || 0) - (y.data.numero || 0));
+        const i = arr.findIndex((x) => x.id === b.dataset.id); const j = i + dir; if (i < 0 || j < 0 || j >= arr.length) return;
+        const A = arr[i], B = arr[j]; let na = B.data.numero, nb = A.data.numero; if (na === nb) na = (Number(nb) || 0) + dir;
+        const dA = { ...A.data, numero: na }, dB = { ...B.data, numero: nb }; const ahora = new Date().toISOString();
+        b.disabled = true;
+        const [r1, r2] = await Promise.all([
+          sb.from("docs").update({ data: dA, actualizado: ahora }).eq("comunidad_id", CENTRAL).eq("col", "cuentos").eq("id", A.id),
+          sb.from("docs").update({ data: dB, actualizado: ahora }).eq("comunidad_id", CENTRAL).eq("col", "cuentos").eq("id", B.id)]);
+        if (r1.error || r2.error) { render(); throw (r1.error || r2.error); }
+        A.data = dA; B.data = dB; A.actualizado = ahora; B.actualizado = ahora; render();
+        const f = document.querySelector(`[data-mover="${dir}"][data-id="${CSS.escape(A.id)}"]`); if (f && !f.disabled) f.focus();
+        return;
+      }
       if (act0(b) === "nuevaMaestra") {
         const ms = docsDe(CENTRAL, "maestras"); const n = Math.max(0, ...ms.map((m) => Number(m.data.numero) || 0)) + 1; const usados = new Set(ms.map((m) => m.id)); let id = "clase-" + String(n).padStart(3, "0"); for (let k = 2; usados.has(id); k++) id = "clase-" + String(n).padStart(3, "0") + "-" + k;
         const data = { numero: n, titulo: "Nueva clase", archivos: [], plan: "gratis" };

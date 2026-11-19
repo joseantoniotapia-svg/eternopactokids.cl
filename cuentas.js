@@ -366,11 +366,14 @@
   const ROLN = { admin: "Administrador", maestro: "Maestro", familia: "Familia" };
   function abrirMenu() {
     const c = CTX.comunidad; const nombreU = (CTX.user.user_metadata && CTX.user.user_metadata.nombre) || CTX.user.email;
-    const r = hoja(`<h2>${esc(c.nombre)}</h2><p class="muted small">${esc(nombreU)} · ${ROLN[CTX.rol]}</p>
+    // "Ver como": si el administrador está mirando la app como maestro o familia, el menú se ve igual que para ese rol
+    const v = ["admin", "maestro", "familia"].includes(window.EPK_VISTA) ? window.EPK_VISTA : CTX.rol;
+    const verEquipo = equipo() && v !== "familia", verAdmin = CTX.rol === "admin" && v === "admin";
+    const r = hoja(`<h2>${esc(c.nombre)}</h2><p class="muted small">${esc(nombreU)} · ${ROLN[CTX.rol]}${v !== CTX.rol ? ` · <b>viendo como ${ROLN[v]}</b>` : ""}</p>
       <div class="list">
-      ${equipo() ? `<button class="item" data-m="invitar"><span class="grow"><b>Invitar familias y maestros</b><span class="muted small">Código ${esc(c.codigo)}</span></span></button>` : ""}
+      ${verEquipo ? `<button class="item" data-m="invitar"><span class="grow"><b>Invitar familias y maestros</b><span class="muted small">Código ${esc(c.codigo)}</span></span></button>` : ""}
       ${CTX.super ? `<a class="item" href="panel.html"><span class="grow"><b>Panel de Control</b><span class="muted small">Súper administrador: todas las congregaciones</span></span></a>` : ""}
-      ${CTX.rol === "admin" ? `<button class="item" data-m="miembros"><span class="grow"><b>Miembros y roles</b><span class="muted small">Nombrar maestros y administradores</span></span></button>` : ""}
+      ${verAdmin ? `<button class="item" data-m="miembros"><span class="grow"><b>Miembros y roles</b><span class="muted small">Nombrar maestros y administradores</span></span></button>` : ""}
       <button class="item" data-m="cambiar"><span class="grow"><b>Cambiar o unirme a otra congregación</b></span></button>
       <a class="item" href="privacidad.html"><span class="grow"><b>Privacidad y términos</b></span></a>
       <button class="item" data-m="salir"><span class="grow"><b>Cerrar sesión</b></span></button></div>
