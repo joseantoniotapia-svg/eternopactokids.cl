@@ -347,6 +347,65 @@
   }
   const citasDe = (txt) => String(txt || "").split(/[;\n]+/).map((r) => r.trim()).filter(Boolean).map((ref) => ({ ref }));
 
+  /* ---------- álbum bíblico: 100 láminas ---------- */
+  const LAM_TOTAL = 100;
+  const lamId = (n) => "lamina-" + String(n).padStart(3, "0");
+  const lamDoc = (n) => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "laminas" && Number(x.data.numero) === Number(n));
+  const esVideo = (p) => /\.(mp4|webm)$/i.test(p || "");
+  const lamMedia = (d, cls) => d && d.data.img ? (esVideo(d.data.img) ? `<video class="${cls}" src="${esc(blobUrl(d.data.img))}" autoplay muted loop playsinline></video>` : `<img class="${cls}" src="${esc(blobUrl(d.data.img))}" alt="" loading="lazy">`) : "";
+  function vLaminas(seg) {
+    const hechas = Array.from({ length: LAM_TOTAL }, (_, i) => lamDoc(i + 1)).filter((d) => d && d.data.img).length;
+    const pg = ui.subida;
+    let out = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div><span class="pill ${hechas === LAM_TOTAL ? "ok" : ""}">${hechas} de ${LAM_TOTAL} láminas con imagen</span></div>
+    <p class="muted">Las 100 láminas del Álbum bíblico. Los sobres de los niños ya funcionan aunque falten imágenes: mientras tanto se ve una lámina de color con el número y el nombre. Cuando subas la imagen, aparece sola en todos los álbumes.</p>`;
+    const d = ui.ficha && lamDoc(ui.ficha);
+    if (ui.ficha) return out + editorLamina(Number(ui.ficha), d);
+    out += `<label class="drop" id="dropL" for="lFiles"><b>Arrastra aquí varias láminas a la vez</b><span class="muted small">Nombra cada archivo con su número y el personaje, por ejemplo <b>009-Moisés.webp</b> o <b>14 Débora.png</b>: se ubica sola en su casilla. Sirven PNG, JPG, WEBP, GIF animado, MP4 o WEBM de hasta ${MAXMB} MB.</span>
+      <input type="file" id="lFiles" multiple accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir láminas para subir</span></label>
+    ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} láminas subidas`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
+    <div class="lam-grid">${Array.from({ length: LAM_TOTAL }, (_, i) => { const n = i + 1, x = lamDoc(n);
+      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m") || `<span class="lam-m vacia">${x && x.data.nombre ? "🖼" : "+"}</span>`}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`;
+    return out;
+  }
+  function editorLamina(n, d) {
+    const x = (d && d.data) || {};
+    const bib = docsDe(CENTRAL, "biblicos").sort((a, b) => String(a.data.nombre || "").localeCompare(String(b.data.nombre || ""), "es"));
+    return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Todas las láminas</button><span class="row"><button class="btn ghost sm" data-act="editLamina" data-n="${n - 1}" ${n > 1 ? "" : "disabled"}>‹ N° ${n - 1}</button><button class="btn ghost sm" data-act="editLamina" data-n="${n + 1}" ${n < LAM_TOTAL ? "" : "disabled"}>N° ${n + 1} ›</button></span></div>
+      <div class="mae-grid"><div class="mae-portada">${lamMedia(d, "") || `<div class="empty">Lámina ${n} sin imagen</div>`}
+        <label class="btn line sm" for="lFoto">${x.img ? "Cambiar imagen o animación" : "Subir imagen o animación"}</label><input type="file" id="lFoto" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden>
+        ${x.img ? `<button class="btn ghost sm" type="button" data-act="quitarImgLamina">Quitar imagen</button>` : ""}</div>
+      <form class="form" id="fLamina"><div class="field"><label>Número</label><input class="inp" value="${n}" disabled></div>
+        <div class="field"><label for="l_nombre">Personaje</label><input class="inp" id="l_nombre" value="${esc(x.nombre || "")}" placeholder="Moisés"></div>
+        <div class="field"><label for="l_cita">Dónde aparece</label><input class="inp" id="l_cita" value="${esc(x.cita || "")}" placeholder="Éxodo 3"></div>
+        <div class="field"><label for="l_biblico">Su ficha en Personajes bíblicos (opcional)</label><select class="inp" id="l_biblico"><option value="">— Ninguna —</option>${bib.map((b) => `<option value="c_${esc(b.id)}" ${x.biblico === "c_" + b.id ? "selected" : ""}>${esc(b.data.nombre || b.id)}</option>`).join("")}</select></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_frase">Frase de la lámina (se lee al tocarla)</label><textarea class="inp" id="l_frase" rows="3" maxlength="220" placeholder="Guió al pueblo de Dios fuera de Egipto.">${esc(x.frase || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar lámina</button></div></form></div></section>`;
+  }
+  async function guardarLamina(n, cambios) {
+    const d = lamDoc(n); const ahora = new Date().toISOString();
+    const data = { ...(d ? d.data : { numero: n, plan: "gratis" }), ...cambios, numero: n };
+    const id = d ? d.id : lamId(n);
+    const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: "laminas", id, data, actualizado: ahora }); if (error) throw error;
+    if (d) { d.data = data; d.actualizado = ahora; } else D.docs.push({ comunidad_id: CENTRAL, col: "laminas", id, data, actualizado: ahora });
+  }
+  async function subirLaminas(files) {
+    files = [...files]; if (!files.length) return;
+    ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
+    for (const f of files) {
+      try {
+        const m = f.name.match(/^\D*?(\d{1,3})[\s._-]*(.*?)\.[a-z0-9]+$/i); const n = m ? Number(m[1]) : 0;
+        if (!n || n > LAM_TOTAL) throw new Error("el nombre debe empezar con el número de la lámina (1 a " + LAM_TOTAL + ")");
+        const viejo = lamDoc(n) && lamDoc(n).data.img; const { path } = await subirArchivoCentral(f);
+        const nombre = (m[2] || "").replace(/[_-]+/g, " ").trim(); const prev = lamDoc(n);
+        await guardarLamina(n, { img: path, ...(nombre && !(prev && prev.data.nombre) ? { nombre } : {}) });
+        if (viejo) await sb.storage.from(BUCKET).remove([viejo]);
+      } catch (e) { ui.subida.errores.push(f.name + ": " + (e.message || e)); }
+      ui.subida.hecho++; render();
+    }
+    toast(ui.subida.errores.length ? "Algunas láminas no se subieron: revisa el detalle" : "¡Láminas subidas!");
+  }
+
   const verNinos = (a) => a.ninos !== undefined ? !!a.ninos : a.para !== "Maestro";
   const verMaestros = (a) => a.maestros !== undefined ? !!a.maestros : true;
   async function guardarMaestra(d, data) {
@@ -420,8 +479,9 @@
   }
 
   function vBiblioteca() {
-    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo"]];
+    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo"], ["laminas", "Álbum (láminas)"]];
     if (ui.bib === "maestras") return vMaestras(seg);
+    if (ui.bib === "laminas") return vLaminas(seg);
     if (ui.bib === "biblicos" || ui.bib === "parabolas") return vFichas(seg);
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
@@ -500,7 +560,7 @@
       ui.subida.hecho++; render();
     }
   }
-  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation", xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mp3: "audio/mpeg", m4a: "audio/mp4", mov: "video/quicktime" };
+  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", webm: "video/webm", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation", xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mp3: "audio/mpeg", m4a: "audio/mp4", mov: "video/quicktime" };
   const ACEPTA = Object.keys(TIPOS).map((k) => "." + k).join(",");
   const MAXMB = 50;
   async function subir(files) {
@@ -588,6 +648,10 @@
         const ahora = new Date().toISOString(); const { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); if (error) throw error;
         D.docs.push({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); ui.ficha = id; render(); window.scrollTo(0, 0); return;
       }
+      if (act0(b) === "editLamina") { ui.ficha = Number(b.dataset.n); render(); window.scrollTo(0, 0); return; }
+      if (act0(b) === "quitarImgLamina") { const d = lamDoc(ui.ficha); if (!d) return; const viejo = d.data.img; const data = { ...d.data }; delete data.img;
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", "laminas").eq("id", d.id); if (error) throw error;
+        d.data = data; if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Imagen quitada"); render(); return; }
       if (act0(b) === "editFicha") { ui.ficha = b.dataset.id; render(); window.scrollTo(0, 0); return; }
       if (act0(b) === "cerrarFicha") { ui.ficha = null; render(); return; }
       if (act0(b) === "borrarFicha") {
@@ -683,6 +747,12 @@
         if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else { as[i][t.dataset.k] = t.checked; if (!as[i].ninos && !as[i].maestros) { as[i].maestros = true; toast("Al menos un grupo debe verlo"); } delete as[i].para; }
         await guardarMaestra(d, { ...d.data, archivos: as }); toast("Guardado"); return;
       }
+      if (t.id === "lFiles") { const fs = [...t.files]; t.value = ""; subirLaminas(fs); return; }
+      if (t.id === "lFoto") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const n = ui.ficha; const viejo = lamDoc(n) && lamDoc(n).data.img;
+        toast("Subiendo lámina…"); const { path } = await subirArchivoCentral(f); await guardarLamina(n, { img: path });
+        if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Lámina " + n + " lista"); render(); return;
+      }
       if (t.id === "fFoto") {
         const f = t.files[0]; t.value = ""; if (!f) return; const d = fichaActual(); if (!d) return;
         if (!/^image\//.test(f.type)) { toast("Elige una imagen (PNG, JPG o WEBP)"); return; }
@@ -773,6 +843,10 @@
         if (!data.titulo) return toast("Escribe el título");
         await guardarMaestra(d, data); toast("Clase guardada"); render(); return;
       }
+      if (f.id === "fLamina") {
+        await guardarLamina(ui.ficha, { nombre: $("#l_nombre").value.trim(), cita: $("#l_cita").value.trim(), biblico: $("#l_biblico").value || null, frase: $("#l_frase").value.trim() });
+        toast("Lámina " + ui.ficha + " guardada"); if (ui.ficha < LAM_TOTAL) ui.ficha++; render(); window.scrollTo(0, 0); return;
+      }
       if (f.id === "fFicha") {
         const d = fichaActual(); if (!d) return; const data = { ...d.data };
         FICHA[ui.bib].campos.forEach(([k, , t]) => { const v = $("#f_" + k).value; data[k] = t === "number" ? (Number(v) || null) : v.trim(); });
@@ -812,7 +886,7 @@
     const d = e.target.closest && e.target.closest(".drop"); if (!d) { toast("Suelta los archivos dentro del recuadro punteado"); return; }
     const fs = [...((e.dataTransfer && e.dataTransfer.files) || [])];
     if (!fs.length) { toast("No llegó ningún archivo. Si lo arrastras desde un correo o WhatsApp, guárdalo primero en tu computador o usa el botón."); return; }
-    if (d.id === "dropM") subirArchivosMaestra(fs); else subir(fs);
+    if (d.id === "dropM") subirArchivosMaestra(fs); else if (d.id === "dropL") subirLaminas(fs); else subir(fs);
   });
   $("#recargar").addEventListener("click", cargar);
   $("#salir").addEventListener("click", async () => { await sb.auth.signOut(); location.href = "/"; });
