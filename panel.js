@@ -299,15 +299,16 @@
         <td class="row"><button class="btn ghost sm" data-amov="${i}" data-d="-1" ${i ? "" : "disabled"} aria-label="Subir">↑</button><button class="btn ghost sm" data-amov="${i}" data-d="1" ${i < as.length - 1 ? "" : "disabled"} aria-label="Bajar">↓</button><button class="btn danger sm" data-aborrar="${i}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Esta clase aún no tiene archivos.</p>`}</section>`;
   }
   /* ---------- personajes bíblicos y museo de parábolas ---------- */
+  const SALAS_M = [["parabolas", "Parábolas"], ["milagros", "Milagros"], ["tribus", "Las 12 tribus"], ["lugares", "Lugares"], ["animales", "Animales"]];
   const ICONOS_MUSEO = [["semilla", "Semilla"], ["oveja", "Oveja"], ["moneda", "Moneda"], ["corazon", "Corazón"], ["camino", "Camino"], ["casa", "Casa"], ["arbol", "Árbol"], ["perla", "Perla"], ["lampara", "Lámpara"], ["talentos", "Talentos"]];
   const FICHA = {
     biblicos: { uno: "personaje", nuevo: "+ Nuevo personaje", vacio: "Aún no hay personajes bíblicos en la biblioteca central.", nombre: (x) => x.nombre || "(sin nombre)", sub: (x) => x.titulo || "",
       ayuda: "Los personajes aparecen en Biblia → Personajes bíblicos de todas las congregaciones. Los versículos marcan al personaje cuando los niños leen esos pasajes.",
       campos: [["nombre", "Nombre", "text", "David"], ["titulo", "Cómo lo conocemos", "text", "El pastor que llegó a ser rey"], ["orden", "Orden", "number", ""],
         ["descripcion", "Su historia para niños", "area", "Quién era, qué hizo y qué nos enseña."], ["citasTxt", "Versículos donde aparece (uno por línea)", "area", "1 Samuel 16:13\n1 Samuel 17:45-47\nSalmos 23"]] },
-    parabolas: { uno: "cuadro", nuevo: "+ Nuevo cuadro", vacio: "Aún no hay cuadros del museo en la biblioteca central. Mientras no haya, cada congregación ve los 10 cuadros de base.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
-      ayuda: "Los cuadros aparecen en Biblia → Museo de todas las congregaciones, junto a los suyos. Un cuadro con el mismo título que uno de los 10 de base lo reemplaza.",
-      campos: [["titulo", "Parábola", "text", "La oveja perdida"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo (si no hay imagen)", "icono", ""],
+    parabolas: { uno: "cuadro", nuevo: "+ Nueva obra", vacio: "Aún no hay obras del Museo Bíblico en la biblioteca central. Mientras no haya, cada congregación ve las obras de base de cada sala.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
+      ayuda: "Las obras aparecen en Biblia → Museo Bíblico de todas las congregaciones, en la sala que elijas (Parábolas, Milagros, Las 12 tribus, Lugares o Animales). En Parábolas, una obra con el mismo título que una de base la reemplaza; en las otras salas, al subir obras propias se reemplazan las de base.",
+      campos: [["titulo", "Título", "text", "La oveja perdida"], ["sala", "Sala del museo", "sala", ""], ["emoji", "Emoji (si no hay imagen)", "text", "🐟"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo (si no hay imagen)", "icono", ""],
         ["resumen", "La historia", "area", ""], ["ensenanza", "¿Qué nos enseña?", "area", ""], ["pregunta", "Pregunta para conversar en familia", "area", ""]] }
   };
   function vFichas(seg) {
@@ -330,6 +331,7 @@
     const F = FICHA[col], x = { ...d.data, citasTxt: (d.data.citas || []).map((c) => c.ref).join("\n") };
     const campo = ([k, l, t, ph]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="f_${k}">${l}</label>${
       t === "area" ? `<textarea class="inp" id="f_${k}" rows="${k === "descripcion" || k === "resumen" ? 6 : 4}" placeholder="${esc(ph)}">${esc(x[k] || "")}</textarea>`
+      : t === "sala" ? `<select class="inp" id="f_${k}">${SALAS_M.map(([v, n]) => `<option value="${v}" ${v === (x.sala || "parabolas") ? "selected" : ""}>${n}</option>`).join("")}</select>`
       : t === "icono" ? `<select class="inp" id="f_${k}">${ICONOS_MUSEO.map(([v, n]) => `<option value="${v}" ${v === (x.icono || "semilla") ? "selected" : ""}>${n}</option>`).join("")}</select>`
       : `<input class="inp" id="f_${k}" type="${t}" value="${esc(x[k] ?? "")}" placeholder="${esc(ph)}">`}</div>`;
     const fotos = col === "biblicos" ? `<div class="mae-portada">${[0, 1].map((i) => (x.fotos || [])[i] ? `<img src="${esc(blobUrl(x.fotos[i]))}" alt="Foto ${i + 1}"><button class="btn ghost sm" type="button" data-act="quitarFotoFicha" data-i="${i}">Quitar foto ${i + 1}</button>` : "").join("")}
@@ -489,7 +491,7 @@
   }
 
   function vBiblioteca() {
-    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo"], ["laminas", "Álbum (láminas)"]];
+    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo Bíblico"], ["laminas", "Álbum (láminas)"]];
     if (ui.bib === "maestras") return vMaestras(seg);
     if (ui.bib === "laminas") return vLaminas(seg);
     if (ui.bib === "biblicos" || ui.bib === "parabolas") return vFichas(seg);

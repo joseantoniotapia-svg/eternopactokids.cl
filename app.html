@@ -316,6 +316,33 @@ button.item:hover{border-color:var(--accent)}
 .alb-flecha.izq{left:-14px}.alb-flecha.der{right:-14px}.alb-flecha:disabled{opacity:0;pointer-events:none}.alb-flecha:active{transform:translateY(2px);box-shadow:0 1px 0 #2A1E5C}
 @media (min-width:760px){.alb-flecha.izq{left:-26px}.alb-flecha.der{right:-26px}.alb-flecha{width:52px;height:52px}}
 .alb-nav{justify-content:center}
+.museo-fachada{position:relative;text-align:center;padding:18px 14px 46px;border-radius:22px 22px 8px 8px;background:linear-gradient(180deg,#FFF1CC,#FBDDA0);color:#4A2C0A;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C;overflow:hidden}
+.museo-fachada h2{font-family:var(--display);font-size:clamp(1.7rem,6vw,2.4rem);margin:4px 0 0;letter-spacing:.02em;color:#5A2FD6;text-shadow:0 2px 0 #FFD23F}
+.museo-fachada p{margin:2px 0 0;font-weight:700;font-size:.9rem}
+.mf-fronton{margin:-18px -14px 6px;height:58px;background:linear-gradient(180deg,#F7C766,#E9A93A);clip-path:polygon(50% 0,100% 100%,0 100%);display:grid;place-items:end center;padding-bottom:4px;font-size:1.6rem}
+.mf-columnas{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;justify-content:space-around;align-items:flex-end;border-top:3px solid #E9A93A;background:#F7D58A}
+.mf-columnas i{width:16px;height:100%;background:repeating-linear-gradient(90deg,#fff6df 0 4px,#ecd29b 4px 6px);border:2px solid #C9963A;border-bottom:0}
+.puertas{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.puerta{display:flex;flex-direction:column;align-items:center;gap:6px;border:0;background:none;font:inherit;color:var(--ink);cursor:pointer;padding:6px 4px;perspective:600px}
+.p-letrero{font-family:var(--display);font-weight:800;font-size:1.02rem;padding:4px 14px;border-radius:999px;background:var(--c1);color:#fff;border:2.5px solid #2A1E5C;box-shadow:0 3px 0 #2A1E5C;white-space:nowrap}
+.p-marco{position:relative;display:flex;width:100%;max-width:170px;aspect-ratio:3/4;border:5px solid #2A1E5C;border-bottom-width:7px;border-radius:999px 999px 6px 6px;overflow:hidden;
+  background:radial-gradient(circle at 50% 40%,#FFF6C8,#FFD23F 45%,var(--c1) 100%);box-shadow:0 5px 0 #2A1E5C,inset 0 0 0 5px rgba(255,255,255,.35)}
+.p-luz{position:absolute;inset:0;display:grid;place-items:center;font-size:3rem;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.p-hoja{position:relative;z-index:1;flex:1;background:linear-gradient(160deg,var(--c1),var(--c2));display:flex;flex-direction:column;gap:8%;padding:22% 12% 12%;transition:transform .55s cubic-bezier(.3,.7,.3,1);box-shadow:inset 0 0 0 2px rgba(0,0,0,.15)}
+.p-hoja.izq{transform-origin:left center;border-right:2px solid rgba(0,0,0,.25)}.p-hoja.der{transform-origin:right center;border-left:2px solid rgba(255,255,255,.2)}
+.p-hoja i{flex:1;border-radius:6px;border:3px solid rgba(255,255,255,.35);box-shadow:inset 0 0 0 2px rgba(0,0,0,.12);background:rgba(255,255,255,.08)}
+.p-hoja.izq i:first-child{border-radius:999px 6px 6px 6px}.p-hoja.der i:first-child{border-radius:6px 999px 6px 6px}
+.p-pomo{position:absolute;top:56%;width:11px;height:11px;border-radius:50%;background:#FFD23F;border:2px solid #8A5A00}.izq .p-pomo{right:6px}.der .p-pomo{left:6px}
+.puerta:hover .p-hoja.izq,.puerta:focus-visible .p-hoja.izq{transform:rotateY(-62deg)}.puerta:hover .p-hoja.der,.puerta:focus-visible .p-hoja.der{transform:rotateY(62deg)}
+.puerta.abre .p-hoja.izq{transform:rotateY(-80deg)}.puerta.abre .p-hoja.der{transform:rotateY(80deg)}.puerta:active .p-marco{transform:translateY(2px)}
+.p-desc{font-size:.85rem;text-align:center;line-height:1.25;color:var(--ink)}.p-cant{font-size:.75rem;font-weight:700;color:var(--muted)}
+.sala-head{display:flex;gap:14px;align-items:center;padding:16px;border-radius:20px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
+.sala-head h2{margin:0;color:#fff;font-size:1.6rem}.sala-head p{margin:2px 0 0}.sala-head .eyebrow{color:rgba(255,255,255,.85)}
+.sala-ico{font-size:2.6rem;display:grid;place-items:center;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.22);flex:none}
+.frame .art.emoji{font-size:2.4rem;line-height:1;color:#fff}
+.frame .art.retrato{aspect-ratio:4/3}
+.sala-epoca{margin:14px 0 6px;color:var(--era);border-left:6px solid var(--era);padding-left:8px}
+@media (prefers-reduced-motion:reduce){.p-hoja{transition:none}}
 .alb-cartas{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.alb-cartas>*{width:min(30%,140px)}
 @media (prefers-reduced-motion:reduce){.pasa-sig .alb-hoja,.pasa-ant .alb-hoja{animation:none}}
 .alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
@@ -981,11 +1008,11 @@ function formPremio(p){
     onSave:async v=>{await guardar("premios",p&&p.id,{...(p||{}),...v});},
     onDelete:p?async()=>borrar("premios",p.id):null});
 }
-function formParabola(p){
-  openForm({titulo:p?"Editar cuadro":"Nuevo cuadro del museo",datos:p||{icono:"semilla",orden:S.parabolas.length+1},
-    campos:[{k:"titulo",label:"Parábola",req:true},{k:"cita",label:"Pasaje",ph:"Lucas 15:3-7"},{k:"resumen",label:"La historia",type:"textarea"},
+function formParabola(p,sala){sala=(p&&p.sala)||sala||"parabolas";
+  openForm({titulo:p?"Editar obra del museo":"Nueva obra · sala "+salaDe(sala)[1],datos:p||{icono:"semilla",sala,orden:museoItems(sala).filter(x=>!x._base).length+1},
+    campos:[{k:"titulo",label:"Título",req:true},{k:"sala",label:"Sala del museo",type:"select",opts:SALAS.filter(x=>x[0]!=="personajes").map(x=>[x[0],x[1]])},{k:"cita",label:"Pasaje",ph:"Lucas 15:3-7"},{k:"resumen",label:"La historia",type:"textarea"},
       {k:"ensenanza",label:"¿Qué nos enseña?",type:"textarea"},{k:"pregunta",label:"Pregunta para conversar en familia",type:"textarea"},
-      {k:"icono",label:"Dibujo",type:"select",opts:ARTKEYS.map(k=>[k,k[0].toUpperCase()+k.slice(1)])},{k:"orden",label:"Orden en el museo",type:"number"}],
+      {k:"emoji",label:"Emoji del cuadro (opcional, ej.: 🐟)",ph:"🐟"},{k:"icono",label:"Dibujo (si no hay emoji)",type:"select",opts:ARTKEYS.map(k=>[k,k[0].toUpperCase()+k.slice(1)])},{k:"orden",label:"Orden en el museo",type:"number"}],
     onSave:async v=>{const id=await guardar("parabolas",p&&p.id,{...(p||{}),...v});ui.parabola=id;},
     onDelete:p?async()=>{await borrar("parabolas",p.id);ui.parabola=null;}:null});
 }
@@ -1229,24 +1256,105 @@ function vNino(n){
   return out;
 }
 
-function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat">${p.img?`<span class="art pintura"><img src="${esc(blobUrl(p.img))}" alt="" loading="lazy"></span>`:`<span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span>`}<b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
+/* ---------- Museo Bíblico: salas con puertas ---------- */
+const SALAS=[
+  ["parabolas","Parábolas","📜","Las historias que Jesús contó para enseñarnos","#7B4DFF","#5A2FD6"],
+  ["personajes","Personajes","👑","Héroes y heroínas de la Biblia","#FF8A1A","#D96500"],
+  ["milagros","Milagros","✨","Cuando Dios hizo lo imposible","#16B3A3","#0E8A7E"],
+  ["tribus","Las 12 tribus","⛺","Los hijos de Jacob y sus familias","#E5383B","#B71F22"],
+  ["lugares","Lugares","🗺️","Ciudades, montes, ríos y mares","#2FB36B","#1E8A4E"],
+  ["animales","Animales","🦁","Animales que aparecen en la Biblia","#E0A100","#B37F00"]];
+const mx=(sala,pre,a)=>a.map((x,i)=>({id:pre+(i+1),sala,orden:i+1,emoji:x[0],titulo:x[1],cita:x[2],resumen:x[3],ensenanza:x[4],pregunta:x[5],_base:true}));
+const BASE_MUSEO={
+ milagros:mx("milagros","mil-",[
+  ["🌊","El mar Rojo se abre","Éxodo 14:21-31","El pueblo de Israel huía de Egipto y llegó al mar. Moisés extendió su vara, Dios abrió el mar y caminaron sobre tierra seca.","Dios abre caminos donde no los hay.","¿Qué camino le pedirías a Dios que abra para ti?"],
+  ["🍞","El maná del cielo","Éxodo 16:11-18","En el desierto no había comida. Cada mañana Dios enviaba maná, un pan dulce como la miel, para todo el pueblo.","Dios cuida de nosotros cada día.","¿Por qué cosas de cada día puedes darle gracias a Dios?"],
+  ["🔥","Fuego del cielo","1 Reyes 18:30-39","Elías oró en el monte Carmelo y Dios envió fuego que consumió el altar, aunque estaba empapado de agua.","Dios escucha y responde la oración.","¿Por qué cosa oraste y Dios te respondió?"],
+  ["🫒","El aceite de la viuda","2 Reyes 4:1-7","Una viuda solo tenía un poco de aceite. Eliseo le pidió juntar vasijas, y el aceite no paró de salir hasta llenarlas todas.","Dios multiplica lo poco que tenemos.","¿Qué cosa pequeña tuya podría usar Dios?"],
+  ["🦁","Daniel y los leones","Daniel 6:16-23","Daniel fue lanzado al foso de los leones por orar a Dios. Un ángel cerró la boca de los leones y salió sin un rasguño.","Dios protege a quienes le son fieles.","¿Cuándo has sentido que Dios te cuidó?"],
+  ["🍷","El agua en vino","Juan 2:1-11","En una boda se acabó el vino. Jesús convirtió seis tinajas de agua en el mejor vino: fue su primer milagro.","Jesús se preocupa por las cosas de nuestra vida.","¿Qué problema pequeño le contarías a Jesús?"],
+  ["🐟","Cinco panes y dos peces","Juan 6:5-13","Un niño compartió su almuerzo y Jesús alimentó con él a más de cinco mil personas. ¡Sobraron doce canastas!","Cuando compartimos, Dios hace grandes cosas.","¿Qué puedes compartir esta semana?"],
+  ["🌊","Jesús camina sobre el agua","Mateo 14:22-33","En medio de una tormenta, Jesús caminó sobre el mar hacia la barca. Pedro también caminó mientras miró a Jesús.","Si miro a Jesús, no tengo que tener miedo.","¿Qué te da miedo y cómo te ayuda Jesús?"],
+  ["⛈️","La tormenta se calma","Marcos 4:35-41","Los discípulos tenían miedo de la tormenta. Jesús dijo «¡Calla, enmudece!» y el viento y el mar obedecieron.","Jesús tiene poder sobre todo.","¿Qué «tormenta» le pedirías a Jesús que calme?"],
+  ["👁️","El ciego Bartimeo","Marcos 10:46-52","Bartimeo gritaba «¡Jesús, ten misericordia de mí!». Jesús lo llamó, le preguntó qué quería y le devolvió la vista.","Jesús escucha a quienes lo buscan con fe.","Si Jesús te preguntara «¿qué quieres que haga por ti?», ¿qué le dirías?"],
+  ["🐠","La pesca milagrosa","Lucas 5:1-11","Pedro pescó toda la noche sin nada. Jesús le dijo que echara la red otra vez, y sacaron tantos peces que la red se rompía.","Obedecer a Jesús trae bendición.","¿En qué puedes obedecer a Jesús hoy?"],
+  ["🪦","Lázaro vuelve a vivir","Juan 11:38-44","Lázaro llevaba cuatro días muerto. Jesús oró y dijo «¡Lázaro, ven fuera!», y su amigo salió vivo de la tumba.","Jesús es la resurrección y la vida.","¿Por qué Jesús tiene poder sobre la muerte?"]]),
+ tribus:mx("tribus","tri-",[
+  ["💧","Rubén","Génesis 49:3-4","El hijo mayor de Jacob y Lea. Su tribu vivió al este del río Jordán.","Ser el primero también significa dar el buen ejemplo.","¿Cómo puedes ser un buen ejemplo para tus hermanos?"],
+  ["⚔️","Simeón","Génesis 49:5-7","Segundo hijo de Lea. Su tribu vivió dentro del territorio de Judá.","Dios puede transformar nuestro carácter.","¿Qué parte de tu carácter quieres que Dios cambie?"],
+  ["🕯️","Leví","Números 3:5-10","La tribu de los sacerdotes y servidores del templo. No recibió tierra: ¡Dios era su herencia!","Servir a Dios es un gran honor.","¿Cómo puedes servir en tu iglesia?"],
+  ["🦁","Judá","Génesis 49:8-10","Su símbolo es el león. De esta tribu vinieron el rey David y Jesús, el León de la tribu de Judá.","Dios cumple sus promesas a lo largo de la historia.","¿Por qué a Jesús le dicen «el León de Judá»?"],
+  ["⚖️","Dan","Génesis 49:16-17","Su nombre significa «juez». De esta tribu vino Sansón.","Dios nos llama a hacer lo justo.","¿Cómo puedes ser justo con tus amigos?"],
+  ["🦌","Neftalí","Génesis 49:21","Su símbolo es una cierva ágil. Vivió en Galilea, donde Jesús enseñó mucho tiempo.","Podemos llevar buenas noticias con alegría.","¿A quién le contarías una buena noticia de Jesús?"],
+  ["🛡️","Gad","Génesis 49:19","Una tribu de valientes guerreros que vivió al este del Jordán.","Con Dios podemos ser valientes.","¿En qué necesitas ser valiente esta semana?"],
+  ["🫒","Aser","Génesis 49:20","Su tierra era fértil y producía aceite de oliva y ricos alimentos.","Dios nos bendice para que bendigamos a otros.","¿Con qué bendición puedes ayudar a alguien?"],
+  ["🫏","Isacar","1 Crónicas 12:32","Eran hombres que entendían los tiempos y sabían lo que el pueblo debía hacer.","La sabiduría viene de Dios.","¿A quién le pides consejo cuando no sabes qué hacer?"],
+  ["⛵","Zabulón","Génesis 49:13","Vivía cerca del mar, con puertos para los barcos.","Dios nos da a cada uno un lugar especial.","¿Cuál es el lugar donde Dios te puso?"],
+  ["🌾","José (Efraín y Manasés)","Génesis 48:1-20","Los hijos de José recibieron cada uno su tribu. Por eso José tuvo una doble porción.","Dios recompensa la fidelidad.","¿Cómo fue fiel José aun en momentos difíciles?"],
+  ["🐺","Benjamín","Génesis 49:27","El hijo menor de Jacob y Raquel. De esta tribu vinieron el rey Saúl y el apóstol Pablo.","Dios usa a los pequeños para grandes cosas.","¿Por qué Dios puede usarte aunque seas niño?"]]),
+ lugares:mx("lugares","lug-",[
+  ["🌳","El jardín del Edén","Génesis 2:8-15","El hermoso jardín donde Dios puso a Adán y Eva, con ríos y árboles de todo tipo.","Dios creó un mundo bueno para que lo cuidemos.","¿Cómo puedes cuidar la creación de Dios?"],
+  ["⛰️","Monte Sinaí","Éxodo 19:16-20; 20:1-17","El monte donde Dios le dio a Moisés los Diez Mandamientos, entre truenos y una nube de fuego.","Los mandamientos de Dios son para nuestro bien.","¿Cuál de los mandamientos te cuesta más cumplir?"],
+  ["🧱","Jericó","Josué 6:1-20","La ciudad de murallas enormes que cayeron cuando el pueblo marchó, tocó trompetas y gritó, obedeciendo a Dios.","No hay muro que Dios no pueda derribar.","¿Qué muro le pedirías a Dios que derribe?"],
+  ["🌊","El río Jordán","Josué 3:14-17; Mateo 3:13-17","Israel lo cruzó en seco para entrar a la tierra prometida, y allí Juan bautizó a Jesús.","Dios nos acompaña en cada paso nuevo.","¿Qué cosa nueva vas a empezar con Dios?"],
+  ["🏰","Jerusalén","2 Samuel 5:6-7; 1 Reyes 6:1","La ciudad de David, donde Salomón construyó el templo y donde Jesús murió y resucitó.","Dios quiere vivir en medio de su pueblo.","¿Por qué Jerusalén es tan importante en la Biblia?"],
+  ["⭐","Belén","Miqueas 5:2; Lucas 2:1-7","El pueblo pequeño donde nació el rey David y, muchos años después, Jesús en un pesebre.","Dios elige lo pequeño para hacer lo grande.","¿Por qué crees que Jesús nació en un lugar tan humilde?"],
+  ["🪚","Nazaret","Lucas 2:39-52","El pueblo donde Jesús creció con María y José y aprendió el oficio de carpintero.","Jesús también fue niño y creció en sabiduría.","¿En qué quieres crecer este año?"],
+  ["🛶","El mar de Galilea","Mateo 4:18-22","Un gran lago donde trabajaban pescadores como Pedro y Andrés. Allí Jesús calmó la tormenta.","Jesús nos llama a seguirlo en nuestra vida diaria.","¿Cómo puedes seguir a Jesús en tu colegio o tu casa?"],
+  ["🏛️","Babilonia","Daniel 1:1-6","La gran ciudad donde Daniel y sus amigos vivieron lejos de casa, pero siguieron fieles a Dios.","Puedo ser fiel a Dios en cualquier lugar.","¿Cómo puedes ser fiel a Dios cuando estás lejos de casa?"],
+  ["🛤️","El camino a Damasco","Hechos 9:1-9","En este camino Jesús se le apareció a Saulo con una luz del cielo y cambió su vida para siempre.","Jesús puede cambiar cualquier corazón.","¿A quién le pedirías a Jesús que le cambie el corazón?"]]),
+ animales:mx("animales","ani-",[
+  ["🐍","La serpiente del Edén","Génesis 3:1-6","Engañó a Eva en el jardín. La Biblia nos enseña a escuchar a Dios y no a las mentiras.","La verdad de Dios nos protege.","¿Cómo sabes si algo que escuchas es verdad?"],
+  ["🕊️","La paloma de Noé","Génesis 8:8-12","Noé la envió desde el arca y volvió con una hoja de olivo: ¡las aguas estaban bajando!","Dios siempre trae esperanza.","¿Qué te da esperanza cuando estás triste?"],
+  ["🐏","El carnero de Abraham","Génesis 22:13-14","Dios proveyó un carnero enredado en un arbusto para ofrecerlo en lugar de Isaac.","Dios provee lo que necesitamos.","¿Qué te ha dado Dios cuando lo necesitabas?"],
+  ["🐸","Las ranas de Egipto","Éxodo 8:1-15","Una de las plagas: ¡ranas por todas partes, hasta en las camas del faraón!","Dios tiene poder sobre toda la creación.","¿Por qué el faraón no quería obedecer a Dios?"],
+  ["🫏","La burra de Balaam","Números 22:21-33","Una burra que vio a un ángel en el camino y ¡habló para advertirle a su dueño!","Dios puede usar cualquier cosa para hablarnos.","¿De qué formas te habla Dios?"],
+  ["🐦‍⬛","Los cuervos de Elías","1 Reyes 17:2-6","Dios envió cuervos que le llevaban pan y carne a Elías cada mañana y cada tarde.","Dios cuida de los suyos de formas sorprendentes.","¿Cómo te ha cuidado Dios de forma sorprendente?"],
+  ["🦁","Los leones de Daniel","Daniel 6:19-22","Leones hambrientos que no le hicieron nada a Daniel porque Dios cerró su boca.","Dios es más fuerte que cualquier peligro.","¿Qué te da miedo y cómo te protege Dios?"],
+  ["🐋","El gran pez de Jonás","Jonás 1:17; 2:10","Un pez enorme que se tragó a Jonás y lo devolvió a tierra después de tres días.","Siempre es tiempo de volver a obedecer a Dios.","¿En qué necesitas volver a obedecer a Dios?"],
+  ["🐑","La oveja perdida","Lucas 15:3-7","En la parábola, el pastor deja a las 99 para buscar a la oveja que se perdió.","Jesús nos busca y nos ama a cada uno.","¿Cómo se siente saber que Jesús te busca?"],
+  ["🐴","El burrito de Jesús","Mateo 21:1-9","Jesús entró a Jerusalén montado en un burrito mientras la gente gritaba «¡Hosanna!».","Jesús es un rey humilde.","¿Por qué Jesús eligió un burrito y no un caballo de guerra?"]])};
+const salaDe=k=>SALAS.find(x=>x[0]===k)||SALAS[0];
+function museoItems(k){if(k==="parabolas")return S.parabolas.filter(x=>!x.sala||x.sala==="parabolas");
+  const xs=S.parabolas.filter(x=>x.sala===k);return xs.length?xs:(BASE_MUSEO[k]||[]);}
+function museoFind(id){return S.parabolas.find(x=>x.id===id)||Object.values(BASE_MUSEO).flat().find(x=>x.id===id)||null;}
+function puertaHTML(s){const [k,n,ico,desc,c1,c2]=s;const cant=k==="personajes"?ALB_TOTAL:museoItems(k).length;
+  return `<button class="puerta" data-act="museoSala" data-k="${k}" style="--c1:${c1};--c2:${c2}" aria-label="Entrar a la sala ${esc(n)}: ${esc(desc)}">
+    <span class="p-letrero">${ico} ${esc(n)}</span>
+    <span class="p-marco"><span class="p-luz" aria-hidden="true">${ico}</span><span class="p-hoja izq"><i></i><i></i><span class="p-pomo"></span></span><span class="p-hoja der"><i></i><i></i><span class="p-pomo"></span></span></span>
+    <span class="p-desc">${esc(desc)}</span><span class="p-cant">${cant} ${k==="personajes"?"retratos":"obras"}</span></button>`;}
+
+function frame(p){const col=colorFor(p.id||p.titulo);const art=p.img?`<span class="art pintura"><img src="${esc(blobUrl(p.img))}" alt="" loading="lazy"></span>`
+    :p.emoji?`<span class="art emoji" style="background:${salaDe(p.sala||"parabolas")[4]}">${esc(p.emoji)}</span>`:`<span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span>`;
+  return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat">${art}<b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
 function vMuseo(){
-  if(ui.parabola){const p=S.parabolas.find(x=>x.id===ui.parabola);if(p)return vParabola(p);ui.parabola=null;}
-  const ps=[...S.parabolas].sort((a,b)=>(a.orden||0)-(b.orden||0));
-  let out=`<div class="sec-h"><h2>Museo de parábolas</h2>${ed()?`<button class="btn sm" data-act="nuevaParabola">Nuevo cuadro</button>`:""}</div>${guia("mateo","Cada pregunta nos ayuda a conocer mejor a Dios. Toca un cuadro para explorar la historia que Jesús contó y su pregunta para conversar en familia.")}`;
-  if(!ps.length)return out+emptyBox("El museo está vacío",ed()?"Agrega el primer cuadro con una parábola.":"Pronto se colgarán los primeros cuadros.","");
-  return out+`<div class="museum">${ps.map(frame).join("")}</div>`;
-}
-function vParabola(p){
-  const ps=[...S.parabolas].sort((a,b)=>(a.orden||0)-(b.orden||0));const i=ps.findIndex(x=>x.id===p.id);
+  if(ui.parabola){const p=museoFind(ui.parabola);if(p)return vParabola(p);ui.parabola=null;}
+  if(ui.sala)return vSala(ui.sala);
+  return guia("mateo","¡Bienvenidos al Museo Bíblico! Cada puerta es una sala distinta. ¿Cuál quieres visitar primero?")+`<section class="museo-fachada" aria-label="Museo Bíblico">
+    <div class="mf-fronton"><span>🏛️</span></div><h2>Museo Bíblico</h2><p>Eterno Pacto KIDS · Toca una puerta para entrar</p><div class="mf-columnas" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></section>
+    <div class="puertas">${SALAS.map(puertaHTML).join("")}</div>`;}
+function vSala(k){const s=salaDe(k),[,n,ico,desc,c1,c2]=s;
+  let out=`<button class="back" data-act="museoSala" data-k="">‹ Volver a las puertas del museo</button>
+    <section class="sala-head" style="--c1:${c1};--c2:${c2}"><span class="sala-ico">${ico}</span><div><p class="eyebrow">Sala del Museo Bíblico</p><h2>${esc(n)}</h2><p>${esc(desc)}</p></div></section>`;
+  if(k==="personajes"){const tieneFichas=S.biblicos.length||ed();
+    if(ui.subsala==="fichas"&&tieneFichas)return out+`<div class="seg"><button aria-pressed="false" data-act="museoSub" data-k="">Los 100 del álbum</button><button aria-pressed="true" data-act="museoSub" data-k="fichas">Fichas con versículos</button></div>`+vBiblicos();
+    out+=tieneFichas?`<div class="seg"><button aria-pressed="true" data-act="museoSub" data-k="">Los 100 del álbum</button><button aria-pressed="false" data-act="museoSub" data-k="fichas">Fichas con versículos</button></div>`:"";
+    return out+ALB_SECC.map(([a,z,t,c])=>`<h3 class="sala-epoca" style="--era:${c}">${esc(t)}</h3><div class="museum retratos">${Array.from({length:z-a+1},(_,i)=>{const nn=a+i,L=albCat(nn)||{};
+      return `<button class="frame" data-act="albVer" data-n="${nn}"><span class="mat"><span class="art pintura retrato"><img src="${esc(albImg(nn))}" alt="" loading="lazy"></span><b>${esc(L.nombre||"N° "+nn)}</b><span>${esc(L.cita||"")}</span></span></button>`;}).join("")}</div>`).join("");}
+  const ps=[...museoItems(k)].sort((a,b)=>(a.orden||0)-(b.orden||0));
+  out+=ed()?`<div class="row"><button class="btn sm" data-act="nuevaParabola" data-k="${k}">Agregar a esta sala</button>${ps.length&&ps[0]._base?`<span class="small muted">Estas obras vienen de base; si agregas las tuyas, reemplazan a las de base.</span>`:""}</div>`:"";
+  if(!ps.length)return out+emptyBox("La sala está vacía",ed()?"Agrega la primera obra.":"Pronto se colgarán las primeras obras.","");
+  return out+`<div class="museum">${ps.map(frame).join("")}</div>`;}
+function vParabola(p){const k=p.sala||"parabolas",s=salaDe(k);
+  const ps=[...museoItems(k)].sort((a,b)=>(a.orden||0)-(b.orden||0));const i=ps.findIndex(x=>x.id===p.id);
   const prev=ps[i-1],next=ps[i+1];
-  return `<button class="back" data-act="volver">‹ Volver al museo</button>
+  return `<button class="back" data-act="museoSala" data-k="${k}">‹ Volver a la sala ${esc(s[1])}</button>
   <div style="max-width:260px;width:70%;align-self:center">${frame(p)}</div>
   <section class="plaque"><p class="eyebrow">${esc(p.cita||"")}</p><h2 style="font-size:1.5rem">${esc(p.titulo)}</h2>${p.resumen?`<p>${esc(p.resumen)}</p>`:""}</section>
   ${p.ensenanza?`<section class="card"><p class="eyebrow">Lo que nos enseña</p><p>${esc(p.ensenanza)}</p></section>`:""}
   ${p.pregunta?`<section class="verse"><p class="eyebrow">Para conversar en familia</p><blockquote style="font-size:1.2rem">${esc(p.pregunta)}</blockquote></section>`:""}
   <div class="row between">${prev?`<button class="btn line sm" data-act="verParabola" data-id="${esc(prev.id)}">‹ ${esc(prev.titulo)}</button>`:"<span></span>"}${next?`<button class="btn line sm" data-act="verParabola" data-id="${esc(next.id)}">${esc(next.titulo)} ›</button>`:""}</div>
-  ${ed()&&!p._central?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar cuadro</button>`:""}`;
+  ${ed()&&!p._central&&!p._base?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar obra</button>`:""}`;
 }
 
 function vMas(){
@@ -1610,7 +1718,8 @@ function vLeerBiblia(){
 }
 function textoSel(){const d=BCACHE[BR.ver+"/"+CODES[BR.li]];const vs=(d&&d[String(BR.cap)])||[];return vs.filter(x=>BR.sel.has(x[0])).map(x=>x[1]).join(" ");}
 function vBiblia(){
-  const seg=[["leer","Leer la Biblia"],["biblicos","Personajes bíblicos"],["lectura","Mi lectura"],["album","⭐ Álbum bíblico"],["museo","Museo"]];
+  if(ui.bib==="biblicos"){ui.bib="museo";ui.sala="personajes";ui.subsala="fichas";}
+  const seg=[["leer","Leer la Biblia"],["lectura","Mi lectura"],["album","⭐ Álbum bíblico"],["museo","🏛️ Museo Bíblico"]];
   let out=`<div class="seg" role="group" aria-label="Biblia">${seg.map(x=>`<button aria-pressed="${ui.bib===x[0]}" data-act="bib" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.bib==="museo")return out+vMuseo();
   if(ui.bib==="biblicos")return guia("santiago","La sabiduría de Dios es para todos. Conoce a los héroes de la Biblia y descubre en qué versículos aparecen.")+out+vBiblicos();
@@ -2378,7 +2487,9 @@ document.addEventListener("click",async e=>{
     case "borrarFoto":{const k=id+"/"+b.dataset.i;if(ui.fotoBorrar!==k){ui.fotoBorrar=k;render();setTimeout(()=>{if(ui.fotoBorrar===k){ui.fotoBorrar=null;render();}},4000);break;}ui.fotoBorrar=null;borrarFoto(id,Number(b.dataset.i));break;}
     case "permFoto":permisoFoto(id,b.dataset.si==="1",b);break;
     case "verNino":ui.tab="puntos";ui.nino=id;render();window.scrollTo(0,0);break;
-    case "verParabola":{const L=lector();if(L&&id&&!L.museo[id]){L.museo[id]=hoyISO();bibSave();setTimeout(revisarInsignias,300);}}ui.tab="biblia";ui.bib="museo";ui.parabola=id;render();window.scrollTo(0,0);break;
+    case "verParabola":{const L=lector();if(L&&id&&!L.museo[id]){L.museo[id]=hoyISO();bibSave();ptsActividad("museo",id,[BIB.actual]);}}ui.tab="biblia";ui.bib="museo";ui.parabola=id;render();window.scrollTo(0,0);break;
+    case "museoSala":if(b.classList.contains("puerta")&&!b.classList.contains("abre")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){b.classList.add("abre");try{sonidoPagina();}catch(e){}setTimeout(()=>b.click(),520);break;}ui.tab="biblia";ui.bib="museo";ui.sala=b.dataset.k||null;ui.subsala=null;ui.parabola=null;render();window.scrollTo(0,0);break;
+    case "museoSub":ui.subsala=b.dataset.k||null;ui.biblico=null;render();break;
     case "mas":ui.mas=b.dataset.k;ui.personaje=null;render();break;
     case "verPersonaje":callar();ui.tab="mas";ui.mas="personajes";ui.personaje=id||null;render();window.scrollTo(0,0);break;
     case "oirHistoria":oirHistoria(id);break;
@@ -2391,8 +2502,8 @@ document.addEventListener("click",async e=>{
     case "bono":formBono(find("ninos"));break;
     case "nuevoPremio":formPremio(null);break;
     case "editPremio":formPremio(find("premios"));break;
-    case "nuevaParabola":formParabola(null);break;
-    case "editParabola":formParabola(find("parabolas"));break;
+    case "nuevaParabola":formParabola(null,b.dataset.k||ui.sala||"parabolas");break;
+    case "editParabola":formParabola(museoFind(id));break;
     case "nuevoPost":formPost(null);break;
     case "editPost":formPost(find("muro"));break;
     case "nuevoLink":formLink(null);break;
@@ -2524,8 +2635,8 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
         const arr=snap.docs.map(x=>({id:x.id,...x.data()}));
         if(c==="libro"){const keep={};for(const k in S.libro)if(pendingLibro[k])keep[k]=S.libro[k];S.libro={};arr.forEach(a=>S.libro[a.id]=a);Object.assign(S.libro,keep);}
         else if(c==="asistencia"){const keep={};for(const k in S.asistencia)if(pendingAsis[k])keep[k]=S.asistencia[k];S.asistencia={};arr.forEach(a=>S.asistencia[a.id]=a);Object.assign(S.asistencia,keep);}
-        else if(c==="parabolas"){const cen=arr.filter(x=>x._central),pro=arr.filter(x=>!x._central);const tit=t=>String(t||"").trim().toLowerCase();
-          S[c]=(pro.length?pro:BASE.parabolas.filter(b=>!cen.some(x=>tit(x.titulo)===tit(b.titulo)))).concat(cen);}
+        else if(c==="parabolas"){const cen=arr.filter(x=>x._central),pro=arr.filter(x=>!x._central&&(!x.sala||x.sala==="parabolas")),otros=arr.filter(x=>!x._central&&x.sala&&x.sala!=="parabolas");const tit=t=>String(t||"").trim().toLowerCase();
+          S[c]=(pro.length?pro:BASE.parabolas.filter(b=>!cen.some(x=>tit(x.titulo)===tit(b.titulo)))).concat(otros,cen);}
         else S[c]=arr;
         loaded[c]=true;dbFailed=false;render();if(c==="fotos"||c==="clases")limpiarFotos();
       },err=>{console.warn(c,err);loaded[c]=true;render();});
