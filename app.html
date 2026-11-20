@@ -1,5 +1,5 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Eterno Pacto Kids: la escuela dominical en casa. Clases, cuentos, la Biblia para niños e insignias para toda la familia.">
+<meta name="description" content="Eterno Pacto Kids: la escuela dominical en casa. Clases, cuentos, la Biblia para niños y un álbum bíblico para toda la familia.">
 <meta name="theme-color" content="#5B3DF5"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="img/icono-192.png">
 <link rel="apple-touch-icon" href="img/icono-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="EP Kids">
 <meta property="og:title" content="Eterno Pacto Kids"><meta property="og:description" content="La escuela dominical en casa para toda la familia."><meta property="og:image" content="https://eternopactokids.cl/img/sara-poster.jpg">
@@ -222,6 +222,104 @@ button.item:hover{border-color:var(--accent)}
 .dm-nota .btn{align-self:flex-start}
 .dm-verso{--nc:#FFE45C;--pin:#7A4DFF}.dm-verso blockquote{margin:0;font-family:var(--display);font-weight:500;font-size:1.2rem;line-height:1.35}.dm-verso cite{font-style:normal;font-weight:700}
 .dm-tarea{--nc:#C9F2D8;--pin:#FF7A1A}
+.dm-afiche .dm-afiche-img{border:0;padding:0;background:none;cursor:pointer;border-radius:6px;overflow:hidden;display:block}
+.dm-afiche .dm-afiche-img img{width:100%;height:auto;max-height:340px;object-fit:cover;display:block;border-radius:6px;border:2px solid rgba(42,30,92,.85)}
+.dd-dots{display:flex;gap:5px;flex-wrap:wrap}
+.dd-dot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(42,30,92,.85);background:#fff;font-size:.95rem;display:grid;place-items:center;cursor:pointer}
+.dd-dot:disabled{opacity:.35;cursor:default}.dd-dot.ok{background:#16B3A3;color:#fff;font-weight:700}.dd-dot.hoy{box-shadow:0 0 0 3px #FFD23F}
+.dd .dd-une{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dd .dd-une>div{display:flex;flex-direction:column;gap:8px}
+.dd-card{text-align:left;padding:10px 12px;border-radius:14px;border:2.5px solid var(--edge,var(--line));background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.dd-card.der{background:#FFF4D6;color:#1E1548}.dd-card.sel{background:#FFD23F;color:#1E1548}.dd-card.ok{background:#C9F2D8;color:#1E1548;opacity:.8}
+.dd-cw{display:grid;gap:3px;max-width:420px}.dd-c{position:relative;aspect-ratio:1;border:2px solid var(--edge,#2A1E5C);background:#fff;color:#1E1548;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.05rem;border-radius:4px}
+.dd-c.vac{border:0;background:none}.dd-c i{position:absolute;left:2px;top:0;font-size:.6rem;font-style:normal}
+.dd-pistas{display:flex;flex-direction:column;gap:8px}.dd-pista.ok{opacity:.7}.dd-in{font:inherit;text-transform:uppercase;padding:8px 10px;border-radius:10px;border:2px solid var(--line);min-width:140px}
+.dd-sopa{display:grid;gap:3px;max-width:420px}.dd-l{aspect-ratio:1;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1.05rem;border-radius:6px;cursor:pointer;padding:0}
+.dd-l.sel{background:#FFD23F;color:#1E1548}.dd-l.ok{background:#16B3A3;color:#fff}
+.dd-lista{display:flex;gap:8px;flex-wrap:wrap}.dd-lista span{padding:3px 10px;border-radius:999px;border:2px solid var(--line);font-weight:700;font-size:.85rem}.dd-lista span.ok{text-decoration:line-through;background:#C9F2D8;color:#1E1548}
+.dd-dif{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.dd-pan{position:relative;border:2.5px solid var(--edge,#2A1E5C);border-radius:12px;overflow:hidden;line-height:0}
+.dd-pan.der{cursor:crosshair}.dd-svg{width:100%;height:auto;display:block}.dd-fig{position:absolute;left:44%;bottom:4%;height:44%;width:auto;pointer-events:none}
+.dd-spot{position:absolute;width:15%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:0;background:transparent;cursor:crosshair;padding:0}.dd-spot.ok{border:4px solid #FF3D8B;background:rgba(255,61,139,.12)}
+.dd-lab{display:grid;max-width:340px;aspect-ratio:1;border:3px solid var(--edge,#2A1E5C);border-radius:6px;background:#FFF4E4}
+.dd-q{border:0 solid #2A1E5C;display:grid;place-items:center;font-size:1.2rem;line-height:1}.dd-q img{width:80%;height:80%;object-fit:cover;border-radius:50%}
+.dd-flechas{display:flex;flex-direction:column;align-items:center;gap:6px}.dd-flechas .btn{min-width:54px;font-size:1.2rem}
+.dd-fin{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:#FFF4D6;color:#1E1548}
+.dd-cont{display:inline-block;min-width:38px;padding:2px 8px;border-radius:999px;background:#E2D6FF;color:#1E1548;font-weight:700}.dd-cont.full{background:#16B3A3;color:#fff}
+.libro input.ex{min-width:90px}
+.alb-top{gap:10px}.alb-head{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}.alb-head>div{flex:1;min-width:200px}
+.alb-sobre-btn{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;padding:4px}
+.alb-sobre-btn:disabled{opacity:.55;cursor:default}.alb-sobre-btn.on .sobre{animation:albLate 1.4s ease-in-out infinite}
+@keyframes albLate{0%,100%{transform:rotate(-4deg) scale(1)}50%{transform:rotate(4deg) scale(1.06)}}
+.sobre{position:relative;display:grid;place-items:center;width:120px;aspect-ratio:3/4;border-radius:12px;border:3px solid #2A1E5C;cursor:pointer;
+  background:repeating-linear-gradient(135deg,#FFD23F 0 14px,#FFB23F 14px 28px);box-shadow:0 6px 0 #2A1E5C;overflow:hidden}
+.sobre::before{content:"";position:absolute;inset:0 0 auto 0;height:22%;background:#FF7A1A;border-bottom:3px dashed #2A1E5C}
+.sobre.mini{width:64px;border-width:2.5px;box-shadow:0 4px 0 #2A1E5C;cursor:inherit}.sobre.grande{width:min(220px,60vw);margin:10px auto}
+.sobre-sello{position:relative;display:grid;place-items:center;width:46%;aspect-ratio:1;border-radius:50%;background:#7B4DFF;color:#fff;font-family:var(--display);font-weight:800;font-size:1rem;border:3px solid #2A1E5C}
+.sobre-txt{position:absolute;bottom:10%;font-weight:800;color:#1E1548}
+.alb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.lam-b{border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:center;border-radius:12px}.lam-b.sel .lam{outline:4px solid #FFD23F}span.lam-b{cursor:default}
+.lam{position:relative;display:flex;flex-direction:column;aspect-ratio:3/4;border-radius:12px;border:3px solid #2A1E5C;background:#fff;overflow:hidden;box-shadow:0 3px 0 #2A1E5C}
+.lam img,.lam video{flex:1;min-height:0;width:100%;object-fit:cover;background:var(--lc)}
+.lam-ph{flex:1;display:grid;place-items:center;background:var(--lc);color:#fff;font-family:var(--display);font-weight:800;font-size:2.2rem}
+.lam-num{position:absolute;top:4px;left:4px;z-index:1;min-width:24px;padding:1px 6px;border-radius:999px;background:#fff;color:#1E1548;font-weight:800;font-size:.75rem;border:2px solid #2A1E5C}
+.lam-nom{padding:4px 4px 5px;font-size:.78rem;line-height:1.15;color:#1E1548;background:#FFF4D6;border-top:2px solid #2A1E5C}
+.lam-rep{position:absolute;top:4px;right:4px;padding:1px 7px;border-radius:999px;background:#FF3D8B;color:#fff;font-weight:800;font-size:.78rem;border:2px solid #2A1E5C}
+.lam.vacia{border-style:dashed;box-shadow:none;background:var(--sunk)}.lam.vacia .lam-ph{background:none;color:var(--muted);font-size:1.6rem}.lam.vacia .lam-nom{background:none;color:var(--muted);border-top:2px dashed var(--line)}
+.alb-pagina{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:18px;background:#FFF8EA;border:2.5px solid #2A1E5C;color:#1E1548}
+.alb-pagina .lam.vacia{background:#F2E6CC}.alb-pagina .lam.vacia .lam-nom,.alb-pagina .lam.vacia .lam-ph{color:#8A7A5C}
+.alb-op{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+.alb-of{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap}.alb-of .grow{flex:1;min-width:180px;display:flex;flex-direction:column;gap:6px}
+.alb-mini{width:64px;display:block}.alb-mini .lam-nom{font-size:.6rem}.alb-mini .lam-ph{font-size:1.3rem}.alb-flecha{font-size:1.4rem;font-weight:800}
+.alb-msgs{display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;padding:8px;border-radius:14px;background:var(--sunk)}
+.alb-msg{align-self:flex-start;max-width:85%;display:flex;flex-direction:column;gap:2px;padding:7px 11px;border-radius:14px 14px 14px 4px;background:var(--surface);border-left:5px solid var(--lc)}
+.alb-msg.yo{align-self:flex-end;border-radius:14px 14px 4px 14px;background:#E2D6FF;color:#1E1548}.alb-msg.oculto{opacity:.5}.alb-msg small{color:var(--muted);font-size:.7rem}
+.alb-sis{align-self:center;font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;background:#C9F2D8;color:#1E1548;margin:0}
+.alb-enviar{display:flex;gap:8px}.alb-enviar .dd-in{flex:1;text-transform:none}.alb-frases{gap:6px}
+.alb-abre{text-align:center;align-items:center}.alb-cartas{display:grid;grid-template-columns:repeat(2,minmax(110px,150px));gap:12px;justify-content:center}
+.carta{display:flex;flex-direction:column;gap:6px;align-items:center}.carta>.lam{width:100%}.alb-mini .lam-num{font-size:.6rem;min-width:18px;padding:0 4px;top:2px;left:2px}.alb-mini .lam-ph{padding-top:14px}.alb-mini .lam-rep{display:none}.carta.vuelta{animation:albVuelta .5s ease-out}
+.carta.dorso{aspect-ratio:3/4;border-radius:12px;border:3px solid #2A1E5C;background:repeating-linear-gradient(45deg,#7B4DFF 0 12px,#6A3DEB 12px 24px);display:grid;place-items:center;cursor:pointer}
+.carta.dorso:disabled{opacity:.6;cursor:default}.carta.dorso:not(:disabled){animation:albLate 1.4s ease-in-out infinite}
+@keyframes albVuelta{from{transform:rotateY(90deg) scale(.9)}to{transform:none}}
+.alb-det{align-items:center;text-align:center}.alb-det>.lam{width:min(230px,62vw)}
+.dd-sobres{margin-top:4px}
+.alb-acc{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:stretch}.alb-acc .alb-sobre-btn{grid-column:auto!important;flex-direction:column!important}
+.alb-bolsa{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding:10px 12px;border-radius:16px;background:#FFF4D6;color:#1E1548}
+.alb-pts{display:flex;flex-direction:column}.alb-pts-n{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1}
+.alb-regalo{margin:0;padding:8px 12px;border-radius:14px;background:#E2D6FF;color:#1E1548}
+.alb-libro{display:flex;flex-direction:column;gap:10px;perspective:1800px;scroll-margin-top:70px}
+.alb-pliego{position:relative;transform-style:preserve-3d}
+.alb-hoja{position:relative;min-height:420px;padding:16px;border-radius:6px 18px 18px 6px;background:#FFF8EA;color:#1E1548;border:2.5px solid #2A1E5C;
+  box-shadow:inset 18px 0 22px -16px rgba(42,30,92,.45),6px 8px 0 #2A1E5C;display:flex;flex-direction:column;gap:12px;backface-visibility:hidden}
+.alb-hoja::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.08),transparent 8%)}
+.alb-hoja.era{border-top:10px solid var(--era)}.alb-hoja.era h3{color:var(--era)}
+.alb-hoja .lam.vacia{background:#F2E6CC}.alb-hoja .lam.vacia .lam-nom,.alb-hoja .lam.vacia .lam-ph{color:#8A7A5C}
+.pasa-sig .alb-hoja{transform-origin:left center;animation:hojaSig .6s cubic-bezier(.3,.7,.3,1)}
+.pasa-ant .alb-hoja{transform-origin:right center;animation:hojaAnt .6s cubic-bezier(.3,.7,.3,1)}
+@keyframes hojaSig{0%{transform:rotateY(-88deg);filter:brightness(.75)}60%{filter:brightness(1.05)}100%{transform:none}}
+@keyframes hojaAnt{0%{transform:rotateY(88deg);filter:brightness(.75)}60%{filter:brightness(1.05)}100%{transform:none}}
+.alb-hoja.tapa{padding:0;overflow:hidden;min-height:0}.alb-hoja.tapa img{width:100%;display:block}
+.alb-dueno{position:absolute;left:9%;right:9%;bottom:4.5%;text-align:center;font-family:var(--display);font-size:clamp(.85rem,3.6vw,1.2rem);color:#1E1548;background:rgba(255,248,234,.92);border-radius:14px;padding:6px 10px}
+.alb-dueno b{display:block;font-size:1.3em}
+.alb-tl{list-style:none;margin:0;padding:0 0 0 14px;display:flex;flex-direction:column;gap:6px;border-left:4px dashed #CDBB95}
+.alb-tl li button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:14px;padding:8px 10px;background:#fff;color:#1E1548;font:inherit;cursor:pointer;border-left:6px solid var(--era);margin-left:-21px}
+.tl-dot{display:grid;place-items:center;min-width:30px;height:30px;border-radius:50%;background:var(--era);color:#fff;font-weight:800}
+.tl-t{flex:1;display:flex;flex-direction:column;line-height:1.2}
+.alb-hoja.contra{align-items:center;text-align:center;justify-content:center;gap:10px;background:linear-gradient(180deg,#FFF8EA,#FFE9B8)}
+.contra-logo{width:150px}.contra-tot{font-size:1.05rem}.contra-jat{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:8px}.contra-jat img{width:min(220px,60%)}
+.contra-legal{font-size:.72rem;line-height:1.4;color:#5A4E7A;max-width:420px}
+.alb-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}.alb-nav .btn{min-width:52px;font-size:1.3rem}
+.alb-nav-t{display:flex;flex-direction:column;align-items:center;text-align:center}.alb-desliza{text-align:center;margin:0}
+.alb-cartas{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.alb-cartas>*{width:min(30%,140px)}
+@media (prefers-reduced-motion:reduce){.pasa-sig .alb-hoja,.pasa-ant .alb-hoja{animation:none}}
+.alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
+.alb-portada{width:92px;aspect-ratio:2/3;object-fit:cover;border-radius:10px;border:2.5px solid #2A1E5C;box-shadow:0 4px 0 #2A1E5C}
+.alb-pagina{border-top:10px solid var(--era,#2A1E5C)}.alb-pagina h3{color:var(--era)}.alb-pagina .dd-dot{border-color:var(--era)}.alb-pagina .dd-dot.ok{background:var(--era)}
+.lam-ph{background:var(--lc)}
+.ficha{text-align:left;align-items:stretch;border-top:10px solid var(--era)}.ficha h2{font-size:1.25rem}.ficha h3{margin:4px 0 0;font-size:1rem;color:var(--era)}
+.fi-era{margin:0;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--era)}
+.fi-img{width:100%;max-height:300px;object-fit:cover;border-radius:14px;border:3px solid #2A1E5C}
+.fi-datos{display:flex;flex-direction:column;gap:6px}.fi-fila{display:flex;gap:8px;margin:0}
+.fi-aprendo{padding:10px 12px;border-radius:14px;background:#FFF4D6;color:#1E1548;border-left:6px solid var(--era)}.fi-aprendo p{margin:4px 0 0}
+@media (prefers-reduced-motion:reduce){.alb-sobre-btn.on .sobre,.carta.dorso:not(:disabled),.carta.vuelta{animation:none}}
 .dm-aviso{--pin:#FF7A1A}.dm-firma{font-size:.8rem;font-weight:700;opacity:.8}
 .dm-nuevo{--nc:rgba(255,255,255,.55);border-style:dashed;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:110px;font:inherit}.dm-nuevo>span:first-child{font-size:1.8rem}
 @media (prefers-reduced-motion:reduce){.dm-nota{transform:none!important}}
@@ -626,9 +724,9 @@ function criterios(){const c=S.config&&Array.isArray(S.config.criterios)?S.confi
   return base.concat(c?c.filter(y=>y&&y.k&&!CRIT_DEF.some(d=>d.k===y.k)):[]).map(x=>({...x,on:x.on!==false,p:Number(x.p)||0,ico:x.ico||"⭐"}));}
 const MARCASf=()=>criterios().filter(c=>c.on).map(c=>[c.k,c.n,c.ico]);
 const PTS=new Proxy({},{get:(_,k)=>{const c=criterios().find(x=>x.k===k);return c?c.p:0;}});
-const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos","fotos"];
-const COLS_EQUIPO=["matprofes","libro","maestras"];
-const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},biblicos:[],fotos:[],config:{}};
+const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos","fotos","laminas"];
+const COLS_EQUIPO=["matprofes","libro","maestras","desafios"];
+const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},desafios:[],biblicos:[],fotos:[],laminas:[],config:{}};
 const loaded={};
 const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
@@ -646,7 +744,7 @@ let isOwner=false;
 const ROLES_VISTA={
  admin:["Administrador","Todo lo del maestro, más invitar, nombrar maestros, los datos de la congregación y el espacio de archivos."],
  maestro:["Maestro","Crea clases, marca asistencia, pone notas, da estrellas, sube material y publica en el muro."],
- familia:["Niño / familia","Solo mira y usa: la clase, el versículo, cuentos, estrellas, Biblia, insignias y museo."]};
+ familia:["Niño / familia","Solo mira y usa: la clase, el versículo, cuentos, estrellas, Biblia, álbum y museo."]};
 function rolReal(){return isOwner?"admin":canEdit?"maestro":"familia";}
 function vistasPosibles(){return isOwner?["admin","maestro","familia"]:canEdit?["maestro","familia"]:["familia"];}
 function vista(){const v=vistasPosibles();return v.includes(vistaGuardada)?vistaGuardada:v[0];}
@@ -770,9 +868,10 @@ function puntos(){
   const cr=criterios();const p={};S.ninos.forEach(n=>{p[n.id]={total:0,bonos:0};cr.forEach(c=>p[n.id][c.k]=0);});
   for(const a of Object.values(S.asistencia)){for(const c of cr){(Array.isArray(a[c.k])?a[c.k]:[]).forEach(id=>{if(p[id]){p[id].total+=c.p;p[id][c.k]++;}});}}
   S.bonos.forEach(b=>{if(p[b.ninoId]){const v=Number(b.pts)||0;p[b.ninoId].total+=v;p[b.ninoId].bonos+=v;}});
+  for(const id in p){const e=typeof ALB!=="undefined"&&ALB.estado[id];if(e){p[id].ganados=e.pts_ganados;p[id].gastados=e.pts_gastados;p[id].total=e.saldo;}else p[id].ganados=p[id].total;}
   return p;
 }
-function ranking(){const p=puntos();return [...S.ninos].sort(byNombre).sort((a,b)=>p[b.id].total-p[a.id].total).map(n=>({n,p:p[n.id]}));}
+function ranking(){const p=puntos();return [...S.ninos].sort(byNombre).sort((a,b)=>p[b.id].ganados-p[a.id].ganados).map(n=>({n,p:p[n.id]}));}
 
 let toastT;
 function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,2600);}
@@ -839,6 +938,7 @@ function formClase(c){
       {k:"versiculoCita",label:"Cita del versículo",ph:"Salmo 56:3"},
       {k:"material",label:"Material de la semana",type:"textarea",ph:"Hoja para colorear | https://...\nVideo de la historia | https://...",hint:"Un material por línea: nombre | enlace"},
       {k:"tarea",label:"Tarea para la casa",type:"textarea"},
+      {k:"conceptos",label:"Conceptos para el desafío «Une los conceptos» (opcional)",type:"textarea",ph:"Primer amor = el amor del principio\nArrepentirse = darse la vuelta y volver a Dios",hint:"Uno por línea: concepto = significado. Si lo dejas vacío, el desafío se arma con el versículo."},
       {k:"consideraciones",label:"Consideraciones",type:"textarea",ph:"Traer Biblia, ensayo para el programa, cambios de horario…"},
       {k:"visible",label:"¿Las familias pueden ver esta clase?",type:"select",opts:[["si","Sí, visible para las familias"],["no","No, solo el equipo de maestros"]]},
       {k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date",hint:"Déjalo vacío para mostrarla de inmediato. Antes de esa fecha solo la ve el equipo."}
@@ -922,7 +1022,8 @@ const corto=(t,n)=>{t=String(t||"").replace(/\s+/g," ").trim();if(t.length<=n)re
 function clasesMural(){const h=hoyISO();const vis=S.clases.filter(c=>c.fecha&&(ed()||!claseOculta(c)));
   const pasada=vis.filter(c=>c.fecha<h).sort((a,b)=>a.fecha<b.fecha?1:-1)[0]||null;
   const proxima=vis.filter(c=>c.fecha>=h).sort((a,b)=>a.fecha<b.fecha?-1:1)[0]||null;return {pasada,proxima};}
-function notaClase(c,eti,cls){if(!c)return "";const img=c.portadaMini||c.portada;const hoy=c.fecha===hoyISO();
+function notaClase(c,eti,cls){if(!c)return "";const img=cls==="proxima"?(c.portada||c.portadaMini):(c.portadaMini||c.portada);const hoy=c.fecha===hoyISO();
+  if(cls==="proxima"&&img)return `<article class="dm-nota dm-clase proxima dm-afiche"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p><button class="dm-afiche-img" data-act="verClase" data-id="${esc(c.id)}" aria-label="${esc("Ver la clase "+c.titulo)}"><img src="${esc(srcDe(img))}" alt="Afiche: ${esc(c.titulo)}" loading="lazy"></button><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">Ver la clase</button></article>`;
   return `<article class="dm-nota dm-clase ${cls}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p>
     <div class="dm-cl">${img?`<img src="${esc(srcDe(img))}" alt="" loading="lazy" width="78" height="117">`:`<span class="dm-sinimg" aria-hidden="true">📖</span>`}<div><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}<p class="small">${esc(corto(c.subtitulo||c.resumen,110))}</p></div></div>
     ${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">${cls==="pasada"?"Repasar la clase":"Ver la clase"}</button></article>`;}
@@ -937,14 +1038,16 @@ function notaFaltaClase(){if(!ed())return "";const dom=proximoDomingo();const m=
     <div class="row">${m?`<button class="btn sm" data-act="adoptar" data-id="${esc(m.id)}">Programar para el domingo</button><button class="btn line sm" data-act="irBiblioClases">Elegir otra</button>`:`<button class="btn sm" data-act="nuevaClase">Agregar clase</button><button class="btn line sm" data-act="irBiblioClases">Biblioteca</button>`}</div></article>`;}
 function vDiarioMural(){const {pasada,proxima}=clasesMural();const h=hoyISO();
   const vcl=proxima&&proxima.versiculo?proxima:(pasada&&pasada.versiculo?pasada:null);
-  const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,4);
+  const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,1);
   if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed()&&!notaFotos(pasada))return "";
   const COL={amarillo:"#FFE45C",rosado:"#FFC2D9",celeste:"#BFE6FF",verde:"#C9F2D8",lila:"#E2D6FF"};
   let notas=(proxima?notaClase(proxima,proxima.fecha===h?"Hoy":"Este domingo","proxima"):notaFaltaClase())+notaClase(pasada,"El domingo pasado","pasada")+notaFotos(pasada);
   if(vcl)notas+=`<article class="dm-nota dm-verso"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Versículo para memorizar</p><blockquote>“${esc(vcl.versiculo)}”</blockquote>${vcl.versiculoCita?`<cite>${esc(vcl.versiculoCita)}</cite>`:""}<button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(vcl.id)}">🎮 Practicar</button></article>`;
-  if(proxima&&proxima.tarea)notas+=`<article class="dm-nota dm-tarea"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Tarea para la casa</p><p class="small">${esc(corto(proxima.tarea,160))}</p></article>`;
-  notas+=avisos.map((p,i)=>`<article class="dm-nota dm-aviso" style="--nc:${COL[p.color]||COL[["rosado","celeste","verde","lila"][i%4]]}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(p.texto,220))}</p><p class="dm-firma">${esc(p.autor||"")}${p.hasta?` · hasta el ${esc(fCorta(p.hasta).dia)} ${esc(fCorta(p.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</article>`).join("");
-  if(ed())notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
+  /* Diario mural: 6 notas -> próxima clase (con afiche), domingo pasado, fotos, versículo, desafío diario y 1 aviso */
+  notas+=notaDesafio();
+  const av=avisos[0];
+  if(av)notas+=`<article class="dm-nota dm-aviso" style="--nc:${COL[av.color]||COL.rosado}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(av.texto,220))}</p><p class="dm-firma">${esc(av.autor||"")}${av.hasta?` · hasta el ${esc(fCorta(av.hasta).dia)} ${esc(fCorta(av.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(av.id)}">Editar</button>`:""}</article>`;
+  if(ed()&&!avisos.length)notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Espacio libre: clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
   return `<section class="diario" aria-label="Diario mural"><div class="dm-cab"><h2>📌 Diario mural</h2>${S.muro.length?`<button class="dm-link" data-act="verMuro">Ver todo el muro ›</button>`:""}</div><div class="dm-tablero">${notas}</div></section>`;}
 
 /* ---------- fotos de la semana (carpeta privada, enlaces que caducan) ---------- */
@@ -1031,11 +1134,11 @@ function vInicio(){
   }
   out+=tiraPersonajes();
   const r=ranking().slice(0,3);
-  out+=`<section class="card"><div class="sec-h"><h2>Estrellas de la clase</h2><button class="link-btn" data-act="tab" data-tab="puntos">Ver todos</button></div>`;
+  out+=`<section class="card"><div class="sec-h"><h2>Puntos de la clase</h2><button class="link-btn" data-act="tab" data-tab="puntos">Ver todos</button></div>`;
   out+=r.length?`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`
     :`<p class="muted">${ed()?"Agrega a los niños en la pestaña Puntos para empezar a contar estrellas.":"Pronto verás aquí a los niños con más estrellas."}</p>`;
   out+=`</section>`;
-  {const L=lector();out+=`<section class="card" style="--pc:var(--p-simon)"><div class="sec-h"><h2>Lee y gana insignias</h2><button class="link-btn" data-act="irInsignias">Ver insignias</button></div><p class="muted">${L?`${esc(BIB.actual)} tiene ${nK(L.insignias)} de ${INSIGNIAS.length} insignias y ha leído ${nK(L.cuentos)} cuentos.`:"Lee cuentos, historias de la Biblia y actividades para ganar insignias con Sara, Simón, Santiago, María y Mateo."}</p><div class="row"><button class="btn sm" data-act="tab" data-tab="recursos">Leer un cuento</button><button class="btn line sm" data-act="irBiblia">Leer la Biblia</button></div></section>`;}
+  out+=`<section class="card" style="--pc:var(--p-simon)"><div class="sec-h"><h2>⭐ Álbum bíblico</h2><button class="link-btn" data-act="irInsignias">Ver mi álbum</button></div><p class="muted">Todo lo que haces suma puntos: venir a clases con tu versículo y tu Biblia, los desafíos diarios y leer en la app. Cambia tus puntos por sobres de 5 láminas de 100 personajes bíblicos, cambia tus repetidas en el mercado del foro y ¡completa el álbum!</p><div class="row"><button class="btn sm" data-act="irInsignias">Abrir mi álbum</button></div></section>`;
   return out;
 }
 
@@ -1082,14 +1185,14 @@ function vClase(c){
   return out;
 }
 
-function vPuntos(){
+function vPuntos(){cargarAlbum();
   if(ui.nino){const n=S.ninos.find(x=>x.id===ui.nino);if(n)return vNino(n);ui.nino=null;}
   const segP=`<div class="seg" role="group" aria-label="Puntos"><button aria-pressed="${ui.pts==="hijos"}" data-act="ptsSeg" data-k="hijos">Mis hijos</button><button aria-pressed="${ui.pts==="estrellas"}" data-act="ptsSeg" data-k="estrellas">Estrellas y premios</button><button aria-pressed="${ui.pts==="retos"}" data-act="ptsSeg" data-k="retos">Retos entre familias${window.EPKX&&EPKX.pendientes()?` <span class="pill sun">${EPKX.pendientes()}</span>`:""}</button></div>`;
   if(ui.pts==="hijos")return guia("simon","¡Miau! Aquí ves cómo van tus hijos en la clase: asistencia, estrellas y logros de cada domingo.")+segP+vMisHijos();
   if(ui.pts==="retos")return guia("simon","¡Miau! ¿Quién lee más en familia? Reta a otra familia o únete a los desafíos de la congregación.")+segP+(window.EPKX?EPKX.vRetos():"");
   const r=ranking();const max=Math.max(1,...r.map(x=>x.p.total));
-  let out=guia("simon","¡Miau! Aprender también puede ser divertido. Junta estrellas cada domingo y canjéalas por premios.")+segP+`<div class="sec-h"><h2>Estrellas y premios</h2>${ed()?`<button class="btn sm" data-act="nuevoNino">Agregar niño/a</button>`:""}</div>
-  <div class="note">Cada domingo se ganan estrellas: ${MARCASf().map(([k,n,i])=>`${i} ${esc(n.toLowerCase())} <b>${PTS[k]}</b>`).join(" · ")}.</div>`;
+  let out=guia("simon","¡Miau! Todo suma puntos: venir a clases, el versículo, la Biblia, los desafíos diarios y leer en la app. Cámbialos por sobres para tu álbum bíblico o por premios.")+segP+`<div class="sec-h"><h2>Estrellas y premios</h2>${ed()?`<button class="btn sm" data-act="nuevoNino">Agregar niño/a</button>`:""}</div>
+  <div class="note">Cada domingo se ganan puntos: ${MARCASf().map(([k,n,i])=>`${i} ${esc(n.toLowerCase())} <b>${PTS[k]}</b>`).join(" · ")}.</div>`;
   if(!r.length)out+=emptyBox("Aún no hay niños en la clase",ed()?"Agrega a cada niño con su nombre y apoderado. Luego marca la asistencia en cada clase.":"Los maestros agregarán a los niños de la clase.","");
   else out+=`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b><span class="bar" style="margin-top:6px"><i style="width:${Math.max(0,x.p.total)/max*100}%"></i></span></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`;
   out+=`<div class="sec-h" style="margin-top:6px"><h2>Premios</h2>${ed()?`<button class="btn ghost sm" data-act="nuevoPremio">Nuevo premio</button>`:""}</div>`;
@@ -1105,7 +1208,7 @@ function vNino(n){
   const bonos=S.bonos.filter(b=>b.ninoId===n.id).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1);
   let out=`<button class="back" data-act="volver">‹ Todos los niños</button>
   <section class="card"><div class="row">${avatar(n,true)}<div class="grow" style="min-width:0;flex:1"><h2 style="font-size:1.6rem">${esc(n.nombre)}</h2>${n.apoderado?`<p class="muted small">Apoderado/a: ${esc(n.apoderado)}</p>`:""}</div><span class="stars" style="font-size:1.6rem">${I.starFill}${p.total}</span></div>
-  ${ed()?`<div class="row"><button class="btn sm" data-act="bono" data-id="${esc(n.id)}">Dar estrellas</button><button class="btn line sm" data-act="editNino" data-id="${esc(n.id)}">Editar</button></div>
+  ${ed()?`<div class="row"><button class="btn sm" data-act="bono" data-id="${esc(n.id)}">Dar puntos</button><button class="btn sm" data-act="albRegalar" data-id="${esc(n.id)}">🎁 Regalar sobre</button><button class="btn line sm" data-act="editNino" data-id="${esc(n.id)}">Editar</button></div>
   <p class="small">${n.familia_uid?`👪 <b>Vinculado a su familia</b> en la app.`:`👪 Aún sin familia vinculada.`} Código para la familia: <b class="code-nino">${esc(n.codigo||"—")}</b> <button class="copy" data-act="copiar" data-v="${esc(n.codigo||"")}">Copiar</button></p><p class="small">${n.fotos==="si"?"📸 La familia <b>autoriza fotos</b>.":n.fotos==="no"?"🚫 La familia <b>no autoriza fotos</b>. No lo fotografíes o elige fotos donde no se vea.":"❔ Aún sin respuesta sobre las fotos."}</p>`:""}</section>
   <section class="stats"><div class="stat"><span class="muted small">Domingos asistidos</span><b>${p.presente}${totalClases?`<span class="muted small"> / ${totalClases}</span>`:""}</b></div><div class="stat"><span class="muted small">Versículos recitados</span><b>${p.versiculo}</b></div><div class="stat"><span class="muted small">Biblia</span><b>${p.biblia}</b></div><div class="stat"><span class="muted small">Tareas</span><b>${p.tarea}</b></div></section>`;
   const pr=[...S.premios].sort((a,b)=>(a.costo||0)-(b.costo||0));
@@ -1113,11 +1216,11 @@ function vNino(n){
   if(ed()){const obs=[];const notas=[];clasesOrd().forEach(c=>{const l=S.libro[c.id];if(!l)return;const nt=l.notas&&l.notas[n.id];if(nt!=null)notas.push(Number(nt));const o=l.obs&&l.obs[n.id];if(o||nt!=null)obs.push({c,o,nt});});
     const prom=notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length):null;
     out+=`<section class="card"><div class="sec-h"><p class="eyebrow">Libro de clases (solo equipo)</p>${prom!=null?`<span class="pill ${prom<4?"":"leaf"}">Promedio ${fmtNota(prom)}</span>`:""}</div>${obs.length?`<div class="list">${obs.slice(0,12).map(x=>`<div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><span style="min-width:0"><b>${esc(x.c.titulo)}</b><span class="muted small" style="display:block">${esc(fLarga(x.c.fecha))}${x.o?" · "+esc(x.o):""}</span></span>${x.nt!=null?`<span class="pill ${Number(x.nt)<4?"":"sun"}">${fmtNota(x.nt)}</span>`:""}</div>`).join("")}</div>`:`<p class="muted small">Sin notas ni observaciones todavía.</p>`}</section>`;}
-  out+=`<section class="card"><p class="eyebrow">Estrellas extra y canjes</p>${bonos.length?`<div class="list">${bonos.map(b=>`<div class="row between" style="flex-wrap:nowrap"><span style="min-width:0"><b>${esc(b.motivo)}</b><span class="muted small" style="display:block">${esc(fLarga(b.fecha))}</span></span><span class="row" style="flex-wrap:nowrap"><span class="pill ${Number(b.pts)<0?"":"sun"}">${Number(b.pts)>0?"+":""}${Number(b.pts)||0}</span>${ed()?`<button class="copy" data-act="borrarBono" data-id="${esc(b.id)}">Quitar</button>`:""}</span></div>`).join("")}</div>`:`<p class="muted small">Sin estrellas extra todavía.</p>`}</section>`;
+  out+=`<section class="card"><p class="eyebrow">Puntos extra y canjes</p>${bonos.length?`<div class="list">${bonos.map(b=>`<div class="row between" style="flex-wrap:nowrap"><span style="min-width:0"><b>${esc(b.motivo)}</b><span class="muted small" style="display:block">${esc(fLarga(b.fecha))}</span></span><span class="row" style="flex-wrap:nowrap"><span class="pill ${Number(b.pts)<0?"":"sun"}">${Number(b.pts)>0?"+":""}${Number(b.pts)||0}</span>${ed()?`<button class="copy" data-act="borrarBono" data-id="${esc(b.id)}">Quitar</button>`:""}</span></div>`).join("")}</div>`:`<p class="muted small">Sin estrellas extra todavía.</p>`}</section>`;
   return out;
 }
 
-function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat"><span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span><b>${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
+function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat"><span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span><b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
 function vMuseo(){
   if(ui.parabola){const p=S.parabolas.find(x=>x.id===ui.parabola);if(p)return vParabola(p);ui.parabola=null;}
   const ps=[...S.parabolas].sort((a,b)=>(a.orden||0)-(b.orden||0));
@@ -1134,13 +1237,14 @@ function vParabola(p){
   ${p.ensenanza?`<section class="card"><p class="eyebrow">Lo que nos enseña</p><p>${esc(p.ensenanza)}</p></section>`:""}
   ${p.pregunta?`<section class="verse"><p class="eyebrow">Para conversar en familia</p><blockquote style="font-size:1.2rem">${esc(p.pregunta)}</blockquote></section>`:""}
   <div class="row between">${prev?`<button class="btn line sm" data-act="verParabola" data-id="${esc(prev.id)}">‹ ${esc(prev.titulo)}</button>`:"<span></span>"}${next?`<button class="btn line sm" data-act="verParabola" data-id="${esc(next.id)}">${esc(next.titulo)} ›</button>`:""}</div>
-  ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar cuadro</button>`:""}`;
+  ${ed()&&!p._central?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar cuadro</button>`:""}`;
 }
 
 function vMas(){
   const seg=[["personajes","Personajes"],["foro","Foro"],["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
   let out=(ui.mas==="personajes"?"":guia("maria","El amor también se demuestra. Aquí están los avisos, nuestro compromiso, los personajes y a quién escribir."))+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
-  if(ui.mas==="foro"){out+=window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`;}
+  if(ui.mas==="foro"){out+=`<div class="seg" role="group" aria-label="Foro"><button aria-pressed="${ui.foroSec!=="mercado"}" data-act="foroSec" data-k="foro">💬 Conversaciones</button><button aria-pressed="${ui.foroSec==="mercado"}" data-act="foroSec" data-k="mercado">🛒 Mercado de láminas</button></div>`;
+    out+=ui.foroSec==="mercado"?vMercadoForo():(window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`);}
   else if(ui.mas==="familia"){out+=vFamilia();}
   else if(ui.mas==="compromiso"){
     const cs=[...S.compromisos].sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1);
@@ -1186,14 +1290,17 @@ function vLibro(){
   const cs=clasesOrd();
   if(!cs.length)return emptyBox("Primero crea una clase","El libro de clases se llena por cada domingo: crea la lección en la vista Lecciones.","");
   if(!ui.libroClase||!cs.some(c=>c.id===ui.libroClase)){const h=hoyISO();ui.libroClase=(cs.find(c=>(c.fecha||"")<=h)||cs[cs.length-1]).id;}
-  const c=cs.find(x=>x.id===ui.libroClase);const a=S.asistencia[c.id]||{};const l=S.libro[c.id]||{};
+  const c=cs.find(x=>x.id===ui.libroClase);const a=S.asistencia[c.id]||{};const l=S.libro[c.id]||{};const campos=(S.config.libroCampos&&S.config.libroCampos.length===2)?S.config.libroCampos:["Campo 1","Campo 2"];
   const ninos=[...S.ninos].sort(byNombre);
   let out=`<section class="card"><div class="sec-h"><h2>Libro de clases</h2><span class="pill">Solo equipo</span></div>
   <label class="small" for="libroSel"><b>Domingo</b></label><select class="selclase" id="libroSel">${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===c.id?"selected":""}>${esc(fLarga(x.fecha))} · ${esc(x.titulo)}</option>`).join("")}</select>
-  <p class="muted small">Marca la asistencia, pon la nota (1,0 a 7,0) y escribe una observación. Se guarda solo al salir de cada casilla.</p>`;
+  <p class="muted small">Marca asistencia, Biblia, participación y tarea; el desafío diario se llena solo cuando las familias juegan (lunes a sábado). Pon la nota (1,0 a 7,0) y una observación. Se guarda solo al salir de cada casilla.</p><button class="btn ghost sm" data-act="libroCampos">✏️ Nombrar los 2 campos libres</button>`;
   if(!ninos.length)out+=`<p class="muted">Agrega a los niños en la pestaña Puntos.</p>`;
-  else out+=`<div class="reg libro"><table><thead><tr><th>Niño/a</th><th>Asistió</th><th>Nota</th><th style="text-align:left">Observación</th><th title="La familia ve esta observación en Mis hijos">👪 Familia</th></tr></thead><tbody>${ninos.map(n=>{const on=(a.presente||[]).includes(n.id);const nt=l.notas&&l.notas[n.id];const o=(l.obs&&l.obs[n.id])||"";
-    return `<tr><td>${esc(n.nombre)}</td><td><button class="tog" aria-pressed="${on}" aria-label="${esc("Asistió: "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="presente">${I.check}</button></td>
+  else out+=`<div class="reg libro"><table><thead><tr><th>Niño/a</th><th>Asistió</th><th>Trajo Biblia</th><th>Participa</th><th title="Desafíos diarios hechos en la semana (lunes a sábado)">Desafío diario</th><th>Tarea</th><th>${esc(campos[0])}</th><th>${esc(campos[1])}</th><th>Nota</th><th style="text-align:left">Observación</th><th title="La familia ve esta observación en Mis hijos">👪 Familia</th></tr></thead><tbody>${ninos.map(n=>{const on=(a.presente||[]).includes(n.id);const nt=l.notas&&l.notas[n.id];const o=(l.obs&&l.obs[n.id])||"";
+    const tg=(k,t)=>{const v=(a[k]||[]).includes(n.id);return `<td><button class="tog" aria-pressed="${v}" aria-label="${esc(t+": "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="${k}">${I.check}</button></td>`;};
+    const dd=hechosDD(c.id,n.id);const nd=Object.keys(dd).length;
+    const ex=k=>`<td><input class="obs ex" id="${k}_${esc(n.id)}" value="${esc((l[k]&&l[k][n.id])||"")}" placeholder="–" aria-label="${esc(campos[k==="extra1"?0:1]+" de "+n.nombre)}" data-libro="${k}" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td>`;
+    return `<tr><td>${esc(n.nombre)}</td><td><button class="tog" aria-pressed="${on}" aria-label="${esc("Asistió: "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="presente">${I.check}</button></td>${tg("biblia","Trajo Biblia")}${tg("participa","Participa en clases")}<td><span class="dd-cont${nd>=6?" full":""}" title="${esc(DIAS_DD.map((x,i)=>x[0]+": "+(dd[i+1]?"✓ "+(dd[i+1].pts||"")+" pts":"—")).join(" · "))}">${nd}/6</span></td>${tg("tarea","Tarea solicitada")}${ex("extra1")}${ex("extra2")}
     <td><input class="nota" id="nota_${esc(n.id)}" inputmode="decimal" value="${nt!=null?fmtNota(nt):""}" placeholder="–" aria-label="${esc("Nota de "+n.nombre)}" data-libro="notas" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td>
     <td><input class="obs" id="obs_${esc(n.id)}" value="${esc(o)}" placeholder="Participó, ayudó, necesita apoyo…" aria-label="${esc("Observación de "+n.nombre)}" data-libro="obs" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td><td><input type="checkbox" class="obsfam" data-obsfam="1" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" ${l.obsFam&&l.obsFam[n.id]?"checked":""} aria-label="${esc("Mostrar a la familia de "+n.nombre)}"></td></tr>`;}).join("")}</tbody></table></div><p class="muted small">👪 Marca la casilla para que la familia vea esa observación. La nota y las demás observaciones solo las ve el equipo.</p>`;
   out+=`</section>`;
@@ -1210,13 +1317,18 @@ function vLibro(){
 }
 const libroTimers={};
 function setLibro(claseId,ninoId,campo,valor){
-  const l=JSON.parse(JSON.stringify(S.libro[claseId]||{}));l.notas=l.notas||{};l.obs=l.obs||{};l.obsFam=l.obsFam||{};
+  const l=JSON.parse(JSON.stringify(S.libro[claseId]||{}));l.notas=l.notas||{};l.obs=l.obs||{};l.obsFam=l.obsFam||{};l.extra1=l.extra1||{};l.extra2=l.extra2||{};l[campo]=l[campo]||{};
   if(valor===""||valor==null)delete l[campo][ninoId];else l[campo][ninoId]=valor;
   S.libro[claseId]=l;pendingLibro[claseId]=true;
   clearTimeout(libroTimers[claseId]);
   libroTimers[claseId]=setTimeout(()=>{const ref=db.collection("libro").doc(claseId);const cur=S.libro[claseId];
-    enqueue(ref.path,()=>ref.set({notas:cur.notas||{},obs:cur.obs||{},obsFam:cur.obsFam||{}})).then(()=>{pendingLibro[claseId]=false;toast("Libro guardado");}).catch(e=>{pendingLibro[claseId]=false;toast(errMsg(e));});},500);
+    enqueue(ref.path,()=>ref.set({notas:cur.notas||{},obs:cur.obs||{},obsFam:cur.obsFam||{},extra1:cur.extra1||{},extra2:cur.extra2||{}})).then(()=>{pendingLibro[claseId]=false;toast("Libro guardado");}).catch(e=>{pendingLibro[claseId]=false;toast(errMsg(e));});},500);
 }
+
+function formLibroCampos(){const c=S.config.libroCampos||["Campo 1","Campo 2"];
+  openForm({titulo:"Campos libres del libro de clases",ayuda:"Dos columnas extra que puedes usar para lo que necesites (por ejemplo: Ofrenda, Trajo a un amigo).",datos:{a:c[0],b:c[1]},
+    campos:[{k:"a",label:"Nombre del campo 1",req:true},{k:"b",label:"Nombre del campo 2",req:true}],
+    onSave:async v=>{const ref=db.doc("config/general");await enqueue(ref.path,()=>ref.set({...S.config,libroCampos:[v.a.slice(0,24),v.b.slice(0,24)]}));}});}
 
 /* ---------- recursos: cuentos y materiales ---------- */
 const fmtMB=b=>b?(b>=1048576?(b/1048576).toFixed(1).replace(".",",")+" MB":Math.max(1,Math.round(b/1024))+" KB"):"";
@@ -1282,7 +1394,7 @@ function vRecursos(){
   let out=guia("maria","El amor también se demuestra. Aquí están los cuentos de cada semana y los materiales para descargar.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.progreso){const pg=ui.progreso;out+=`<section class="card"><p><b>${pg.hecho<pg.total?`Subiendo cuentos: ${pg.hecho} de ${pg.total}`:`Listo: ${pg.total-pg.errores.length} de ${pg.total} cuentos subidos`}</b></p><div class="prog"><i style="width:${pg.total?pg.hecho/pg.total*100:0}%"></i></div>${pg.hecho<pg.total?`<p class="muted small">No cierres la app hasta que termine.</p>`:""}${pg.errores.length?`<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>`:""}${pg.hecho>=pg.total?`<button class="link-btn" style="align-self:flex-start" data-act="cerrarProg">Ocultar</button>`:""}</section>`;}
   if(adm()&&ui.uso)out+=`<p class="muted small">Espacio de archivos: ${fmtMB(ui.uso.bytes)} de ${fmtMB(ui.uso.maxBytes)} · ${ui.uso.files} de ${ui.uso.maxFiles} archivos</p>`;
-  if(ui.rec!=="profes")out+=lectorBar("Agrega tu nombre: cada cuento y actividad que termines te acerca a una insignia.");
+  if(ui.rec!=="profes")out+=lectorBar("Agrega tu nombre para llevar la cuenta de tus lecturas.");
   if(ui.rec==="cuentos"){
     out+=`<div class="sec-h"><h2>Cuentos semanales</h2>${ed()?`<button class="btn sm" data-act="subirCuentos" ${ui.progreso&&ui.progreso.hecho<ui.progreso.total?"disabled":""}>Subir PDF</button>`:""}</div>
     ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 50 MB cada uno). Si el nombre es como <b>Clase01-Cuento2-Título</b>, se ordenan por clase y cuento; si solo trae un número, ese será el número del cuento. Si ese cuento ya existe, se reemplaza el archivo. Usa ▲ ▼ para cambiar el orden.</p>`:""}
@@ -1376,7 +1488,7 @@ function recoLogos(){return `<section class="reco"><img src="img/logos-biblia.pn
 /* ---------- personajes bíblicos ---------- */
 function parseRefs(txt){const out=[];String(txt||"").split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).forEach(r=>{const p=parseRef(r);if(!p)return;const m=r.match(/[:.]\s*(\d+)\s*-\s*(\d+)\s*$/);
   const code=CODES[p.li];if(!p.v)out.push({ref:r,k:[code+"."+p.cap]});else{const a=parseInt(p.v,10),z=m?Math.min(parseInt(m[2],10),a+60):a;const ks=[];for(let v=a;v<=z;v++)ks.push(code+"."+p.cap+"."+v);out.push({ref:r,k:ks});}});return out;}
-function indiceBiblicos(){const ix={};S.biblicos.forEach(b=>(b.citas||[]).forEach(c=>(c.k||[]).forEach(k=>{(ix[k]=ix[k]||[]).includes(b)||ix[k].push(b);})));return ix;}
+function indiceBiblicos(){const ix={};S.biblicos.forEach(b=>(b.citas||[]).forEach(c=>(c.k||((parseRefs(c.ref)[0]||{}).k)||[]).forEach(k=>{(ix[k]=ix[k]||[]).includes(b)||ix[k].push(b);})));return ix;}
 function fotoB(b,cls){const f=(b.fotos||[])[0];return f?`<img src="${esc(blobUrl(f))}" alt="${esc(b.nombre)}" ${cls||""}>`:`<span class="ini">${inicial(b.nombre)}</span>`;}
 function vBiblicos(){
   if(ui.biblico){const b=S.biblicos.find(x=>x.id===ui.biblico);if(b)return vBiblico(b);}
@@ -1489,11 +1601,11 @@ function vLeerBiblia(){
 }
 function textoSel(){const d=BCACHE[BR.ver+"/"+CODES[BR.li]];const vs=(d&&d[String(BR.cap)])||[];return vs.filter(x=>BR.sel.has(x[0])).map(x=>x[1]).join(" ");}
 function vBiblia(){
-  const seg=[["leer","Leer la Biblia"],["biblicos","Personajes bíblicos"],["lectura","Mi lectura"],["insignias","Insignias"],["museo","Museo"]];
+  const seg=[["leer","Leer la Biblia"],["biblicos","Personajes bíblicos"],["lectura","Mi lectura"],["album","⭐ Álbum bíblico"],["museo","Museo"]];
   let out=`<div class="seg" role="group" aria-label="Biblia">${seg.map(x=>`<button aria-pressed="${ui.bib===x[0]}" data-act="bib" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.bib==="museo")return out+vMuseo();
   if(ui.bib==="biblicos")return guia("santiago","La sabiduría de Dios es para todos. Conoce a los héroes de la Biblia y descubre en qué versículos aparecen.")+out+vBiblicos();
-  if(ui.bib==="insignias")return guia("simon","¡Miau! Cada cuento, historia y actividad que termines te acerca a una insignia. ¡A coleccionarlas todas!")+out+vInsignias();
+  if(ui.bib==="album"||ui.bib==="insignias")return guia("simon","¡Miau! Todo lo que haces suma puntos: venir a clases, el versículo, la Biblia, los desafíos y leer en la app. Cambia tus puntos por sobres de 5 láminas y completa el álbum. ¡Las repetidas se cambian en el mercado!")+out+vAlbum();
   if(ui.bib==="leer")return guia("mateo","Cada pregunta nos ayuda a conocer mejor a Dios. Elige un libro y un capítulo, escúchalo, marca tus versículos y compara versiones.")+out+vLeerBiblia();
   return guia("mateo","¡Vamos a explorar la Biblia! Marca cada historia que leas y guarda tus versículos favoritos.")+out+vLectura();
 }
@@ -1551,7 +1663,8 @@ const INSIGNIAS=[
  {id:"sabio",p:"santiago",n:"Sabio lector",d:"Lee 50 cuentos",meta:50,v:L=>nK(L.cuentos)},
  {id:"cien",p:"maria",n:"Corazón de 100 cuentos",d:"Lee los 100 cuentos",meta:100,v:L=>nK(L.cuentos)}
 ];
-function revisarInsignias(nombres){nombres=nombres||[BIB.actual];const nuevas=[];
+function revisarInsignias(){return;}
+function revisarInsigniasViejo(nombres){nombres=nombres||[BIB.actual];const nuevas=[];
   nombres.forEach(n=>{const L=perfil(n);if(!L)return;INSIGNIAS.forEach(b=>{if(!L.insignias[b.id]&&b.v(L)>=b.meta){L.insignias[b.id]=hoyISO();nuevas.push({...b,quien:n});}});});
   bibSave();if(nuevas.length)celebrar(nuevas);}
 function celebrar(lista){const b=lista[0];const p=PERS[b.p];const cols=["var(--sun)","var(--p-sara)","var(--accent)","var(--leaf)","var(--p-santiago)"];
@@ -1596,7 +1709,7 @@ async function abrirLector({titulo,asset,archivo,url,onDone}){
   }catch(e){body.innerHTML=`<div class="empty"><h3>No se pudo abrir aquí</h3><p class="muted">Ábrelo en otra pestaña y vuelve para marcarlo como leído.</p><a class="btn" href="${esc(blobUrl(asset))}" target="_blank" rel="noopener noreferrer">Abrir el archivo</a></div>`;RD.total=1;RD.page=1;navLector();}
 }
 function cerrarLector(){$("#reader").hidden=true;document.body.style.overflow="";RD.tok++;RD.doc=null;$("#rBody").innerHTML="";}
-function acreditar(col,id,nombres){nombres.forEach(n=>{const L=perfil(n);if(L)L[col][id]=hoyISO();});bibSave();toast(nombres.length>1?"¡Leyeron juntos! Lectura sumada a "+nombres.length:"¡Lectura completada!");render();revisarInsignias(nombres);}
+function acreditar(col,id,nombres){nombres.forEach(n=>{const L=perfil(n);if(L)L[col][id]=hoyISO();});bibSave();ptsActividad(col,id,nombres);toast(nombres.length>1?"¡Leyeron juntos! Lectura sumada a "+nombres.length:"¡Lectura completada!");render();revisarInsignias(nombres);}
 function quienesLeyeron(alFinal){const ns=Object.keys(BIB.lectores);
   if(ns.length<=1){alFinal(ns.length?[BIB.actual||ns[0]]:[]);return;}
   $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><form class="sheet" id="qForm"><h2>¿Quiénes leyeron?</h2><p class="muted small">Si leyeron en familia, marca a todos: cada uno suma la lectura para sus insignias.</p>
@@ -1605,10 +1718,10 @@ function quienesLeyeron(alFinal){const ns=Object.keys(BIB.lectores);
   $("#qCancel").onclick=()=>$("#sheetRoot").innerHTML="";
   $("#qForm").addEventListener("submit",e=>{e.preventDefault();const sel=[...document.querySelectorAll("#qForm input:checked")].map(x=>x.value);if(!sel.length){toast("Marca al menos una persona");return;}$("#sheetRoot").innerHTML="";alFinal(sel);});}
 function terminar(col,id){cerrarLector();
-  if(!Object.keys(BIB.lectores).length){toast("Crea tu perfil para ganar insignias");formLector(null,()=>acreditar(col,id,[BIB.actual]));return;}
+  if(!Object.keys(BIB.lectores).length){toast("Crea tu perfil para sumar tus lecturas");formLector(null,()=>acreditar(col,id,[BIB.actual]));return;}
   quienesLeyeron(ns=>acreditar(col,id,ns));}
 function formLector(nombre,despues){const L=nombre?perfil(nombre):null;
-  openForm({titulo:L?"Editar perfil":"Nuevo integrante",ayuda:"Cada integrante tiene su propio avance e insignias. Se guarda en este dispositivo.",datos:L?{n:nombre,rol:L.rol||"Otro",color:String(L.color||0)}:{rol:Object.keys(BIB.lectores).length?"Hijo":"Papá",color:String(Object.keys(BIB.lectores).length%6)},
+  openForm({titulo:L?"Editar perfil":"Nuevo integrante",ayuda:"Cada integrante tiene su propio avance. Se guarda en este dispositivo.",datos:L?{n:nombre,rol:L.rol||"Otro",color:String(L.color||0)}:{rol:Object.keys(BIB.lectores).length?"Hijo":"Papá",color:String(Object.keys(BIB.lectores).length%6)},
     campos:[{k:"n",label:"Nombre",req:true,ph:"Sofía"},{k:"rol",label:"En la familia es",type:"select",opts:ROLES.map(r=>[r,r])},{k:"color",label:"Color",type:"select",opts:[["0","Azul"],["1","Verde"],["2","Rojo"],["3","Morado"],["4","Naranjo"],["5","Turquesa"]]}],
     guardarTxt:L?"Guardar":"Agregar",
     onSave:async v=>{const n=v.n.slice(0,30);if(n!==nombre&&BIB.lectores[n])throw "Ya existe alguien con ese nombre.";
@@ -1628,16 +1741,16 @@ function fusionar(j){
 function vFamilia(){
   const ns=Object.keys(BIB.lectores);const fam=(BIB.familia&&BIB.familia.nombre)||"";
   let out=(window.EPKX?EPKX.vAvisos():"")+`<section class="card"><div class="sec-h"><h2>${fam?esc(fam):"Mi familia"}</h2><button class="btn ghost sm" data-act="nombreFamilia">${fam?"Cambiar nombre":"Ponerle nombre"}</button></div>
-  <p class="muted">Papá, mamá, abuelos e hijos: cada uno con su perfil, su avance y sus insignias. Cuando lean juntos, la lectura se suma a todos.</p></section>`;
+  <p class="muted">Papá, mamá, abuelos e hijos: cada uno con su perfil y su avance. Cuando lean juntos, la lectura se suma a todos, y los niños ganan puntos para sus sobres.</p></section>`;
   if(!ns.length)return out+emptyBox("Crea el primer perfil","Empieza por ti y luego agrega a cada integrante de la familia.",`<button class="btn" data-act="nuevoLector">Agregar integrante</button>`);
   let tot=0,ins=0;
   out+=`<div class="sec-h"><h2>Integrantes</h2><button class="btn sm" data-act="nuevoLector">Agregar integrante</button></div><div class="fam">${ns.map(n=>{const L=perfil(n);tot+=totalLect(L);ins+=nK(L.insignias);const yo=n===BIB.actual;
     return `<div class="miembro ${yo?"yo":""}"><div class="row" style="flex-wrap:nowrap">${avatarP(n)}<span style="min-width:0;flex:1"><b>${esc(n)}</b><span class="muted small" style="display:block">${esc(L.rol||"")}</span></span>${yo?`<span class="pill leaf">Usando ahora</span>`:""}</div>
-    <p class="small muted">${nK(L.cuentos)} cuentos · ${nK(L.plan)} historias · ${nK(L.insignias)} insignias</p>
+    <p class="small muted">${nK(L.cuentos)} cuentos · ${nK(L.plan)} historias</p>
     <div class="row">${yo?"":`<button class="btn sm" data-act="lector" data-n="${esc(n)}">Soy yo</button>`}<button class="btn line sm" data-act="editLector" data-n="${esc(n)}">Editar</button></div></div>`;}).join("")}</div>`;
   const meta=Math.max(50,Math.ceil((tot+1)/50)*50);
   out+=`<section class="card" style="--pc:var(--p-maria)"><p class="eyebrow">Meta familiar</p><h2>${tot} lecturas en familia</h2><div class="prog"><i style="width:${Math.min(100,tot/meta*100)}%;background:var(--p-maria)"></i></div><p class="muted small">Próxima meta: ${meta} lecturas · ${ins} insignias entre todos</p></section>`;
-  out+=`<section class="card"><p class="eyebrow">En todos tus dispositivos</p><p class="small">Los perfiles, el avance y las insignias se guardan en la cuenta de tu familia. Para verlos en el celular de mamá, papá o los abuelos, ingresen con el mismo correo y contraseña.</p></section>`;
+  out+=`<section class="card"><p class="eyebrow">En todos tus dispositivos</p><p class="small">Los perfiles y el avance se guardan en la cuenta de tu familia. Para verlos en el celular de mamá, papá o los abuelos, ingresen con el mismo correo y contraseña.</p></section>`;
   return out;
 }
 
@@ -1662,11 +1775,11 @@ function render(){
   if(dbFailed)html+=`<div class="note"><b>No se pudieron cargar los datos de tu congregación.</b> Revisa tu conexión y vuelve a abrir la app.</div>`;
   if(window.EPK_OFFLINE)html+=`<div class="note">📶 <b>Sin conexión.</b> Estás viendo lo último que se guardó en este celular. Los cuentos que ya abriste se pueden leer igual.</div>`;
   else if(!loaded.clases)html+=`<div class="note">Cargando clases y puntos…</div>`;
-  html+=({inicio:vInicio,clases:vClases,recursos:vRecursos,puntos:vPuntos,biblia:vBiblia,museo:vMuseo,mas:vMas}[ui.tab]||vInicio)();
+  html+=ui.desafio&&DS?vDesafio():({inicio:vInicio,clases:vClases,recursos:vRecursos,puntos:vPuntos,biblia:vBiblia,museo:vMuseo,mas:vMas}[ui.tab]||vInicio)();
   $("#app").innerHTML=html;
   pintarFotos($("#app"));if(VF)pintarVisor();
 }
-function irA(tab){callar();ui.juego=false;ui.quiz=false;if(tab==="recursos"&&ed()&&!ui.uso)refrescarUso();ui.tab=tab;ui.clase=null;ui.nino=null;ui.parabola=null;try{history.replaceState(null,"","#"+tab);}catch(e){}render();window.scrollTo(0,0);}
+function irA(tab){callar();ui.juego=false;ui.desafio=false;ui.quiz=false;if(tab==="recursos"&&ed()&&!ui.uso)refrescarUso();ui.tab=tab;ui.clase=null;ui.nino=null;ui.parabola=null;try{history.replaceState(null,"","#"+tab);}catch(e){}render();window.scrollTo(0,0);}
 
 /* ---------- asistencia ---------- */
 const asisTimers={};
@@ -1765,6 +1878,373 @@ function formReprogramar(c){openForm({titulo:"Reprogramar: "+(c.titulo||"clase")
   campos:[{k:"fecha",label:"Nueva fecha de la clase",type:"date",req:true},{k:"visible",label:"¿Las familias pueden verla?",type:"select",opts:[["si","Sí"],["no","Todavía no, solo el equipo"]]},{k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date"}],
   guardarTxt:"Guardar cambios",onSave:async v=>{await guardar("clases",c.id,{...c,...v});setTimeout(render,0);}});}
 
+/* ---------- desafío diario: 6 juegos cortos (lunes a sábado) de la clase del domingo ---------- */
+const DIAS_DD=[["Lunes","Une los conceptos","🔗"],["Martes","Crucigrama","✏️"],["Miércoles","Sopa de letras","🔎"],["Jueves","4 diferencias","👀"],["Viernes","Laberinto","🌀"],["Sábado","Completa el versículo","📖"]];
+const STOP_DD=new Set("PARA PORQUE COMO CUANDO DONDE ESTOS ESTAS ESTE ESTA ESTO ELLOS ELLAS NOSOTROS VOSOTROS TODOS TODAS TODO TODA SOBRE ENTRE HASTA DESDE TAMBIEN TANTO PUES ENTONCES AQUEL AQUELLA AQUELLOS SINO MISMO MISMA DICE DIJO TENGO TIENE TIENES SERA SEAN SIDO HABEIS HABIA HABER CUAL CUALES QUIEN SIEMPRE NUNCA MUCHO MUCHA MUCHOS OTRO OTRA OTROS".split(" "));
+let DS=null,DDF=null;
+function rngDD(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
+function mezclaDD(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const upDD=w=>String(w).normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-ZÑ]/g,"");
+function palabrasDD(c,min,max){const txt=[c.versiculo||"",c.titulo||"",c.subtitulo||""].join(" ");const vistos=new Set();const out=[];
+  txt.split(/\s+/).forEach(w=>{const u=upDD(w);if(u.length>=min&&u.length<=max&&!STOP_DD.has(u)&&!vistos.has(u)){vistos.add(u);out.push({u,orig:limpiaW(w)});}});
+  if(out.length<4)["JESUS","BIBLIA","AMOR","FE","ORAR","DIOS","PERDON","AMIGOS"].forEach(u=>{if(u.length>=min&&u.length<=max&&!vistos.has(u)){vistos.add(u);out.push({u,orig:u.toLowerCase()});}});
+  return out;}
+/* día del desafío: 1 = lunes después de la clase … 6 = sábado */
+function diaDD(c){if(!c||!c.fecha)return 0;const d=Math.round((new Date(hoyISO()+"T12:00:00")-new Date(c.fecha+"T12:00:00"))/864e5);return d<1?0:Math.min(d,7);}
+function claseDD(){const h=hoyISO();const vis=S.clases.filter(c=>c.fecha&&c.fecha<h&&(ed()||!claseOculta(c))&&c.versiculo).sort((a,b)=>a.fecha<b.fecha?1:-1);return vis[0]||null;}
+/* resultados: equipo los lee de S.desafios; la familia los pide con mis_desafios */
+function hechosDD(claseId,ninoId){if(ed()){const d=(S.desafios||[]).find(x=>x.id===claseId);return d&&d[ninoId]?d[ninoId]:{};}
+  const f=(DDF||[]).filter(r=>r.clase_id===claseId&&r.nino_id===ninoId)[0];return f&&f.dias?f.dias:{};}
+function cargarDDF(force){if(ed()||!window.EPK||!EPK.sb||!EPK.comunidad||(DDF&&!force))return;DDF=DDF||[];
+  EPK.sb.rpc("mis_desafios",{p_comunidad:EPK.comunidad.id}).then(({data,error})=>{if(!error){DDF=data||[];render();}});}
+function notaDesafio(){const c=claseDD();if(!c)return "";const d=diaDD(c);cargarDDF();
+  const hs=misHijos();const hoyD=Math.min(d,6);
+  const hecho=k=>hs.length?hs.every(n=>hechosDD(c.id,n.id)[k]):false;
+  const puntos=DIAS_DD.map((x,i)=>{const k=i+1;const ab=k<=Math.min(d,6);const ok=hecho(k);
+    return `<button class="dd-dot${ok?" ok":""}${k===hoyD&&d<7?" hoy":""}" ${ab?`data-act="jugarDD" data-id="${esc(c.id)}" data-dia="${k}"`:"disabled"} title="${esc(x[0]+": "+x[1])}" aria-label="${esc(x[0]+": "+x[1]+(ok?" (hecho)":ab?"":" (aún no)"))}">${ok?"✓":x[2]}</button>`;}).join("");
+  let cuerpo;
+  if(d>=7)cuerpo=`<p class="small">¡Completaste la semana! El lunes parte un nuevo desafío con la clase del domingo.</p>`;
+  else{const x=DIAS_DD[hoyD-1];cuerpo=`<p><b>${esc(x[0])}: ${esc(x[1])}</b></p><p class="small">Sobre «${esc(c.titulo)}». Se arma uno nuevo cada día hasta el sábado.</p><button class="btn sm" data-act="jugarDD" data-id="${esc(c.id)}" data-dia="${hoyD}">${hecho(hoyD)?"Jugar otra vez":"¡Jugar ahora!"}</button>`;}
+  cargarAlbum();const pa=hs.reduce((t,n)=>t+albPorAbrir(n.id),0);
+  const sob=`<p class="small dd-sobres">🎁 ${pa?`<b>¡${pa} ${pa>1?"sobres":"sobre"} por abrir!</b> <button class="link-btn" data-act="irInsignias">Abrir en el álbum</button>`:`Cada desafío suma puntos ⭐ para cambiar por sobres de láminas.`}</p>`;
+  return `<article class="dm-nota dm-tarea dm-dd"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">⭐ Desafío diario</p>${cuerpo}<div class="dd-dots">${puntos}</div>${sob}</article>`;}
+
+function iniciarDD(claseId,dia){const c=S.clases.find(x=>x.id===claseId);if(!c)return;callar();
+  const r=rngDD(c.id+"#"+dia);DS={clase:c.id,dia,err:0,hecho:false,quien:{},guardado:false};
+  if(dia===1){let pares=String(c.conceptos||"").split(/\n/).map(l=>l.split(/\s*[=:]\s*/)).filter(p=>p.length>=2&&p[0]&&p[1]).slice(0,5).map(p=>[p[0].trim(),p.slice(1).join(": ").trim()]);
+    if(pares.length<3){const pal=String(c.versiculo||"").split(/\s+/).filter(Boolean);const n=Math.min(4,Math.max(2,Math.floor(pal.length/4)));const tam=Math.ceil(pal.length/n);pares=[];
+      for(let i=0;i<n;i++){const t=pal.slice(i*tam,(i+1)*tam);if(t.length<2)continue;const m=Math.ceil(t.length/2);pares.push([t.slice(0,m).join(" "),t.slice(m).join(" ")]);}DS.verso=true;}
+    DS.izq=pares.map((p,i)=>({i,t:p[0]}));DS.der=mezclaDD(pares.map((p,i)=>({i,t:p[1]})),r);DS.ok={};DS.sel=null;}
+  if(dia===2){const pal=mezclaDD(palabrasDD(c,4,8),r);DS.cw=armarCruci(pal,r);DS.ok={};}
+  if(dia===3){const pal=mezclaDD(palabrasDD(c,4,8),r).slice(0,5);armarSopa(pal,r);}
+  if(dia===4){DS.dif=mezclaDD([0,1,2,3,4,5,6,7],r).slice(0,4);DS.ok={};DS.fig=["santiago","maria","mateo","sara","simon"][Math.floor(r()*5)];}
+  if(dia===5){armarLaberinto(r);}
+  if(dia===6){const pal=String(c.versiculo).split(/\s+/).filter(Boolean);const cand=pal.map((w,i)=>i).filter(i=>normW(pal[i]).length>=4);
+    const hue=mezclaDD(cand,r).slice(0,Math.min(5,Math.max(2,Math.round(cand.length*.4)))).sort((a,b)=>a-b);DS.pal=pal;DS.hue=hue;DS.llenos={};DS.fichas=mezclaDD(hue,r);DS.mal=null;}
+  ui.desafio=true;render();window.scrollTo(0,0);}
+/* crucigrama pequeño: hasta 4 palabras que se cruzan */
+function armarCruci(lista,r){const N=13;let best=null;
+  for(let intento=0;intento<25;intento++){const ws=mezclaDD(lista,r).slice(0,8);const g={};const puestas=[];const put=(w,x,y,dx,dy)=>{for(let k=0;k<w.u.length;k++)g[(x+dx*k)+","+(y+dy*k)]=w.u[k];puestas.push({w,x,y,dx,dy});};
+    const cabe=(w,x,y,dx,dy)=>{let cruces=0;for(let k=-1;k<=w.u.length;k++){const cx=x+dx*k,cy=y+dy*k;if(cx<0||cy<0||cx>=N||cy>=N)return -1;const v=g[cx+","+cy];
+        if(k<0||k===w.u.length){if(v)return -1;continue;}if(v){if(v!==w.u[k])return -1;cruces++;}else{if(g[(cx+dy)+","+(cy+dx)]||g[(cx-dy)+","+(cy-dx)])return -1;}}return cruces;};
+    if(!ws.length)break;put(ws[0],1,Math.floor(N/2),1,0);
+    for(const w of ws.slice(1)){if(puestas.length>=4)break;let op=null;
+      for(const p of puestas){for(let a=0;a<p.w.u.length&&!op;a++){for(let b=0;b<w.u.length&&!op;b++){if(p.w.u[a]!==w.u[b])continue;const dx=p.dy,dy=p.dx;const x=p.x+p.dx*a-dx*b,y=p.y+p.dy*a-dy*b;if(cabe(w,x,y,dx,dy)>0)op=[x,y,dx,dy];}}}
+      if(op)put(w,...op);}
+    if(!best||puestas.length>best.p.length)best={p:puestas.slice(),g:{...g}};if(best.p.length>=4)break;}
+  const ks=Object.keys(best.g).map(k=>k.split(",").map(Number));const x0=Math.min(...ks.map(k=>k[0])),y0=Math.min(...ks.map(k=>k[1]));
+  const W=Math.max(...ks.map(k=>k[0]))-x0+1,H=Math.max(...ks.map(k=>k[1]))-y0+1;
+  return {W,H,p:best.p.map((q,i)=>({n:i+1,u:q.w.u,orig:q.w.orig,x:q.x-x0,y:q.y-y0,dx:q.dx,dy:q.dy}))};}
+function pistaCruci(c,p){const pal=String(c.versiculo||"").split(/\s+/);const i=pal.findIndex(w=>upDD(w)===p.u);
+  if(i>=0){const a=Math.max(0,i-4),b=Math.min(pal.length,i+3);return "«"+(a>0?"… ":"")+pal.slice(a,b).map((w,k)=>a+k===i?"_____":w).join(" ")+(b<pal.length?" …":"")+"»";}
+  return "Palabra del título de la clase ("+p.u.length+" letras)";}
+function armarSopa(pal,r){const N=9;const g=[];for(let y=0;y<N;y++)g.push(Array(N).fill(""));const ok=[];
+  for(const w of pal){if(w.u.length>N)continue;for(let t=0;t<60;t++){const hor=r()<.5;const x=Math.floor(r()*(hor?N-w.u.length+1:N)),y=Math.floor(r()*(hor?N:N-w.u.length+1));
+      let cabe=true;for(let k=0;k<w.u.length;k++){const cx=hor?x+k:x,cy=hor?y:y+k;if(cx>=N||cy>=N||(g[cy][cx]&&g[cy][cx]!==w.u[k])){cabe=false;break;}}
+      if(!cabe)continue;for(let k=0;k<w.u.length;k++){const cx=hor?x+k:x,cy=hor?y:y+k;g[cy][cx]=w.u[k];}ok.push({u:w.u,x,y,hor});break;}}
+  const AB="ABCDEFGHIJKLMNOPRSTUV";for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(!g[y][x])g[y][x]=AB[Math.floor(r()*AB.length)];
+  DS.sopa={N,g,pal:ok,hall:{},ini:null};}
+function armarLaberinto(r){const N=7;const m=[];for(let y=0;y<N;y++){m.push([]);for(let x=0;x<N;x++)m[y].push({n:1,s:1,e:1,o:1,v:0});}
+  const pila=[[0,0]];m[0][0].v=1;
+  while(pila.length){const [x,y]=pila[pila.length-1];const vec=mezclaDD([[0,-1,"n","s"],[0,1,"s","n"],[1,0,"e","o"],[-1,0,"o","e"]],r).filter(([dx,dy])=>{const a=x+dx,b=y+dy;return a>=0&&b>=0&&a<N&&b<N&&!m[b][a].v;});
+    if(!vec.length){pila.pop();continue;}const [dx,dy,p,q]=vec[0];m[y][x][p]=0;m[y+dy][x+dx][q]=0;m[y+dy][x+dx].v=1;pila.push([x+dx,y+dy]);}
+  DS.lab={N,m,pos:[0,0]};}
+function movDD(dir){const L=DS.lab;const [x,y]=L.pos;const c=L.m[y][x];const mv={n:[0,-1],s:[0,1],e:[1,0],o:[-1,0]}[dir];
+  if(c[dir]){DS.err++;toast("¡Hay una pared!");return;}L.pos=[x+mv[0],y+mv[1]];if(L.pos[0]===L.N-1&&L.pos[1]===L.N-1)terminarDD();else render();}
+function terminarDD(){DS.hecho=true;const hs=misHijos();if(hs.length===1)DS.quien={[hs[0].id]:true};render();}
+function guardarDD(){const ids=Object.keys(DS.quien).filter(k=>DS.quien[k]);if(!ids.length){toast("Marca quién hizo el desafío");return;}
+  const pts=Math.max(1,10-DS.err);
+  Promise.all(ids.map(id=>EPK.sb.rpc("registrar_desafio",{p_comunidad:EPK.comunidad.id,p_clase:DS.clase,p_nino:id,p_dia:DS.dia,p_puntos:pts}))).then(rs=>{
+    const e=rs.find(x=>x.error);if(e){toast("No se pudo guardar: "+(e.error.message||"intenta de nuevo"));return;}
+    DS.guardado=true;toast(`¡Desafío guardado! ⭐ +${pts} puntos para tus sobres`);cargarDDF(true);render();cargarAlbum(true);});}
+function difSVG(lado,f){const D=DS.dif;const on=k=>lado==="der"&&D.includes(k);
+  const col=(k,a,b)=>on(k)?b:a;
+  return `<svg viewBox="0 0 300 220" class="dd-svg" role="img" aria-label="${lado==="izq"?"Dibujo original":"Dibujo con 4 diferencias"}">
+  <rect width="300" height="220" fill="#BFE6FF"/><circle cx="${on(0)?60:250}" cy="38" r="22" fill="#FFD23F"/>
+  <ellipse cx="90" cy="45" rx="30" ry="11" fill="#fff"/><ellipse cx="${on(1)?205:175}" cy="62" rx="24" ry="9" fill="#fff"/>
+  <path d="M0 150 Q 80 120 160 145 T 300 140 V220 H0Z" fill="#7ED957"/>
+  <rect x="190" y="105" width="70" height="55" fill="${col(2,"#FFB36B","#FF7AA8")}"/><path d="M182 108 L225 75 L268 108Z" fill="#B5652E"/><rect x="216" y="130" width="16" height="30" fill="#6B4A2B"/>
+  ${on(3)?"":`<rect x="198" y="117" width="14" height="12" fill="#fff"/>`}
+  <rect x="35" y="110" width="10" height="45" fill="#8B5A3C"/><circle cx="40" cy="${on(4)?95:100}" r="${on(4)?30:24}" fill="#3FA34D"/>
+  ${on(5)?`<circle cx="135" cy="190" r="7" fill="#FF3D8B"/><circle cx="148" cy="194" r="6" fill="#FFD23F"/>`:`<circle cx="135" cy="190" r="7" fill="#FF3D8B"/>`}
+  <path d="M110 60 q5 -6 10 0 q5 -6 10 0" stroke="#3A3F5C" stroke-width="2.5" fill="none"/>${on(6)?`<path d="M140 50 q5 -6 10 0 q5 -6 10 0" stroke="#3A3F5C" stroke-width="2.5" fill="none"/>`:""}
+  <rect x="60" y="175" width="40" height="22" rx="4" fill="${col(7,"#7A4DFF","#16B3A3")}"/></svg>
+  <img class="dd-fig" src="img/${f}-full.webp" alt="" aria-hidden="true">`;}
+const DIF_POS=[[250,38],[190,62],[225,130],[205,123],[40,98],[148,194],[150,47],[80,186]];
+function vDesafio(){const c=S.clases.find(x=>x.id===DS.clase);if(!c){ui.desafio=false;return vInicio();}
+  const [dn,tn,ico]=DIAS_DD[DS.dia-1];let j="",ayuda="";
+  if(DS.dia===1){ayuda=DS.verso?"Une el comienzo de cada parte del versículo con su final. Toca uno a la izquierda y luego su pareja a la derecha.":"Toca un concepto a la izquierda y luego su significado a la derecha.";
+    j=`<div class="dd-une"><div>${DS.izq.map(p=>`<button class="dd-card${DS.ok[p.i]?" ok":""}${DS.sel===p.i?" sel":""}" ${DS.ok[p.i]?"disabled":`data-act="ddUneI" data-i="${p.i}"`}>${esc(p.t)}</button>`).join("")}</div>
+    <div>${DS.der.map(p=>`<button class="dd-card der${DS.ok[p.i]?" ok":""}" ${DS.ok[p.i]?"disabled":`data-act="ddUneD" data-i="${p.i}"`}>${esc(p.t)}</button>`).join("")}</div></div>`;}
+  if(DS.dia===2){const cw=DS.cw;ayuda="Lee cada pista, escribe la palabra y toca «Comprobar». Las palabras salen del versículo y del título de la clase.";
+    const cel={};cw.p.forEach(p=>{for(let k=0;k<p.u.length;k++){const key=(p.x+p.dx*k)+","+(p.y+p.dy*k);cel[key]=cel[key]||{l:p.u[k],v:false,n:null};if(DS.ok[p.n])cel[key].v=true;if(k===0)cel[key].n=p.n;}});
+    let g=`<div class="dd-cw" style="grid-template-columns:repeat(${cw.W},1fr)">`;for(let y=0;y<cw.H;y++)for(let x=0;x<cw.W;x++){const k=cel[x+","+y];g+=k?`<span class="dd-c">${k.n?`<i>${k.n}</i>`:""}${k.v?esc(k.l):""}</span>`:`<span class="dd-c vac"></span>`;}g+=`</div>`;
+    j=g+`<div class="dd-pistas">${cw.p.map(p=>`<div class="dd-pista${DS.ok[p.n]?" ok":""}"><p class="small"><b>${p.n}. ${p.dx?"Horizontal":"Vertical"}</b> · ${p.u.length} letras · ${esc(pistaCruci(c,p))}</p>${DS.ok[p.n]?`<p class="small">✓ ${esc(p.u)}</p>`:`<div class="row"><input id="cw_${p.n}" class="dd-in" maxlength="${p.u.length}" autocomplete="off" aria-label="${esc("Palabra "+p.n)}"><button class="btn sm" data-act="ddCruci" data-i="${p.n}">Comprobar</button></div>`}</div>`).join("")}</div>`;}
+  if(DS.dia===3){const s=DS.sopa;ayuda="Busca las palabras escondidas (horizontales y verticales). Toca la primera letra y después la última.";
+    const marc={};s.pal.forEach((p,i)=>{if(s.hall[i])for(let k=0;k<p.u.length;k++)marc[(p.hor?p.x+k:p.x)+","+(p.hor?p.y:p.y+k)]=true;});
+    j=`<div class="dd-sopa" style="grid-template-columns:repeat(${s.N},1fr)">${s.g.map((f,y)=>f.map((l,x)=>`<button class="dd-l${marc[x+","+y]?" ok":""}${s.ini&&s.ini[0]===x&&s.ini[1]===y?" sel":""}" data-act="ddSopa" data-x="${x}" data-y="${y}">${l}</button>`).join("")).join("")}</div>
+    <p class="dd-lista">${s.pal.map((p,i)=>`<span class="${s.hall[i]?"ok":""}">${esc(p.u)}</span>`).join("")}</p>`;}
+  if(DS.dia===4){ayuda="Mira los dos dibujos. Toca en el dibujo de la derecha las 4 cosas que cambiaron.";
+    j=`<div class="dd-dif"><div class="dd-pan">${difSVG("izq",DS.fig)}</div><div class="dd-pan der" data-act="ddDifMal">${difSVG("der",DS.fig)}${DS.dif.map(k=>{const [x,y]=DIF_POS[k];return `<button class="dd-spot${DS.ok[k]?" ok":""}" style="left:${x/3}%;top:${y/2.2}%" data-act="ddDif" data-i="${k}" aria-label="Diferencia"></button>`;}).join("")}</div></div><p class="small">Encontradas: <b>${Object.keys(DS.ok).length} de 4</b></p>`;}
+  if(DS.dia===5){const L=DS.lab;ayuda="Lleva a Simón hasta la Biblia usando las flechas.";
+    let g=`<div class="dd-lab" style="grid-template-columns:repeat(${L.N},1fr)">`;for(let y=0;y<L.N;y++)for(let x=0;x<L.N;x++){const q=L.m[y][x];const st=`border-top-width:${q.n?3:0}px;border-bottom-width:${q.s?3:0}px;border-right-width:${q.e?3:0}px;border-left-width:${q.o?3:0}px`;
+      g+=`<span class="dd-q" style="${st}">${L.pos[0]===x&&L.pos[1]===y?`<img src="img/simon.jpg" alt="Simón">`:x===L.N-1&&y===L.N-1?"📖":""}</span>`;}
+    j=g+`</div><div class="dd-flechas"><button class="btn sm" data-act="ddMov" data-k="n" aria-label="Arriba">⬆</button><div class="row"><button class="btn sm" data-act="ddMov" data-k="o" aria-label="Izquierda">⬅</button><button class="btn sm" data-act="ddMov" data-k="s" aria-label="Abajo">⬇</button><button class="btn sm" data-act="ddMov" data-k="e" aria-label="Derecha">➡</button></div></div>`;}
+  if(DS.dia===6){const sig=DS.hue.find(i=>!DS.llenos[i]);ayuda="Toca las palabras en orden para completar el versículo de la semana.";
+    j=`<p class="jv-texto">${DS.pal.map((w,i)=>DS.hue.includes(i)?(DS.llenos[i]?`<span class="jv-ok">${esc(w)}</span>`:`<span class="jv-hueco${i===sig?" act":""}">${"&nbsp;".repeat(Math.min(10,Math.max(4,normW(w).length)))}</span>`):esc(w)).join(" ")}</p>${c.versiculoCita?`<p class="jv-cita">${esc(c.versiculoCita)}</p>`:""}
+    <div class="jv-fichas">${DS.fichas.filter(i=>!DS.llenos[i]).map(i=>`<button class="jv-ficha${DS.mal===i?" mal":""}" data-act="ddFicha" data-i="${i}">${esc(limpiaW(DS.pal[i]))}</button>`).join("")}</div>`;}
+  let fin="";
+  if(DS.hecho){const hs=misHijos();
+    fin=`<div class="dd-fin"><h3>🎉 ¡Desafío logrado!</h3><p>${DS.err?`Con ${DS.err} intento${DS.err>1?"s":""} de más.`:"¡Sin ningún error!"} Puntaje: <b>${Math.max(1,10-DS.err)} de 10</b>.</p>`;
+    if(ed())fin+=`<p class="small muted">Vista de equipo: este resultado no se guarda.</p>`;
+    else if(!hs.length)fin+=`<p class="small">Para que el desafío cuente en el libro de clases, vincula a tu hijo con el código que te dio el maestro.</p><button class="btn sm line" data-act="verMisHijos">Vincular a mi hijo</button>`;
+    else if(DS.guardado)fin+=`<p class="small">✓ Guardado. El maestro lo verá en el libro de clases.</p>`;
+    else fin+=`<p class="small"><b>¿Quién hizo el desafío?</b></p><div class="row">${hs.map(n=>`<button class="btn sm${DS.quien[n.id]?"":" line"}" aria-pressed="${!!DS.quien[n.id]}" data-act="ddQuien" data-id="${esc(n.id)}">${esc(n.nombre)}</button>`).join("")}</div><button class="btn" data-act="ddGuardar">Guardar desafío</button>`;
+    fin+=`<div class="row"><button class="btn line" data-act="salirDD">Volver al inicio</button></div></div>`;}
+  return `<button class="back" data-act="salirDD">‹ Volver al inicio</button><section class="juego dd"><div class="jv-top">${figura(DS.hecho?"santiago":["mateo","sara","maria","simon","santiago","mateo"][DS.dia-1],"jv-fig")}<div><p class="eyebrow">${ico} Desafío del ${esc(dn.toLowerCase())}</p><h2>${esc(tn)}</h2><p class="small muted">Clase: ${esc(c.titulo)}</p></div></div>
+  ${DS.hecho?"":`<p class="small">${esc(ayuda)}</p>`}${DS.hecho&&DS.dia!==6?"":j}${fin}</section>`;}
+function accionDD(act,b){
+  if(act==="ddUneI"){DS.sel=Number(b.dataset.i);render();return;}
+  if(act==="ddUneD"){if(DS.sel==null){toast("Primero toca una opción de la izquierda");return;}const i=Number(b.dataset.i);
+    if(i===DS.sel){DS.ok[i]=true;DS.sel=null;if(Object.keys(DS.ok).length===DS.izq.length)return terminarDD();}else{DS.err++;toast("¡Casi! Prueba con otra");}render();return;}
+  if(act==="ddCruci"){const n=Number(b.dataset.i);const p=DS.cw.p.find(x=>x.n===n);const el=document.getElementById("cw_"+n);const v=upDD(el?el.value:"");
+    if(v===p.u){DS.ok[n]=true;if(DS.cw.p.every(x=>DS.ok[x.n]))return terminarDD();}else{DS.err++;toast("Esa no es. ¡Revisa la pista!");return;}render();return;}
+  if(act==="ddSopa"){const s=DS.sopa;const x=Number(b.dataset.x),y=Number(b.dataset.y);
+    if(!s.ini){s.ini=[x,y];render();return;}const [x0,y0]=s.ini;s.ini=null;
+    const i=s.pal.findIndex((p,k)=>!s.hall[k]&&((p.x===x0&&p.y===y0&&(p.hor?(x===p.x+p.u.length-1&&y===p.y):(x===p.x&&y===p.y+p.u.length-1)))||(p.x===x&&p.y===y&&(p.hor?(x0===p.x+p.u.length-1&&y0===p.y):(x0===p.x&&y0===p.y+p.u.length-1)))));
+    if(i>=0){s.hall[i]=true;if(s.pal.every((p,k)=>s.hall[k]))return terminarDD();}else{DS.err++;toast("No hay una palabra ahí");}render();return;}
+  if(act==="ddDif"){const k=Number(b.dataset.i);DS.ok[k]=true;if(Object.keys(DS.ok).length===4)return terminarDD();render();return;}
+  if(act==="ddDifMal"){DS.err++;toast("Ahí no cambió nada");return;}
+  if(act==="ddMov"){movDD(b.dataset.k);return;}
+  if(act==="ddFicha"){const i=Number(b.dataset.i);const sig=DS.hue.find(k=>!DS.llenos[k]);if(sig==null)return;
+    if(normW(DS.pal[i])===normW(DS.pal[sig])){DS.llenos[sig]=true;if(i!==sig){const a=DS.fichas.indexOf(i),c=DS.fichas.indexOf(sig);DS.fichas[a]=sig;DS.fichas[c]=i;}DS.mal=null;if(DS.hue.every(k=>DS.llenos[k]))return terminarDD();}
+    else{DS.err++;DS.mal=i;toast("¡Casi! Esa palabra va más adelante");}render();return;}
+  if(act==="ddQuien"){const id=b.dataset.id;DS.quien[id]=!DS.quien[id];render();return;}
+  if(act==="ddGuardar"){guardarDD();return;}
+  if(act==="salirDD"){ui.desafio=false;DS=null;render();window.scrollTo(0,0);return;}
+}
+
+/* ---------- álbum bíblico: puntos → sobres de 5 láminas, libro con páginas que se dan vuelta, mercado de láminas ---------- */
+const ALB_TOTAL=100,ALB_POR_SOBRE=5;
+const ALB_SECC=[[1,7,"Los comienzos","#2FB36B"],[8,22,"Los patriarcas","#FF8A1A"],[23,27,"Éxodo y conquista","#2E7CF6"],[28,38,"Jueces y transición al reino","#8B5CF6"],[39,47,"Reyes de Israel","#E5383B"],[48,63,"Reyes y profetas","#E0A100"],[64,73,"Exilio y regreso","#1AA3A3"],[74,79,"La llegada de Jesús","#F59E0B"],[80,96,"Jesús y sus discípulos","#E0457B"],[97,100,"La Iglesia comienza","#F25C05"]];
+const ALB_HOJAS=ALB_SECC.length+3; /* portada, línea del tiempo, 10 épocas, contraportada */
+const albEra=n=>ALB_SECC.find(x=>n>=x[0]&&n<=x[1])||ALB_SECC[0];
+const albImg=n=>{const L=albCat(n);return L&&L.img?blobUrl(L.img):"img/album/"+String(n).padStart(3,"0")+".webp";};
+const ALB={cargado:false,cargando:false,estado:{},tengo:{},inter:[],chat:[],regalos:[],nino:null,vista:"album",pag:0,dir:0,ofrezco:null,sobre:null};
+const FRASES_ALB=["¿Alguien tiene la N° ?","¡Te la cambio!","¡Me falta poco para llenar la página!","¡Gracias! 😊","¡Qué buena lámina! 🙌","Revisa tus ofertas 📬"];
+const MOTIVOS_REG=["Cumpleaños 🎂","Ayudó en la clase","Trajo a un amigo","Recitó el versículo de memoria","¡Excelente comportamiento!"];
+const albSB=()=>window.EPK&&EPK.sb&&EPK.comunidad?EPK.sb:null;
+const albNinos=()=>ed()?[...S.ninos].sort(byNombre):misHijos();
+const albNom=id=>{const n=S.ninos.find(x=>x.id===id);return n?String(n.nombre||"").trim().split(/\s+/)[0]:"Alguien";};
+const albCat=num=>(S.laminas||[]).find(x=>Number(x.numero)===Number(num))||null;
+const albCant=(nino,num)=>((ALB.tengo[nino]||{})[num])||0;
+const albEst=nino=>ALB.estado[nino]||{pts_ganados:0,pts_gastados:0,saldo:0,sobres:0,abiertos:0,pegadas:0,repetidas:0,precio:Number(S.config.precioSobre)||50};
+const albPorAbrir=nino=>{const e=ALB.estado[nino];return e?Math.max(0,e.sobres):0;};
+const albPrecio=()=>{const e=Object.values(ALB.estado)[0];return e?e.precio:(Number(S.config.precioSobre)||50);};
+function albNinoSel(){const ns=albNinos();if(!ns.length)return null;if(!ALB.nino||!ns.some(n=>n.id===ALB.nino))ALB.nino=ns[0].id;return ALB.nino;}
+function cargarAlbum(force){const sb=albSB();if(!sb||ALB.cargando||(ALB.cargado&&!force))return Promise.resolve();ALB.cargando=true;const cid=EPK.comunidad.id;
+  return Promise.all([sb.rpc("album_estado",{p_comunidad:cid}),sb.from("album_laminas").select("nino_id,lamina,cantidad").eq("comunidad_id",cid).limit(20000),
+    sb.from("album_intercambios").select("*").eq("comunidad_id",cid).order("creado",{ascending:false}).limit(200),
+    sb.from("album_chat").select("*").eq("comunidad_id",cid).order("creado",{ascending:false}).limit(80),
+    sb.from("album_regalos").select("*").eq("comunidad_id",cid).order("creado",{ascending:false}).limit(60)]).then(([e,l,i,c,g])=>{
+    ALB.cargando=false;if(e.error){ALB.error=e.error.message;render();return;}ALB.error=null;
+    ALB.estado={};(e.data||[]).forEach(r=>ALB.estado[r.nino_id]=r);
+    ALB.tengo={};(l.data||[]).forEach(r=>{if(r.cantidad>0)(ALB.tengo[r.nino_id]=ALB.tengo[r.nino_id]||{})[r.lamina]=r.cantidad;});
+    ALB.inter=i.data||[];ALB.chat=(c.data||[]).reverse();ALB.regalos=g.data||[];ALB.cargado=true;albEscuchar();render();});}
+function albEscuchar(){const sb=albSB();if(!sb||ALB.canal)return;const cid=EPK.comunidad.id;let t;
+  const recargar=()=>{clearTimeout(t);t=setTimeout(()=>cargarAlbum(true),500);};
+  ALB.canal=sb.channel("album-"+cid)
+    .on("postgres_changes",{event:"*",schema:"public",table:"album_chat",filter:"comunidad_id=eq."+cid},p=>{
+      if(p.eventType==="INSERT"&&p.new){if(!ALB.chat.some(m=>m.id===p.new.id))ALB.chat.push(p.new);ALB.chat=ALB.chat.slice(-120);
+        if(p.new.tipo==="sistema")recargar();else pintarChatAlb();}
+      else if(p.new){const i=ALB.chat.findIndex(m=>m.id===p.new.id);if(i>=0)ALB.chat[i]=p.new;pintarChatAlb();}})
+    .on("postgres_changes",{event:"*",schema:"public",table:"album_intercambios",filter:"comunidad_id=eq."+cid},recargar).subscribe();}
+
+/* puntos por actividades de la app: cada lectura/actividad suma al niño que la hizo */
+const albNorm=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").trim().toLowerCase().split(/\s+/)[0]||"";
+async function ptsActividad(tipo,ref,nombres){const sb=albSB();if(!sb||ed())return;const hs=misHijos();if(!hs.length)return;
+  const ids=new Set();(nombres&&nombres.length?nombres:[BIB.actual]).forEach(nm=>{const h=hs.find(x=>albNorm(x.nombre)===albNorm(nm));if(h)ids.add(h.id);else if(hs.length===1)ids.add(hs[0].id);});
+  let tot=0;const quien=[];
+  for(const id of ids){const {data,error}=await sb.rpc("sumar_actividad",{p_comunidad:EPK.comunidad.id,p_nino:id,p_tipo:tipo,p_ref:String(ref)});if(!error&&data>0){tot+=data;quien.push(albNom(id));}}
+  if(tot){setTimeout(()=>toast(`⭐ +${tot} puntos para ${quien.join(" y ")}: ¡júntalos para tus sobres!`),1600);cargarAlbum(true);}}
+
+function laminaHTML(num,o){o=o||{};const L=albCat(num),cant=o.cant||0;const nombre=L&&L.nombre?L.nombre:"Lámina "+num;
+  const src=albImg(num);const vid=/\.(mp4|webm)$/i.test(L&&L.img||"");
+  const media=!o.vacia&&src?(vid?`<video src="${esc(src)}" autoplay muted loop playsinline aria-label="${esc(nombre)}"></video>`:`<img src="${esc(src)}" alt="${esc(nombre)}" loading="lazy">`)
+    :`<span class="lam-ph">${o.vacia?"?":`<span>${esc(inicial(nombre))}</span>`}</span>`;
+  return `<span class="lam${o.vacia?" vacia":""}${o.cls?" "+o.cls:""}" style="--lc:${albEra(num)[3]}"><span class="lam-num">${num}</span>${media}<b class="lam-nom">${esc(nombre)}</b>${cant>1?`<span class="lam-rep">x${cant}</span>`:""}</span>`;}
+
+function albSelector(ns,nid){return ns.length>1?`<div class="row" role="group" aria-label="¿De quién es el álbum?">${ns.map(n=>`<button class="chip" aria-pressed="${n.id===nid}" data-act="albNino" data-id="${esc(n.id)}">${esc(albNom(n.id))}</button>`).join("")}</div>`:"";}
+function albPrevio(){let out="";
+  if(!albSB())return emptyBox("Álbum bíblico","Entra con tu cuenta de la congregación para ver tu álbum.","");
+  if(ALB.error)return emptyBox("El álbum aún no está listo","Falta instalar el álbum en la base de datos ("+ALB.error+").","");
+  if(!albNinos().length)return emptyBox("Aún no hay un niño vinculado","Pide al maestro el código para vincular a tu hijo o hija y su álbum aparecerá aquí.","");
+  if(!ALB.cargado)return `<p class="muted">Abriendo el álbum…</p>`;
+  return null;}
+
+function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
+  const ns=albNinos(),nid=albNinoSel(),e=albEst(nid),pa=albPorAbrir(nid),precio=e.precio||albPrecio(),falta=Math.max(0,precio-e.saldo);
+  const recibidas=ALB.inter.filter(t=>t.estado==="pendiente"&&t.para_nino===nid).length;
+  const reg=ALB.regalos.find(r=>r.nino_id===nid&&(Date.now()-new Date(r.creado))<14*864e5);
+  let out=`<section class="card alb-top">${albSelector(ns,nid)}
+    <div class="alb-head"><img class="alb-portada" src="img/album/portada.webp" alt="Portada del Álbum de Personajes Bíblicos"><div><p class="eyebrow">Álbum bíblico de ${esc(albNom(nid))}</p><h2>${e.pegadas} de ${ALB_TOTAL} láminas</h2><div class="prog"><i style="width:${e.pegadas/ALB_TOTAL*100}%"></i></div>
+      <p class="small muted">${e.repetidas} ${e.repetidas===1?"repetida":"repetidas"} para cambiar · ${e.abiertos} ${e.abiertos===1?"sobre abierto":"sobres abiertos"}</p></div></div>
+    <div class="alb-acc"><div class="alb-bolsa"><div class="alb-pts"><span class="alb-pts-n">⭐ ${e.saldo}</span><span class="small">puntos para gastar</span></div>
+      <button class="btn${falta?" line":""}" data-act="albCanjear" ${falta?"disabled":""}>${falta?`Te faltan ${falta} puntos para un sobre`:`Cambiar ${precio} puntos por 1 sobre`}</button></div>
+    <button class="alb-sobre-btn${pa?" on":""}" ${pa?`data-act="albAbrir"`:"disabled"} aria-label="${pa?"Abrir sobre":"Sin sobres por abrir"}"><span class="sobre mini"><span class="sobre-sello">EPK</span></span><b>${pa?`Abrir sobre (${pa})`:"Sin sobres por abrir"}</b><span class="small">${ALB_POR_SOBRE} láminas</span></button></div>
+    ${reg?`<p class="alb-regalo">🎁 ¡Te regalaron ${reg.cantidad} ${reg.cantidad>1?"sobres":"sobre"}!${reg.motivo?` <b>${esc(reg.motivo)}</b>`:""}</p>`:""}</section>`;
+  const vistas=[["album","📖 Mi álbum"],["repetidas","🔁 Mis repetidas"],["mercado",`🛒 Mercado${recibidas?` (${recibidas})`:""}`]].concat(ed()?[["curso","🎁 Regalar sobres"]]:[]);
+  out+=`<div class="seg" role="group" aria-label="Álbum">${vistas.map(([k,n])=>`<button aria-pressed="${ALB.vista===k}" data-act="albVista" data-k="${k}">${n}</button>`).join("")}</div>`;
+  if(ALB.vista==="repetidas")return out+vAlbRepetidas(nid);
+  if(ALB.vista==="mercado")return out+vAlbMercado(nid);
+  if(ALB.vista==="curso"&&ed())return out+vAlbCurso();
+  return out+vAlbLibro(nid);}
+
+/* libro: portada, línea del tiempo, 10 épocas y contraportada, con páginas que se dan vuelta */
+function vAlbLibro(nid){ALB.pag=Math.max(0,Math.min(ALB.pag,ALB_HOJAS-1));const p=ALB.pag;const dir=ALB.dir;ALB.dir=0;
+  const llenasDe=x=>Array.from({length:x[1]-x[0]+1},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);
+  let hoja;
+  if(p===0)hoja=`<div class="alb-hoja tapa"><img src="img/album/portada.webp" alt="Álbum de Personajes Bíblicos · Eterno Pacto KIDS"><div class="alb-dueno">Este álbum pertenece a: <b>${esc((S.ninos.find(n=>n.id===nid)||{}).nombre||"")}</b></div></div>`;
+  else if(p===1)hoja=`<div class="alb-hoja linea"><p class="eyebrow">Una gran historia</p><h3>Línea del tiempo</h3><p class="small muted">Toca una época para ir a su página.</p>
+    <ol class="alb-tl">${ALB_SECC.map((x,i)=>{const tot=x[1]-x[0]+1,ok=llenasDe(x);return `<li style="--era:${x[3]}"><button data-act="albPag" data-p="${i+2}"><span class="tl-dot">${ok===tot?"✓":i+1}</span><span class="tl-t"><b>${esc(x[2])}</b><span class="small">${esc((albCat(x[0])||{}).nombre||"N° "+x[0])} → ${esc((albCat(x[1])||{}).nombre||"N° "+x[1])}</span></span><span class="pill">${ok}/${tot}</span></button></li>`;}).join("")}</ol></div>`;
+  else if(p===ALB_HOJAS-1)hoja=`<div class="alb-hoja contra"><img class="contra-logo" src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><h3>Álbum de Personajes Bíblicos</h3><p>100 personajes · Una gran historia</p>
+    <p class="contra-tot">Llevas <b>${albEst(nid).pegadas}</b> de ${ALB_TOTAL} láminas</p>
+    <div class="contra-jat"><span class="small">Desarrollado por</span><img src="img/jat-horizontal-negro.svg" alt="JAT · José Antonio Tapia"></div>
+    <p class="contra-legal">JAT® es marca registrada de José Antonio Tapia Meneses.<br>© ${new Date().getFullYear()} Eterno Pacto KIDS · Material de uso exclusivo de la congregación. Prohibida su venta y reproducción.</p></div>`;
+  else{const x=ALB_SECC[p-2],[ini,fin,tit,col]=x;
+    let celdas="";for(let n=ini;n<=fin;n++){const c=albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
+    const ok=llenasDe(x),tot=fin-ini+1;
+    hoja=`<div class="alb-hoja era" style="--era:${col}"><div class="sec-h"><div><p class="eyebrow">Época ${p-1} de ${ALB_SECC.length} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div><span class="pill${ok===tot?" sun":""}">${ok===tot?"¡Completa! ":""}${ok}/${tot}</span></div><div class="alb-grid">${celdas}</div></div>`;}
+  const nom=p===0?"Portada":p===1?"Línea del tiempo":p===ALB_HOJAS-1?"Contraportada":ALB_SECC[p-2][2];
+  return `<section class="alb-libro" id="albLibro"><div class="alb-pliego${dir>0?" pasa-sig":dir<0?" pasa-ant":""}">${hoja}</div>
+    <div class="alb-nav"><button class="btn line sm" data-act="albPag" data-d="-1" ${p?"":"disabled"} aria-label="Página anterior">‹</button>
+    <span class="alb-nav-t"><b>${esc(nom)}</b><span class="small muted">Página ${p+1} de ${ALB_HOJAS}${p>1?` · <button class="link-btn" data-act="albPag" data-p="1">Índice</button>`:""}</span></span>
+    <button class="btn line sm" data-act="albPag" data-d="1" ${p<ALB_HOJAS-1?"":"disabled"} aria-label="Página siguiente">›</button></div>
+    <p class="small muted alb-desliza">Desliza o usa las flechas para dar vuelta la página</p></section>`;}
+
+function vAlbRepetidas(nid){const mias=Object.entries(ALB.tengo[nid]||{}).filter(([,c])=>c>1).map(([n,c])=>[Number(n),c]).sort((a,b)=>a[0]-b[0]);
+  if(!mias.length)return emptyBox("Aún no tienes repetidas","Cuando te salga una lámina que ya tienes, aparecerá aquí para cambiarla en el mercado.","");
+  let out=`<p class="muted">Solo se cambian láminas <b>repetidas</b>: así nadie pierde una lámina pegada. Elige una para ver quién te puede dar una que te falta.</p>
+    <div class="alb-grid">${mias.map(([n,c])=>`<button class="lam-b${ALB.ofrezco===n?" sel":""}" data-act="albOfrezco" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`).join("")}</div>`;
+  if(ALB.ofrezco&&albCant(nid,ALB.ofrezco)>1){const x=ALB.ofrezco;
+    const otros=Object.keys(ALB.tengo).filter(k=>k!==nid&&S.ninos.some(n=>n.id===k));
+    const ops=otros.map(k=>({k,da:Object.entries(ALB.tengo[k]).filter(([n,c])=>c>1&&!albCant(nid,Number(n))).map(([n])=>Number(n)).sort((a,b)=>a-b),lefalta:!albCant(k,x)})).filter(o=>o.da.length)
+      .sort((a,b)=>(b.lefalta-a.lefalta)||(b.da.length-a.da.length));
+    out+=`<section class="card"><h3>Cambiar mi ${esc((albCat(x)||{}).nombre||"lámina "+x)} (N° ${x})</h3>${ops.length?ops.map(o=>`<div class="alb-op"><p><b>${esc(albNom(o.k))}</b> ${o.lefalta?`<span class="pill sun">¡le falta tu N° ${x}!</span>`:""}</p>
+      <div class="row">${o.da.slice(0,12).map(n=>`<button class="btn line sm" data-act="albPedir" data-k="${esc(o.k)}" data-n="${n}">Pedir N° ${n}${albCat(n)&&albCat(n).nombre?" · "+esc(albCat(n).nombre):""}</button>`).join("")}</div></div>`).join("")
+      :`<p class="muted">Por ahora nadie tiene repetida una lámina que te falte. Pregunta en el mercado 🛒</p>`}</section>`;}
+  return out;}
+
+/* mercado de láminas: ofertas y chat del grupo (también aparece en el Foro) */
+function vAlbMercado(nid){const cerrado=S.config.chatAlbum==="no";
+  const rec=ALB.inter.filter(t=>t.estado==="pendiente"&&t.para_nino===nid),mis=ALB.inter.filter(t=>t.estado==="pendiente"&&t.de_nino===nid);
+  const mini=n=>`<span class="alb-mini">${laminaHTML(n)}</span>`;
+  let out=`<p class="muted small">Ofrece tus repetidas desde <button class="link-btn" data-act="albVista" data-k="repetidas">🔁 Mis repetidas</button> y responde aquí las ofertas que te hagan.</p>`;
+  if(rec.length)out+=`<section class="card"><h3>📬 Te ofrecen</h3>${rec.map(t=>`<div class="alb-of">${mini(t.ofrece)}<span class="alb-flecha">⇄</span>${mini(t.pide)}<div class="grow"><p><b>${esc(albNom(t.de_nino))}</b> te da la N° ${t.ofrece} y te pide tu N° ${t.pide} repetida.${albCant(nid,t.ofrece)?` <span class="small muted">(ya la tienes)</span>`:` <span class="pill sun">¡te falta!</span>`}</p>
+    <div class="row"><button class="btn sm" data-act="albResp" data-id="${esc(t.id)}" data-ok="1">Aceptar</button><button class="btn line sm" data-act="albResp" data-id="${esc(t.id)}" data-ok="0">No, gracias</button></div></div></div>`).join("")}</section>`;
+  if(mis.length)out+=`<section class="card"><h3>⏳ Tus ofertas esperando respuesta</h3>${mis.map(t=>`<div class="alb-of">${mini(t.ofrece)}<span class="alb-flecha">⇄</span>${mini(t.pide)}<div class="grow"><p>Para <b>${esc(albNom(t.para_nino))}</b>: das N° ${t.ofrece}, pides N° ${t.pide}.</p><button class="btn ghost sm" data-act="albCancel" data-id="${esc(t.id)}">Retirar oferta</button></div></div>`).join("")}</section>`;
+  out+=`<section class="card alb-chat"><div class="sec-h"><h3>💬 Conversación del mercado</h3>${ed()?`<button class="btn ghost sm" data-act="albCerrarPatio">${cerrado?"Abrir el mercado":"Cerrar el mercado"}</button>`:""}</div>
+    <p class="small muted">Solo para cambiar láminas con tu congregación. Los maestros leen el mercado. No se pueden enviar enlaces, teléfonos ni redes sociales. Sé amable 💛</p>
+    <div class="alb-msgs" id="albChatList" aria-live="polite">${chatAlbHTML()}</div>
+    ${cerrado&&!ed()?`<p class="pill">El mercado está cerrado por ahora</p>`:`<div class="row alb-frases">${FRASES_ALB.map(f=>`<button class="chip" data-act="albFrase" data-t="${esc(f)}">${esc(f)}</button>`).join("")}</div>
+    <div class="alb-enviar"><input class="dd-in" id="albTxt" maxlength="200" placeholder="Escribe como ${esc(albNom(nid))}…" aria-label="Mensaje para el mercado" autocomplete="off"><button class="btn sm" data-act="albEnviar">Enviar</button></div>`}</section>`;
+  return out;}
+function vMercadoForo(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;const ns=albNinos(),nid=albNinoSel();
+  return `<section class="card"><div class="sec-h"><h2>🛒 Mercado de láminas</h2><button class="btn ghost sm" data-act="irInsignias">Ir a mi álbum</button></div>${albSelector(ns,nid)}<p class="small muted">Comerciando como <b>${esc(albNom(nid))}</b> · ${albEst(nid).repetidas} repetidas para cambiar</p></section>`+vAlbMercado(nid);}
+function chatAlbHTML(){if(!ALB.chat.length)return `<p class="muted small">Aún no hay mensajes. ¡Saluda y cuenta qué láminas te faltan!</p>`;
+  const mios=new Set(albNinos().map(n=>n.id));
+  return ALB.chat.map(m=>{const oc=m.estado==="oculto";if(oc&&!ed())return "";
+    if(m.tipo==="sistema")return `<p class="alb-sis">${esc(m.texto)}</p>`;
+    const h=new Date(m.creado);const hora=h.toLocaleString("es-CL",{weekday:"short",hour:"2-digit",minute:"2-digit"});
+    return `<div class="alb-msg${mios.has(m.nino_id)?" yo":""}${oc?" oculto":""}" style="--lc:${colorFor("lam"+m.nino_id)}"><b>${esc(m.autor)}</b><span>${esc(m.texto)}</span><small>${esc(hora)}${oc?" · oculto":""}
+      ${ed()?`<button class="link-btn" data-act="albOcultar" data-id="${esc(m.id)}" data-ok="${oc?0:1}">${oc?"Mostrar":"Ocultar"}</button>`:(mios.has(m.nino_id)?"":`<button class="link-btn" data-act="albReportar" data-id="${esc(m.id)}" aria-label="Avisar al maestro">⚑</button>`)}</small></div>`;}).join("");}
+function pintarChatAlb(){const el=document.getElementById("albChatList");if(!el)return;const abajo=el.scrollHeight-el.scrollTop-el.clientHeight<60;el.innerHTML=chatAlbHTML();if(abajo)el.scrollTop=el.scrollHeight;}
+
+/* maestro: regalar sobres y fijar el precio */
+function vAlbCurso(){const ns=[...S.ninos].sort(byNombre);
+  return `<section class="card"><h3>🎁 Regalar sobres</h3><p class="muted small">Premia a un niño con sobres por un buen motivo. El niño verá el regalo y el motivo en su álbum.</p>
+    <div class="row"><label for="albPrecio" class="small"><b>Precio de un sobre</b></label><input class="dd-in" id="albPrecio" type="number" min="1" max="500" value="${albPrecio()}" style="width:90px;text-transform:none"><span class="small">puntos</span><button class="btn line sm" data-act="albGuardarPrecio">Guardar precio</button></div></section>
+  <div class="reg"><table><thead><tr><th>Niño/a</th><th class="num">Puntos</th><th class="num">Láminas</th><th class="num">Sobres por abrir</th><th></th></tr></thead><tbody>
+  ${ns.map(n=>{const e=albEst(n.id);return `<tr><td>${avatar(n)} ${esc(n.nombre)}</td><td class="num">⭐ ${e.saldo}</td><td class="num"><span class="dd-cont${e.pegadas>=ALB_TOTAL?" full":""}">${e.pegadas}/${ALB_TOTAL}</span></td><td class="num">${e.sobres}</td>
+    <td><button class="btn sm" data-act="albRegalar" data-id="${esc(n.id)}">🎁 Regalar</button> <button class="btn ghost sm" data-act="albNino" data-id="${esc(n.id)}" data-ver="1">Ver álbum</button></td></tr>`;}).join("")}</tbody></table></div>`;}
+function formRegalo(ninoId){
+  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><form class="sheet" id="albRegForm"><h2>🎁 Regalar sobres a ${esc(albNom(ninoId))}</h2>
+    <div class="field"><label for="regCant">¿Cuántos sobres?</label><select class="inp" id="regCant">${[1,2,3,4,5].map(i=>`<option value="${i}">${i} ${i>1?"sobres":"sobre"} (${i*ALB_POR_SOBRE} láminas)</option>`).join("")}</select></div>
+    <div class="field"><label for="regMot">Motivo (lo verá el niño)</label><input class="inp" id="regMot" maxlength="120" placeholder="Ej.: Ayudó a sus compañeros"></div>
+    <div class="row alb-frases">${MOTIVOS_REG.map(m=>`<button type="button" class="chip" data-mot="${esc(m)}">${esc(m)}</button>`).join("")}</div>
+    <div class="row between"><span></span><div class="row"><button type="button" class="btn line" id="regCancel">Cancelar</button><button class="btn" type="submit">Regalar</button></div></div></form></div>`;
+  $("#regCancel").onclick=()=>$("#sheetRoot").innerHTML="";
+  document.querySelectorAll("#albRegForm [data-mot]").forEach(x=>x.onclick=()=>{$("#regMot").value=x.dataset.mot;});
+  $("#albRegForm").addEventListener("submit",async ev=>{ev.preventDefault();const sb=albSB();if(!sb)return;const bt=ev.target.querySelector("[type=submit]");bt.disabled=true;
+    const cant=Number($("#regCant").value)||1;const {error}=await sb.rpc("regalar_sobre",{p_comunidad:EPK.comunidad.id,p_nino:ninoId,p_cantidad:cant,p_motivo:$("#regMot").value.trim()||null});
+    if(albToast(error,`🎁 ${cant} ${cant>1?"sobres regalados":"sobre regalado"} a ${albNom(ninoId)}`)){$("#sheetRoot").innerHTML="";await cargarAlbum(true);}else bt.disabled=false;});}
+
+/* abrir sobre: rasgar y descubrir las 5 láminas */
+function albAbrir(){const sb=albSB(),nid=albNinoSel();if(!sb||!nid||ALB.abriendo)return;ALB.abriendo=true;
+  sb.rpc("abrir_sobre",{p_comunidad:EPK.comunidad.id,p_nino:nid}).then(({data,error})=>{ALB.abriendo=false;
+    if(error){toast(error.message||"No se pudo abrir el sobre");return;}
+    ALB.sobre={nino:nid,cartas:(data||[]).map(r=>({n:r.num,nueva:r.es_nueva})),vistas:0,roto:false};pintarSobre();cargarAlbum(true);});}
+function pintarSobre(){const s=ALB.sobre;if(!s){$("#sheetRoot").innerHTML="";return;}
+  const cols=["var(--sun)","var(--p-sara)","var(--accent)","var(--leaf)","var(--p-santiago)"];
+  const conf=s.vistas>=s.cartas.length&&s.cartas.some(c=>c.nueva)?`<div class="confeti">${Array.from({length:28},(_,i)=>`<i style="left:${(i*37)%100}%;background:${cols[i%cols.length]};animation-delay:${(i%7)*0.12}s"></i>`).join("")}</div>`:"";
+  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet celebra alb-abre">${conf}
+    ${!s.roto?`<p class="eyebrow">¡Sobre del álbum bíblico!</p><button class="sobre grande" data-act="albRasgar" aria-label="Abrir el sobre"><span class="sobre-sello">EPK</span><span class="sobre-txt">Toca para abrir</span></button>`
+    :`<p class="eyebrow">${s.vistas<s.cartas.length?"Toca cada lámina para darla vuelta":"¡Tus láminas nuevas!"}</p>
+      <div class="alb-cartas">${s.cartas.map((c,i)=>i<s.vistas?`<div class="carta vuelta">${laminaHTML(c.n)}<span class="pill ${c.nueva?"sun":""}">${c.nueva?"¡Nueva!":"Repetida"}</span></div>`
+        :`<button class="carta dorso" data-act="albVoltear" ${i===s.vistas?"":"disabled"} aria-label="Dar vuelta la lámina ${i+1}"><span class="sobre-sello">?</span></button>`).join("")}</div>
+      ${s.vistas>=s.cartas.length?`<p>${s.cartas.filter(c=>c.nueva).length} nuevas para pegar · ${s.cartas.filter(c=>!c.nueva).length} repetidas para cambiar</p><button class="btn" data-act="albCerrarSobre">¡Pegar en el álbum!</button>`:""}`}
+    </div></div>`;}
+
+function albToast(error,ok){if(error){toast(error.message||"No se pudo");return false;}if(ok)toast(ok);return true;}
+async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
+  switch(act){
+    case "albNino":ALB.nino=b.dataset.id;ALB.ofrezco=null;if(b.dataset.ver){ALB.vista="album";if(ui.tab!=="biblia"){ui.tab="biblia";ui.bib="album";}}render();break;
+    case "albVista":ALB.vista=b.dataset.k;ALB.ofrezco=null;render();if(ALB.vista==="mercado")setTimeout(()=>{const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;},30);break;
+    case "albPag":{const np=b.dataset.p!=null?Number(b.dataset.p):ALB.pag+Number(b.dataset.d);if(np<0||np>=ALB_HOJAS||np===ALB.pag)break;ALB.dir=np>ALB.pag?1:-1;ALB.pag=np;render();
+      const l=document.getElementById("albLibro");if(l&&l.getBoundingClientRect().top<60)l.scrollIntoView({behavior:"smooth",block:"start"});break;}
+    case "albCanjear":{if(!sb)break;b.disabled=true;const {error}=await sb.rpc("canjear_sobres",{p_comunidad:EPK.comunidad.id,p_nino:nid,p_cantidad:1});
+      if(albToast(error,"🎁 ¡Sobre listo! Ábrelo para descubrir tus 5 láminas")){await cargarAlbum(true);}else b.disabled=false;break;}
+    case "albAbrir":albAbrir();break;
+    case "albRasgar":if(ALB.sobre){ALB.sobre.roto=true;pintarSobre();}break;
+    case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
+    case "albCerrarSobre":{const s=ALB.sobre;ALB.sobre=null;pintarSobre();ALB.vista="album";
+      if(s&&s.cartas.length){const pr=s.cartas.find(c=>c.nueva)||s.cartas[0];const i=ALB_SECC.findIndex(x=>pr.n>=x[0]&&pr.n<=x[1]);if(i>=0&&i+2!==ALB.pag){ALB.dir=i+2>ALB.pag?1:-1;ALB.pag=i+2;}}render();break;}
+    case "albVer":{const n=Number(b.dataset.n),L=albCat(n)||{};const c=albCant(nid,n),e=albEra(n),nom=L.nombre||"Lámina "+n;
+      const fila=(ic,t,v)=>v?`<p class="fi-fila"><span aria-hidden="true">${ic}</span><span><b>${t}</b> ${esc(v)}</span></p>`:"";
+      $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet alb-det ficha" style="--era:${e[3]}" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(nom)}">
+        <p class="fi-era">${esc(e[2])}</p><h2>N.º ${String(n).padStart(3,"0")} · ${esc(nom.toUpperCase())}</h2>
+        <img class="fi-img" src="${esc(albImg(n))}" alt="${esc(nom)}">
+        ${L.quien?`<h3>¿Quién fue?</h3><p>${esc(L.quien)}</p>`:(L.frase?`<p>${esc(L.frase)}</p>`:"")}
+        <div class="fi-datos">${fila("📖","Para leer:",L.leer||L.cita)}${fila("⭐","Lo recordamos por:",L.recordamos)}${fila("❤️","Valor:",L.valor)}${fila("💡","¿Sabías que…?",L.sabias)}</div>
+        ${L.aprendo?`<div class="fi-aprendo"><b>Lo que aprendo de ${esc(nom)}</b><p>${esc(L.aprendo)}</p></div>`:""}
+        <p class="small muted">${c>1?`La tienes ${c} veces: ${c-1} para cambiar.`:c?"Pegada en tu álbum.":""}</p>
+        <div class="row">${L.biblico?`<button class="btn line sm" data-act="verBiblico" data-id="${esc(L.biblico)}">Ver en Personajes bíblicos</button>`:""}${c>1?`<button class="btn line sm" data-act="albOfrezco" data-n="${n}">Cambiarla</button>`:""}<button class="btn sm" data-act="albCerrarDet">Cerrar</button></div></div></div>`;
+      $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});break;}
+    case "albCerrarDet":$("#sheetRoot").innerHTML="";break;
+    case "albOfrezco":$("#sheetRoot").innerHTML="";if(ui.tab!=="biblia"){ui.tab="biblia";ui.bib="album";}ALB.vista="repetidas";ALB.ofrezco=Number(b.dataset.n);render();break;
+    case "albPedir":{if(!sb)break;const k=b.dataset.k,n=Number(b.dataset.n);b.disabled=true;
+      const {error}=await sb.rpc("ofrecer_intercambio",{p_comunidad:EPK.comunidad.id,p_de:nid,p_para:k,p_ofrece:ALB.ofrezco,p_pide:n});
+      if(albToast(error,"¡Oferta enviada a "+albNom(k)+"! Te avisamos cuando responda")){ALB.ofrezco=null;ALB.vista="mercado";await cargarAlbum(true);}else b.disabled=false;break;}
+    case "albResp":{if(!sb)break;b.disabled=true;const ok=b.dataset.ok==="1";const {error}=await sb.rpc("responder_intercambio",{p_id:b.dataset.id,p_acepta:ok});
+      albToast(error,ok?"¡Cambio hecho! La lámina ya está en tu álbum 🤝":"Oferta rechazada");await cargarAlbum(true);break;}
+    case "albCancel":{if(!sb)break;const {error}=await sb.rpc("cancelar_intercambio",{p_id:b.dataset.id});albToast(error,"Oferta retirada");await cargarAlbum(true);break;}
+    case "albFrase":{const i=document.getElementById("albTxt");if(i){i.value=b.dataset.t;i.focus();const p=i.value.indexOf("N° ");if(p>=0)i.setSelectionRange(p+3,p+3);}break;}
+    case "albEnviar":{const i=document.getElementById("albTxt");if(!i||!sb)break;const t=i.value.trim();if(!t)break;b.disabled=true;
+      const {error}=await sb.rpc("chat_album",{p_comunidad:EPK.comunidad.id,p_nino:nid,p_texto:t});b.disabled=false;
+      if(albToast(error)){i.value="";const r=await sb.from("album_chat").select("*").eq("comunidad_id",EPK.comunidad.id).order("creado",{ascending:false}).limit(80);if(!r.error){ALB.chat=(r.data||[]).reverse();pintarChatAlb();const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;}}
+      i.focus();break;}
+    case "albOcultar":case "albReportar":{if(!sb)break;const oc=act==="albReportar"||b.dataset.ok==="1";const {error}=await sb.rpc("moderar_chat_album",{p_id:b.dataset.id,p_ocultar:oc});
+      albToast(error,act==="albReportar"?"Gracias por avisar. El maestro lo revisará":oc?"Mensaje oculto":"Mensaje visible");await cargarAlbum(true);break;}
+    case "albCerrarPatio":{const ref=db.doc("config/general");const v=S.config.chatAlbum==="no"?"si":"no";await enqueue(ref.path,()=>ref.set({...S.config,chatAlbum:v}));toast(v==="no"?"Mercado cerrado":"Mercado abierto");render();break;}
+    case "albGuardarPrecio":{const v=Math.max(1,Math.min(500,Number($("#albPrecio").value)||50));const ref=db.doc("config/general");await enqueue(ref.path,()=>ref.set({...S.config,precioSobre:v}));toast("Un sobre ahora cuesta "+v+" puntos");await cargarAlbum(true);break;}
+    case "albRegalar":formRegalo(b.dataset.id);break;
+  }}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="albTxt"){e.preventDefault();const b=document.querySelector('[data-act="albEnviar"]');if(b)b.click();}
+  if((e.key==="ArrowRight"||e.key==="ArrowLeft")&&document.getElementById("albLibro")&&!/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||"")&&!document.querySelector("#sheetRoot .sheet")){const b=document.querySelector(`#albLibro [data-act="albPag"][data-d="${e.key==="ArrowRight"?1:-1}"]`);if(b&&!b.disabled)b.click();}});
+(()=>{let x0=null,y0=null;document.addEventListener("touchstart",e=>{const l=e.target.closest&&e.target.closest("#albLibro");if(!l){x0=null;return;}x0=e.touches[0].clientX;y0=e.touches[0].clientY;},{passive:true});
+  document.addEventListener("touchend",e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx))return;
+    const b=document.querySelector(`#albLibro [data-act="albPag"][data-d="${dx<0?1:-1}"]`);if(b&&!b.disabled)b.click();},{passive:true});})();
+
 /* ---------- juego del versículo ---------- */
 let JV={};
 const normW=w=>String(w).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ]/gi,"").toLowerCase();
@@ -1789,8 +2269,8 @@ function vJuego(c){
 function jvFicha(i){const sig=JV.hue.find(k=>!JV.llenos[k]);if(sig==null)return;
   if(normW(JV.pal[i])===normW(JV.pal[sig])){JV.llenos[sig]=true;if(i!==sig){const a=JV.fichas.indexOf(i),b=JV.fichas.indexOf(sig);JV.fichas[a]=sig;JV.fichas[b]=i;}JV.mal=null;
     if(JV.hue.every(k=>JV.llenos[k])){JV.hecho=true;render();const id=JV.clase;
-      if(!Object.keys(BIB.lectores).length){toast("¡Muy bien! Crea tu perfil en Mi familia para ganar insignias");return;}
-      quienesLeyeron(ns=>{ns.forEach(n=>{const L=perfil(n);if(L)L.versos[id]=hoyISO();});bibSave();render();revisarInsignias(ns);});return;}}
+      if(!Object.keys(BIB.lectores).length){toast("¡Muy bien! Crea tu perfil en Mi familia para sumar puntos");return;}
+      quienesLeyeron(ns=>{ns.forEach(n=>{const L=perfil(n);if(L)L.versos[id]=hoyISO();});bibSave();render();ptsActividad("versos",id,ns);});return;}}
   else{JV.err++;JV.mal=i;toast("¡Casi! Esa palabra va más adelante");}
   render();}
 const PV={};
@@ -1815,7 +2295,7 @@ function vQuiz(c){const qs=preguntasDe(c);const fin=QZ.i>=qs.length;const quien=
   return out+`</section>`;}
 function qzResp(k){if(QZ.resp!=null)return;QZ.resp=k;const c=S.cuentos.find(x=>x.id===QZ.cuento);const q=preguntasDe(c)[QZ.i];if(QZ.ops[QZ.i][k]===q.ok)QZ.ok++;render();}
 function qzSig(){QZ.i++;QZ.resp=null;const c=S.cuentos.find(x=>x.id===QZ.cuento);
-  if(QZ.i>=preguntasDe(c).length&&Object.keys(BIB.lectores).length){const id=c.id;const pts=QZ.ok;quienesLeyeron(ns=>{ns.forEach(n=>{const L=perfil(n);if(L)L.quiz[id]=hoyISO();});bibSave();render();revisarInsignias(ns);});}
+  if(QZ.i>=preguntasDe(c).length&&Object.keys(BIB.lectores).length){const id=c.id;const pts=QZ.ok;quienesLeyeron(ns=>{ns.forEach(n=>{const L=perfil(n);if(L)L.quiz[id]=hoyISO();});bibSave();render();ptsActividad("quiz",id,ns);});}
   render();window.scrollTo(0,0);}
 
 /* ---------- asistencia con QR ---------- */
@@ -1866,9 +2346,11 @@ document.addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]");if(!b)return;const act=b.dataset.act,id=b.dataset.id;
   const find=(col)=>S[col].find(x=>x.id===id);
   if(act.startsWith("fx_")){if(window.EPKX)EPKX.accion(act,b);return;}
+  if(act.startsWith("alb")){accionAlb(act,b);return;}
   switch(act){
     case "tab":if(b.tagName==="A")e.preventDefault();if(VF){VF=null;pintarVisor();}irA(b.dataset.tab);break;
     case "ptsSeg":ui.pts=b.dataset.k;render();break;
+    case "foroSec":ui.foroSec=b.dataset.k;render();if(ui.foroSec==="mercado")setTimeout(()=>{const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;},30);break;
     case "volver":ui.juego=false;ui.clase=null;ui.nino=null;ui.parabola=null;render();window.scrollTo(0,0);break;
     case "verClase":marcarVista(id);ui.tab="clases";ui.clase=id;render();window.scrollTo(0,0);break;
     case "cerrarAviso":marcarVista(id);render();break;
@@ -1917,6 +2399,9 @@ document.addEventListener("click",async e=>{
     case "adoptar":{const m=S.maestras.find(x=>x.id===id);if(m)adoptarClase(m);break;}
     case "abrirArch":{const c=S.clases.find(x=>x.id===id);const a=c&&archivosDe(c)[Number(b.dataset.i)];if(a)abrirLector({titulo:a.nombre||c.titulo,asset:a.asset,archivo:a.archivo||a.asset});break;}
     case "jvFicha":jvFicha(Number(b.dataset.i));break;
+    case "jugarDD":iniciarDD(id,Number(b.dataset.dia));break;
+    case "ddUneI":case "ddUneD":case "ddCruci":case "ddSopa":case "ddDif":case "ddDifMal":case "ddMov":case "ddFicha":case "ddQuien":case "ddGuardar":case "salirDD":accionDD(act,b);break;
+    case "libroCampos":formLibroCampos();break;
     case "salirJuego":ui.juego=false;render();window.scrollTo(0,0);break;
     case "quiz":iniciarQuiz(id);break;
     case "qzResp":qzResp(Number(b.dataset.k));break;
@@ -1929,12 +2414,12 @@ document.addEventListener("click",async e=>{
     case "pedirAcceso":{const col=b.dataset.col;const x=S[col].find(y=>y.id===id);if(x&&window.EPKX)EPKX.pedir(col,x);break;}
     case "leerMat":{const col=b.dataset.col;const m=S[col].find(x=>x.id===id);if(m)abrirLector({titulo:m.titulo,asset:m.asset,archivo:m.archivo,url:m.url,onDone:col==="materiales"?()=>terminar("mats",m.id):null});break;}
     case "planTog":{const L=lector();if(!L)break;const i=b.dataset.i;if(L.plan[i]){delete L.plan[i];bibSave();render();}else{quienesLeyeron(ns=>acreditar("plan",i,ns));}break;}
-    case "marcarCap":{const L=lector();if(!L)break;const k=selRef.libro+" "+selRef.cap;if(L.leidos[k])delete L.leidos[k];else{L.leidos[k]=new Date().toISOString();toast("Capítulo marcado");}bibSave();render();revisarInsignias();break;}
+    case "marcarCap":{const L=lector();if(!L)break;const k=selRef.libro+" "+selRef.cap;if(L.leidos[k])delete L.leidos[k];else{L.leidos[k]=new Date().toISOString();toast("Capítulo marcado");ptsActividad("leidos",k,[BIB.actual]);}bibSave();render();break;}
     case "nuevoFav":openForm({titulo:"Marcar versículo",ayuda:"Copia el versículo desde la Biblia y elige un color.",datos:{ref:refActual(),color:"sun"},
       campos:[{k:"ref",label:"Cita",req:true,ph:"Juan 3:16"},{k:"texto",label:"Versículo",type:"textarea",req:true},{k:"color",label:"Color",type:"select",opts:HL.map(h=>[h[0],h[1]])}],
       onSave:async v=>{const L=lector();if(!L)throw "Primero elige quién está leyendo.";L.favs.unshift({...v,fecha:hoyISO()});bibSave();render();setTimeout(revisarInsignias,50);}});break;
     case "borrarFav":{const L=lector();if(!L)break;if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="¿Quitar?";break;}L.favs.splice(Number(b.dataset.i),1);bibSave();render();break;}
-    case "irInsignias":ui.tab="biblia";ui.bib="insignias";render();window.scrollTo(0,0);break;
+    case "irInsignias":ui.tab="biblia";ui.bib="album";render();window.scrollTo(0,0);break;
     case "irBiblia":ui.tab="biblia";ui.bib="lectura";render();window.scrollTo(0,0);break;
     case "leerRef":{const r=parseRef(b.dataset.ref);if(r)abrirRef(r.li,r.cap,r.v);else window.open(bgUrl(b.dataset.ref,"NTV"),"_blank");break;}
     case "vs":{const v=b.dataset.v;BR.sel.has(v)?BR.sel.delete(v):BR.sel.add(v);render();break;}
@@ -2019,7 +2504,8 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
         const arr=snap.docs.map(x=>({id:x.id,...x.data()}));
         if(c==="libro"){const keep={};for(const k in S.libro)if(pendingLibro[k])keep[k]=S.libro[k];S.libro={};arr.forEach(a=>S.libro[a.id]=a);Object.assign(S.libro,keep);}
         else if(c==="asistencia"){const keep={};for(const k in S.asistencia)if(pendingAsis[k])keep[k]=S.asistencia[k];S.asistencia={};arr.forEach(a=>S.asistencia[a.id]=a);Object.assign(S.asistencia,keep);}
-        else if(c==="parabolas"&&!arr.length)S[c]=BASE.parabolas.slice();
+        else if(c==="parabolas"){const cen=arr.filter(x=>x._central),pro=arr.filter(x=>!x._central);const tit=t=>String(t||"").trim().toLowerCase();
+          S[c]=(pro.length?pro:BASE.parabolas.filter(b=>!cen.some(x=>tit(x.titulo)===tit(b.titulo)))).concat(cen);}
         else S[c]=arr;
         loaded[c]=true;dbFailed=false;render();if(c==="fotos"||c==="clases")limpiarFotos();
       },err=>{console.warn(c,err);loaded[c]=true;render();});

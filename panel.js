@@ -21,7 +21,7 @@
 
   const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [], solicitudes: [] };
   const NIVN = { todos: "Todos los usuarios", miembros: "Miembros", equipo: "Maestros y admins", admins: "Solo administradores", super: "Solo súper admin" };
-  const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"]];
+  const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"], ["parabolas", "Museo"]];
   const ui = { tab: "resumen", com: null, buscar: "", bib: "cuentos", modCol: "", modCom: "", subida: null, matCol: "cuentos", foroCom: "" };
   let yo = null;
 
@@ -126,7 +126,7 @@
   /* ---------- vistas ---------- */
   const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
-    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
+    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
     const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
@@ -298,6 +298,122 @@
         <td class="ticks"><label><input type="checkbox" data-aver="${i}" data-k="ninos" ${verNinos(a) ? "checked" : ""}> 👧 Niños y familias</label><label><input type="checkbox" data-aver="${i}" data-k="maestros" ${verMaestros(a) ? "checked" : ""}> 🧑‍🏫 Maestros</label></td>
         <td class="row"><button class="btn ghost sm" data-amov="${i}" data-d="-1" ${i ? "" : "disabled"} aria-label="Subir">↑</button><button class="btn ghost sm" data-amov="${i}" data-d="1" ${i < as.length - 1 ? "" : "disabled"} aria-label="Bajar">↓</button><button class="btn danger sm" data-aborrar="${i}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Esta clase aún no tiene archivos.</p>`}</section>`;
   }
+  /* ---------- personajes bíblicos y museo de parábolas ---------- */
+  const ICONOS_MUSEO = [["semilla", "Semilla"], ["oveja", "Oveja"], ["moneda", "Moneda"], ["corazon", "Corazón"], ["camino", "Camino"], ["casa", "Casa"], ["arbol", "Árbol"], ["perla", "Perla"], ["lampara", "Lámpara"], ["talentos", "Talentos"]];
+  const FICHA = {
+    biblicos: { uno: "personaje", nuevo: "+ Nuevo personaje", vacio: "Aún no hay personajes bíblicos en la biblioteca central.", nombre: (x) => x.nombre || "(sin nombre)", sub: (x) => x.titulo || "",
+      ayuda: "Los personajes aparecen en Biblia → Personajes bíblicos de todas las congregaciones. Los versículos marcan al personaje cuando los niños leen esos pasajes.",
+      campos: [["nombre", "Nombre", "text", "David"], ["titulo", "Cómo lo conocemos", "text", "El pastor que llegó a ser rey"], ["orden", "Orden", "number", ""],
+        ["descripcion", "Su historia para niños", "area", "Quién era, qué hizo y qué nos enseña."], ["citasTxt", "Versículos donde aparece (uno por línea)", "area", "1 Samuel 16:13\n1 Samuel 17:45-47\nSalmos 23"]] },
+    parabolas: { uno: "cuadro", nuevo: "+ Nuevo cuadro", vacio: "Aún no hay cuadros del museo en la biblioteca central. Mientras no haya, cada congregación ve los 10 cuadros de base.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
+      ayuda: "Los cuadros aparecen en Biblia → Museo de todas las congregaciones, junto a los suyos. Un cuadro con el mismo título que uno de los 10 de base lo reemplaza.",
+      campos: [["titulo", "Parábola", "text", "La oveja perdida"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo", "icono", ""],
+        ["resumen", "La historia", "area", ""], ["ensenanza", "¿Qué nos enseña?", "area", ""], ["pregunta", "Pregunta para conversar en familia", "area", ""]] }
+  };
+  function vFichas(seg) {
+    const col = ui.bib, F = FICHA[col];
+    const items = docsDe(CENTRAL, col).sort((a, b) => (Number(a.data.orden) || 0) - (Number(b.data.orden) || 0) || F.nombre(a.data).localeCompare(F.nombre(b.data), "es"));
+    const head = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
+    <button class="btn sm" data-act="nuevaFicha">${F.nuevo}</button></div><p class="muted">${F.ayuda} Con la columna "Plan" decides qué permiso lo libera.</p>`;
+    const d = ui.ficha && items.find((x) => x.id === ui.ficha);
+    if (d) return head + editorFicha(col, d);
+    return head + (items.length ? `<div class="tbl"><table><thead><tr><th class="num">Orden</th><th></th><th>${col === "biblicos" ? "Personaje" : "Cuadro"}</th><th>Plan</th><th class="num">${col === "biblicos" ? "Versículos" : ""}</th><th></th></tr></thead><tbody>
+      ${items.map((m) => `<tr><td class="num">${esc(m.data.orden ?? "")}</td>
+        <td>${col === "biblicos" ? ((m.data.fotos || [])[0] ? `<img class="thumb" src="${esc(blobUrl(m.data.fotos[0]))}" alt="" loading="lazy">` : '<span class="thumb vacio">👤</span>') : `<span class="thumb vacio">${esc((ICONOS_MUSEO.find(([k]) => k === m.data.icono) || ["", "🖼"])[1])}</span>`}</td>
+        <td><b>${esc(F.nombre(m.data))}</b><div class="small muted">${esc(F.sub(m.data))}</div></td>
+        <td>${planSelect(`data-fplan="${esc(m.id)}" aria-label="Plan"`, m.data.plan)}</td>
+        <td class="num">${col === "biblicos" ? (m.data.citas || []).length : ""}</td>
+        <td><button class="btn line sm" data-act="editFicha" data-id="${esc(m.id)}">Editar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">${F.vacio}</p>`);
+  }
+  function editorFicha(col, d) {
+    const F = FICHA[col], x = { ...d.data, citasTxt: (d.data.citas || []).map((c) => c.ref).join("\n") };
+    const campo = ([k, l, t, ph]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="f_${k}">${l}</label>${
+      t === "area" ? `<textarea class="inp" id="f_${k}" rows="${k === "descripcion" || k === "resumen" ? 6 : 4}" placeholder="${esc(ph)}">${esc(x[k] || "")}</textarea>`
+      : t === "icono" ? `<select class="inp" id="f_${k}">${ICONOS_MUSEO.map(([v, n]) => `<option value="${v}" ${v === (x.icono || "semilla") ? "selected" : ""}>${n}</option>`).join("")}</select>`
+      : `<input class="inp" id="f_${k}" type="${t}" value="${esc(x[k] ?? "")}" placeholder="${esc(ph)}">`}</div>`;
+    const fotos = col === "biblicos" ? `<div class="mae-portada">${[0, 1].map((i) => (x.fotos || [])[i] ? `<img src="${esc(blobUrl(x.fotos[i]))}" alt="Foto ${i + 1}"><button class="btn ghost sm" type="button" data-act="quitarFotoFicha" data-i="${i}">Quitar foto ${i + 1}</button>` : "").join("")}
+        ${(x.fotos || []).length ? "" : `<div class="empty">Sin foto</div>`}
+        ${(x.fotos || []).length < 2 ? `<label class="btn line sm" for="fFoto">Agregar foto (PNG con fondo transparente)</label><input type="file" id="fFoto" accept="image/png,image/jpeg,image/webp" hidden>` : ""}</div>` : `<div class="mae-portada"><div class="empty">El dibujo del cuadro se elige en "Dibujo".</div></div>`;
+    return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Volver a la lista</button><button class="btn danger sm" data-act="borrarFicha" data-id="${esc(d.id)}">Eliminar ${F.uno}</button></div>
+      <div class="mae-grid">${fotos}<form class="form" id="fFicha">${F.campos.map(campo).join("")}
+        <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar ${F.uno}</button></div></form></div></section>`;
+  }
+  const fichaActual = () => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === ui.ficha);
+  async function guardarFicha(d, data) {
+    const ahora = new Date().toISOString();
+    const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: d.col, id: d.id, data, actualizado: ahora });
+    if (error) throw error; d.data = data; d.actualizado = ahora;
+  }
+  const citasDe = (txt) => String(txt || "").split(/[;\n]+/).map((r) => r.trim()).filter(Boolean).map((ref) => ({ ref }));
+
+  /* ---------- álbum bíblico: 100 láminas ---------- */
+  const LAM_TOTAL = 100;
+  const LAM_SECC = [[1, 7, "Los comienzos"], [8, 22, "Los patriarcas"], [23, 27, "Éxodo y conquista"], [28, 38, "Jueces y transición al reino"], [39, 47, "Reyes de Israel"], [48, 63, "Reyes y profetas"], [64, 73, "Exilio y regreso"], [74, 79, "La llegada de Jesús"], [80, 96, "Jesús y sus discípulos"], [97, 100, "La Iglesia comienza"]];
+  const lamBase = (n) => "img/album/" + String(n).padStart(3, "0") + ".webp";
+  const lamId = (n) => "lamina-" + String(n).padStart(3, "0");
+  const lamDoc = (n) => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "laminas" && Number(x.data.numero) === Number(n));
+  const esVideo = (p) => /\.(mp4|webm)$/i.test(p || "");
+  const lamMedia = (d, cls, n) => d && d.data.img ? (esVideo(d.data.img) ? `<video class="${cls}" src="${esc(blobUrl(d.data.img))}" autoplay muted loop playsinline></video>` : `<img class="${cls}" src="${esc(blobUrl(d.data.img))}" alt="" loading="lazy">`) : (n ? `<img class="${cls}" src="${lamBase(n)}" alt="" loading="lazy">` : "");
+  function vLaminas(seg) {
+    const hechas = Array.from({ length: LAM_TOTAL }, (_, i) => lamDoc(i + 1)).filter((d) => d && d.data.img).length; // reemplazadas desde el panel
+    const pg = ui.subida;
+    let out = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div><span class="pill">${hechas} de ${LAM_TOTAL} reemplazadas</span></div>
+    <p class="muted">Las 100 láminas del Álbum bíblico, ya con nombre, cita y frase (si aún no aparecen, ejecuta <b>supabase/album_laminas.sql</b>). Las 100 ya tienen su imagen base; si subes otra (o una animación) para una lámina, la reemplaza en todos los álbumes.</p>`;
+    const d = ui.ficha && lamDoc(ui.ficha);
+    if (ui.ficha) return out + editorLamina(Number(ui.ficha), d);
+    out += `<label class="drop" id="dropL" for="lFiles"><b>Arrastra aquí varias láminas a la vez</b><span class="muted small">Nombra cada archivo con su número y el personaje, por ejemplo <b>009-Moisés.webp</b> o <b>14 Débora.png</b>: se ubica sola en su casilla. Sirven PNG, JPG, WEBP, GIF animado, MP4 o WEBM de hasta ${MAXMB} MB.</span>
+      <input type="file" id="lFiles" multiple accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir láminas para subir</span></label>
+    ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} láminas subidas`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
+    ${LAM_SECC.map(([a, z, t]) => `<h3 class="lam-sec">${esc(t)} <span class="muted small">(${a}–${z})</span></h3><div class="lam-grid">${Array.from({ length: z - a + 1 }, (_, i) => { const n = a + i, x = lamDoc(n);
+      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m", n)}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`).join("")}`;
+    return out;
+  }
+  function editorLamina(n, d) {
+    const x = (d && d.data) || {};
+    const bib = docsDe(CENTRAL, "biblicos").sort((a, b) => String(a.data.nombre || "").localeCompare(String(b.data.nombre || ""), "es"));
+    return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Todas las láminas</button><span class="row"><button class="btn ghost sm" data-act="editLamina" data-n="${n - 1}" ${n > 1 ? "" : "disabled"}>‹ N° ${n - 1}</button><button class="btn ghost sm" data-act="editLamina" data-n="${n + 1}" ${n < LAM_TOTAL ? "" : "disabled"}>N° ${n + 1} ›</button></span></div>
+      <div class="mae-grid"><div class="mae-portada">${lamMedia(d, "", n)}${x.img ? "" : `<p class="small muted">Imagen base del álbum. Puedes reemplazarla por otra o por una animación.</p>`}
+        <label class="btn line sm" for="lFoto">${x.img ? "Cambiar imagen o animación" : "Subir imagen o animación"}</label><input type="file" id="lFoto" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden>
+        ${x.img ? `<button class="btn ghost sm" type="button" data-act="quitarImgLamina">Quitar imagen</button>` : ""}</div>
+      <form class="form" id="fLamina"><div class="field"><label>Número</label><input class="inp" value="${n}" disabled></div>
+        <div class="field"><label for="l_nombre">Personaje</label><input class="inp" id="l_nombre" value="${esc(x.nombre || "")}" placeholder="Moisés"></div>
+        <div class="field"><label for="l_cita">Dónde aparece</label><input class="inp" id="l_cita" value="${esc(x.cita || "")}" placeholder="Éxodo 3"></div>
+        <div class="field"><label for="l_biblico">Su ficha en Personajes bíblicos (opcional)</label><select class="inp" id="l_biblico"><option value="">— Ninguna —</option>${bib.map((b) => `<option value="c_${esc(b.id)}" ${x.biblico === "c_" + b.id ? "selected" : ""}>${esc(b.data.nombre || b.id)}</option>`).join("")}</select></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_quien">¿Quién fue?</label><textarea class="inp" id="l_quien" rows="3">${esc(x.quien || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_leer">📖 Para leer</label><textarea class="inp" id="l_leer" rows="1">${esc(x.leer || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_recordamos">⭐ Lo recordamos por</label><textarea class="inp" id="l_recordamos" rows="1">${esc(x.recordamos || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_valor">❤️ Valor</label><textarea class="inp" id="l_valor" rows="1">${esc(x.valor || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_sabias">💡 ¿Sabías que...?</label><textarea class="inp" id="l_sabias" rows="2">${esc(x.sabias || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_aprendo">✨ Lo que aprendo</label><textarea class="inp" id="l_aprendo" rows="2">${esc(x.aprendo || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_frase">Frase de la lámina (se lee al tocarla)</label><textarea class="inp" id="l_frase" rows="3" maxlength="220" placeholder="Guió al pueblo de Dios fuera de Egipto.">${esc(x.frase || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar lámina</button></div></form></div></section>`;
+  }
+  async function guardarLamina(n, cambios) {
+    const d = lamDoc(n); const ahora = new Date().toISOString();
+    const data = { ...(d ? d.data : { numero: n, plan: "gratis" }), ...cambios, numero: n };
+    const id = d ? d.id : lamId(n);
+    const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: "laminas", id, data, actualizado: ahora }); if (error) throw error;
+    if (d) { d.data = data; d.actualizado = ahora; } else D.docs.push({ comunidad_id: CENTRAL, col: "laminas", id, data, actualizado: ahora });
+  }
+  async function subirLaminas(files) {
+    files = [...files]; if (!files.length) return;
+    ui.subida = { hecho: 0, total: files.length, errores: [] }; render();
+    for (const f of files) {
+      try {
+        const m = f.name.match(/^\D*?(\d{1,3})[\s._-]*(.*?)\.[a-z0-9]+$/i); const n = m ? Number(m[1]) : 0;
+        if (!n || n > LAM_TOTAL) throw new Error("el nombre debe empezar con el número de la lámina (1 a " + LAM_TOTAL + ")");
+        const viejo = lamDoc(n) && lamDoc(n).data.img; const { path } = await subirArchivoCentral(f);
+        const nombre = (m[2] || "").replace(/[_-]+/g, " ").trim(); const prev = lamDoc(n);
+        await guardarLamina(n, { img: path, ...(nombre && !(prev && prev.data.nombre) ? { nombre } : {}) });
+        if (viejo) await sb.storage.from(BUCKET).remove([viejo]);
+      } catch (e) { ui.subida.errores.push(f.name + ": " + (e.message || e)); }
+      ui.subida.hecho++; render();
+    }
+    toast(ui.subida.errores.length ? "Algunas láminas no se subieron: revisa el detalle" : "¡Láminas subidas!");
+  }
+
   const verNinos = (a) => a.ninos !== undefined ? !!a.ninos : a.para !== "Maestro";
   const verMaestros = (a) => a.maestros !== undefined ? !!a.maestros : true;
   async function guardarMaestra(d, data) {
@@ -371,8 +487,10 @@
   }
 
   function vBiblioteca() {
-    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"]];
+    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo"], ["laminas", "Álbum (láminas)"]];
     if (ui.bib === "maestras") return vMaestras(seg);
+    if (ui.bib === "laminas") return vLaminas(seg);
+    if (ui.bib === "biblicos" || ui.bib === "parabolas") return vFichas(seg);
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
@@ -450,7 +568,7 @@
       ui.subida.hecho++; render();
     }
   }
-  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation", xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mp3: "audio/mpeg", m4a: "audio/mp4", mov: "video/quicktime" };
+  const TIPOS = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", mp4: "video/mp4", webm: "video/webm", doc: "application/msword", docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", ppt: "application/vnd.ms-powerpoint", pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation", xls: "application/vnd.ms-excel", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", mp3: "audio/mpeg", m4a: "audio/mp4", mov: "video/quicktime" };
   const ACEPTA = Object.keys(TIPOS).map((k) => "." + k).join(",");
   const MAXMB = 50;
   async function subir(files) {
@@ -507,7 +625,7 @@
     try {
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
-      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; render(); return; }
+      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; ui.ficha = null; render(); return; }
       if (b.dataset.mover) {
         // ▲ ▼ en Cuentos: intercambia el número con el cuento vecino
         const dir = Number(b.dataset.mover); const arr = docsDe(CENTRAL, "cuentos").sort((x, y) => (x.data.numero || 0) - (y.data.numero || 0));
@@ -530,6 +648,29 @@
         if (error && error.code === "23505") { id = "clase-" + String(n).padStart(3, "0") + "-" + Date.now().toString(36); ({ error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() })); }
         if (error) throw error;
         D.docs.push({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); ui.maestra = id; render(); return;
+      }
+      if (act0(b) === "nuevaFicha") {
+        const col = ui.bib, items = docsDe(CENTRAL, col); const orden = Math.max(0, ...items.map((m) => Number(m.data.orden) || 0)) + 1;
+        const id = (col === "biblicos" ? "personaje-" : "cuadro-") + Date.now().toString(36);
+        const data = col === "biblicos" ? { nombre: "Nuevo personaje", orden, citas: [], fotos: [], plan: "gratis" } : { titulo: "Nuevo cuadro", orden, icono: "semilla", plan: "gratis" };
+        const ahora = new Date().toISOString(); const { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); if (error) throw error;
+        D.docs.push({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); ui.ficha = id; render(); window.scrollTo(0, 0); return;
+      }
+      if (act0(b) === "editLamina") { ui.ficha = Number(b.dataset.n); render(); window.scrollTo(0, 0); return; }
+      if (act0(b) === "quitarImgLamina") { const d = lamDoc(ui.ficha); if (!d) return; const viejo = d.data.img; const data = { ...d.data }; delete data.img;
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", "laminas").eq("id", d.id); if (error) throw error;
+        d.data = data; if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Imagen quitada"); render(); return; }
+      if (act0(b) === "editFicha") { ui.ficha = b.dataset.id; render(); window.scrollTo(0, 0); return; }
+      if (act0(b) === "cerrarFicha") { ui.ficha = null; render(); return; }
+      if (act0(b) === "borrarFicha") {
+        if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Eliminar? Desaparece de todas las congregaciones"; return; }
+        const d = fichaActual(); const fotos = (d && d.data.fotos) || [];
+        await borrarDoc(CENTRAL, ui.bib, b.dataset.id); if (fotos.length) await sb.storage.from(BUCKET).remove(fotos);
+        ui.ficha = null; toast("Eliminado"); render(); return;
+      }
+      if (act0(b) === "quitarFotoFicha") {
+        const d = fichaActual(); if (!d) return; const fotos = (d.data.fotos || []).slice(); const [f] = fotos.splice(Number(b.dataset.i), 1);
+        await guardarFicha(d, { ...d.data, fotos }); if (f) await sb.storage.from(BUCKET).remove([f]); toast("Foto quitada"); render(); return;
       }
       if (act0(b) === "editMaestra") { ui.maestra = b.dataset.id; ui.subida = null; render(); window.scrollTo(0, 0); return; }
       if (act0(b) === "cerrarMaestra") { ui.maestra = null; ui.subida = null; render(); return; }
@@ -614,6 +755,22 @@
         if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else { as[i][t.dataset.k] = t.checked; if (!as[i].ninos && !as[i].maestros) { as[i].maestros = true; toast("Al menos un grupo debe verlo"); } delete as[i].para; }
         await guardarMaestra(d, { ...d.data, archivos: as }); toast("Guardado"); return;
       }
+      if (t.id === "lFiles") { const fs = [...t.files]; t.value = ""; subirLaminas(fs); return; }
+      if (t.id === "lFoto") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const n = ui.ficha; const viejo = lamDoc(n) && lamDoc(n).data.img;
+        toast("Subiendo lámina…"); const { path } = await subirArchivoCentral(f); await guardarLamina(n, { img: path });
+        if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Lámina " + n + " lista"); render(); return;
+      }
+      if (t.id === "fFoto") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const d = fichaActual(); if (!d) return;
+        if (!/^image\//.test(f.type)) { toast("Elige una imagen (PNG, JPG o WEBP)"); return; }
+        toast("Subiendo foto…"); const { path } = await subirArchivoCentral(f);
+        await guardarFicha(d, { ...d.data, fotos: (d.data.fotos || []).concat([path]).slice(0, 2) }); toast("Foto agregada"); render(); return;
+      }
+      if (t.dataset.fplan) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.fplan); if (!d) return;
+        await guardarFicha(d, { ...d.data, plan: t.value }); toast("Plan: " + planNombre(t.value)); return;
+      }
       if (t.dataset.mplan) {
         const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === t.dataset.mplan); if (!d) return;
         await guardarMaestra(d, { ...d.data, plan: t.value }); toast("Plan: " + planNombre(t.value)); return;
@@ -694,6 +851,17 @@
         if (!data.titulo) return toast("Escribe el título");
         await guardarMaestra(d, data); toast("Clase guardada"); render(); return;
       }
+      if (f.id === "fLamina") {
+        await guardarLamina(ui.ficha, { nombre: $("#l_nombre").value.trim(), cita: $("#l_cita").value.trim(), biblico: $("#l_biblico").value || null, frase: $("#l_frase").value.trim(), quien: $("#l_quien").value.trim(), leer: $("#l_leer").value.trim(), recordamos: $("#l_recordamos").value.trim(), valor: $("#l_valor").value.trim(), sabias: $("#l_sabias").value.trim(), aprendo: $("#l_aprendo").value.trim() });
+        toast("Lámina " + ui.ficha + " guardada"); if (ui.ficha < LAM_TOTAL) ui.ficha++; render(); window.scrollTo(0, 0); return;
+      }
+      if (f.id === "fFicha") {
+        const d = fichaActual(); if (!d) return; const data = { ...d.data };
+        FICHA[ui.bib].campos.forEach(([k, , t]) => { const v = $("#f_" + k).value; data[k] = t === "number" ? (Number(v) || null) : v.trim(); });
+        if (ui.bib === "biblicos") { data.citas = citasDe(data.citasTxt); delete data.citasTxt; if (!data.nombre) return toast("Escribe el nombre"); }
+        else if (!data.titulo) return toast("Escribe el título de la parábola");
+        await guardarFicha(d, data); toast("Guardado"); render(); return;
+      }
       if (f.id === "fForo") {
         const nombre = $("#foroNom").value.trim(); if (nombre.length < 2) return toast("Escribe el nombre del foro");
         const padre = $("#foroPadre").value || null; const pf = padre && D.foros.find((x) => x.id === padre);
@@ -726,7 +894,7 @@
     const d = e.target.closest && e.target.closest(".drop"); if (!d) { toast("Suelta los archivos dentro del recuadro punteado"); return; }
     const fs = [...((e.dataTransfer && e.dataTransfer.files) || [])];
     if (!fs.length) { toast("No llegó ningún archivo. Si lo arrastras desde un correo o WhatsApp, guárdalo primero en tu computador o usa el botón."); return; }
-    if (d.id === "dropM") subirArchivosMaestra(fs); else subir(fs);
+    if (d.id === "dropM") subirArchivosMaestra(fs); else if (d.id === "dropL") subirLaminas(fs); else subir(fs);
   });
   $("#recargar").addEventListener("click", cargar);
   $("#salir").addEventListener("click", async () => { await sb.auth.signOut(); location.href = "/"; });
