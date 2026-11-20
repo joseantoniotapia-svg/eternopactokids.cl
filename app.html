@@ -311,6 +311,11 @@ button.item:hover{border-color:var(--accent)}
 .contra-legal{font-size:.72rem;line-height:1.4;color:#5A4E7A;max-width:420px}
 .alb-nav{display:flex;align-items:center;justify-content:space-between;gap:8px}.alb-nav .btn{min-width:52px;font-size:1.3rem}
 .alb-nav-t{display:flex;flex-direction:column;align-items:center;text-align:center}.alb-desliza{text-align:center;margin:0}
+.alb-libro{position:relative}
+.alb-flecha{position:absolute;top:calc(50% - 48px);z-index:3;width:46px;height:46px;border-radius:50%;border:2.5px solid #2A1E5C;background:rgba(255,255,255,.92);color:#2A1E5C;font-size:1.7rem;font-weight:800;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 0 #2A1E5C}
+.alb-flecha.izq{left:-14px}.alb-flecha.der{right:-14px}.alb-flecha:disabled{opacity:0;pointer-events:none}.alb-flecha:active{transform:translateY(2px);box-shadow:0 1px 0 #2A1E5C}
+@media (min-width:760px){.alb-flecha.izq{left:-26px}.alb-flecha.der{right:-26px}.alb-flecha{width:52px;height:52px}}
+.alb-nav{justify-content:center}
 .alb-cartas{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.alb-cartas>*{width:min(30%,140px)}
 @media (prefers-reduced-motion:reduce){.pasa-sig .alb-hoja,.pasa-ant .alb-hoja{animation:none}}
 .alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
@@ -2103,6 +2108,16 @@ function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
   if(ALB.vista==="curso"&&ed())return out+vAlbCurso();
   return out+vAlbLibro(nid);}
 
+/* sonido de página: papel que se da vuelta, hecho con Web Audio (sin archivos) */
+try{ALB.mudo=localStorage.getItem("epk_alb_mudo")==="1";}catch(e){}
+function sonidoPagina(){if(ALB.mudo)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=ALB.ac||(ALB.ac=new AC());if(ac.state==="suspended")ac.resume();
+  const t=ac.currentTime,dur=0.42,n=Math.floor(ac.sampleRate*dur),buf=ac.createBuffer(1,n,ac.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++){const x=i/n;d[i]=(Math.random()*2-1)*Math.pow(1-x,1.6)*(0.55+0.45*Math.sin(x*Math.PI*9)*Math.sin(x*Math.PI));}
+  const src=ac.createBufferSource();src.buffer=buf;const bp=ac.createBiquadFilter();bp.type="bandpass";bp.Q.value=0.9;bp.frequency.setValueAtTime(2600,t);bp.frequency.exponentialRampToValueAtTime(700,t+dur);
+  const hp=ac.createBiquadFilter();hp.type="highpass";hp.frequency.value=300;const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.5,t+0.03);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  src.connect(bp);bp.connect(hp);hp.connect(g);g.connect(ac.destination);src.start(t);src.stop(t+dur);
+  const o=ac.createOscillator(),og=ac.createGain();o.type="sine";o.frequency.setValueAtTime(140,t+dur*0.8);o.frequency.exponentialRampToValueAtTime(60,t+dur*0.8+0.09);og.gain.setValueAtTime(0.0001,t+dur*0.8);og.gain.exponentialRampToValueAtTime(0.18,t+dur*0.8+0.01);og.gain.exponentialRampToValueAtTime(0.0001,t+dur*0.8+0.1);o.connect(og);og.connect(ac.destination);o.start(t+dur*0.8);o.stop(t+dur*0.8+0.12);
+}catch(e){}}
 /* libro: portada, línea del tiempo, 10 épocas y contraportada, con páginas que se dan vuelta */
 function vAlbLibro(nid,todo){todo=todo||ALB.verTodo;ALB.pag=Math.max(0,Math.min(ALB.pag,ALB_HOJAS-1));const p=ALB.pag;const dir=ALB.dir;ALB.dir=0;
   const llenasDe=x=>todo?x[1]-x[0]+1:Array.from({length:x[1]-x[0]+1},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);
@@ -2120,9 +2135,8 @@ function vAlbLibro(nid,todo){todo=todo||ALB.verTodo;ALB.pag=Math.max(0,Math.min(
     hoja=`<div class="alb-hoja era" style="--era:${col}"><div class="sec-h"><div><p class="eyebrow">Época ${p-1} de ${ALB_SECC.length} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div>${nid&&!todo?`<span class="pill${ok===tot?" sun":""}">${ok===tot?"¡Completa! ":""}${ok}/${tot}</span>`:""}</div><div class="alb-grid">${celdas}</div></div>`;}
   const nom=p===0?"Portada":p===1?"Línea del tiempo":p===ALB_HOJAS-1?"Contraportada":ALB_SECC[p-2][2];
   return `<section class="alb-libro" id="albLibro"><div class="alb-pliego${dir>0?" pasa-sig":dir<0?" pasa-ant":""}">${hoja}</div>
-    <div class="alb-nav"><button class="btn line sm" data-act="albPag" data-d="-1" ${p?"":"disabled"} aria-label="Página anterior">‹</button>
-    <span class="alb-nav-t"><b>${esc(nom)}</b><span class="small muted">Página ${p+1} de ${ALB_HOJAS}${p>1?` · <button class="link-btn" data-act="albPag" data-p="1">Índice</button>`:""}</span></span>
-    <button class="btn line sm" data-act="albPag" data-d="1" ${p<ALB_HOJAS-1?"":"disabled"} aria-label="Página siguiente">›</button></div>
+    <button class="alb-flecha izq" data-act="albPag" data-d="-1" ${p?"":"disabled"} aria-label="Página anterior">‹</button><button class="alb-flecha der" data-act="albPag" data-d="1" ${p<ALB_HOJAS-1?"":"disabled"} aria-label="Página siguiente">›</button>
+    <div class="alb-nav"><span class="alb-nav-t"><b>${esc(nom)}</b><span class="small muted">Página ${p+1} de ${ALB_HOJAS}${p>1?` · <button class="link-btn" data-act="albPag" data-p="1">Índice</button>`:""} · <button class="link-btn" data-act="albSonido" aria-pressed="${!ALB.mudo}">${ALB.mudo?"🔇 Sin sonido":"🔊 Sonido"}</button></span></span></div>
     <p class="small muted alb-desliza">Desliza o usa las flechas para dar vuelta la página${ed()&&nid?` · <button class="link-btn" data-act="albVerTodo">${ALB.verTodo?"Ver solo las pegadas":"👀 Ver las 100 láminas"}</button>`:""}</p></section>`;}
 
 function vAlbRepetidas(nid){const mias=Object.entries(ALB.tengo[nid]||{}).filter(([,c])=>c>1).map(([n,c])=>[Number(n),c]).sort((a,b)=>a[0]-b[0]);
@@ -2203,11 +2217,12 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
   switch(act){
     case "albNino":ALB.nino=b.dataset.id;ALB.ofrezco=null;if(b.dataset.ver){ALB.vista="album";if(ui.tab!=="biblia"){ui.tab="biblia";ui.bib="album";}}render();break;
     case "albVista":ALB.vista=b.dataset.k;ALB.ofrezco=null;render();if(ALB.vista==="mercado")setTimeout(()=>{const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;},30);break;
-    case "albPag":{const np=b.dataset.p!=null?Number(b.dataset.p):ALB.pag+Number(b.dataset.d);if(np<0||np>=ALB_HOJAS||np===ALB.pag)break;ALB.dir=np>ALB.pag?1:-1;ALB.pag=np;render();
+    case "albPag":{const np=b.dataset.p!=null?Number(b.dataset.p):ALB.pag+Number(b.dataset.d);if(np<0||np>=ALB_HOJAS||np===ALB.pag)break;ALB.dir=np>ALB.pag?1:-1;ALB.pag=np;sonidoPagina();render();
       const l=document.getElementById("albLibro");if(l&&l.getBoundingClientRect().top<60)l.scrollIntoView({behavior:"smooth",block:"start"});break;}
     case "albCanjear":{if(!sb)break;b.disabled=true;const {error}=await sb.rpc("canjear_sobres",{p_comunidad:EPK.comunidad.id,p_nino:nid,p_cantidad:1});
       if(albToast(error,"🎁 ¡Sobre listo! Ábrelo para descubrir tus 5 láminas")){await cargarAlbum(true);}else b.disabled=false;break;}
     case "albAbrir":albAbrir();break;
+    case "albSonido":ALB.mudo=!ALB.mudo;try{localStorage.setItem("epk_alb_mudo",ALB.mudo?"1":"0");}catch(e){}if(!ALB.mudo)sonidoPagina();render();break;
     case "albVerTodo":ALB.verTodo=!ALB.verTodo;render();break;
     case "albRasgar":if(ALB.sobre){ALB.sobre.roto=true;pintarSobre();}break;
     case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
