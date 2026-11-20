@@ -21,7 +21,7 @@
 
   const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [], solicitudes: [] };
   const NIVN = { todos: "Todos los usuarios", miembros: "Miembros", equipo: "Maestros y admins", admins: "Solo administradores", super: "Solo súper admin" };
-  const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"]];
+  const CENTRAL_COLS = [["cuentos", "Cuentos"], ["materiales", "Material niños"], ["matprofes", "Material profes"], ["biblicos", "Personajes"], ["parabolas", "Museo"]];
   const ui = { tab: "resumen", com: null, buscar: "", bib: "cuentos", modCol: "", modCom: "", subida: null, matCol: "cuentos", foroCom: "" };
   let yo = null;
 
@@ -126,7 +126,7 @@
   /* ---------- vistas ---------- */
   const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
-    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).filter((d) => d.col !== "parabolas").length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
+    const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
     const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
@@ -298,6 +298,55 @@
         <td class="ticks"><label><input type="checkbox" data-aver="${i}" data-k="ninos" ${verNinos(a) ? "checked" : ""}> 👧 Niños y familias</label><label><input type="checkbox" data-aver="${i}" data-k="maestros" ${verMaestros(a) ? "checked" : ""}> 🧑‍🏫 Maestros</label></td>
         <td class="row"><button class="btn ghost sm" data-amov="${i}" data-d="-1" ${i ? "" : "disabled"} aria-label="Subir">↑</button><button class="btn ghost sm" data-amov="${i}" data-d="1" ${i < as.length - 1 ? "" : "disabled"} aria-label="Bajar">↓</button><button class="btn danger sm" data-aborrar="${i}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Esta clase aún no tiene archivos.</p>`}</section>`;
   }
+  /* ---------- personajes bíblicos y museo de parábolas ---------- */
+  const ICONOS_MUSEO = [["semilla", "Semilla"], ["oveja", "Oveja"], ["moneda", "Moneda"], ["corazon", "Corazón"], ["camino", "Camino"], ["casa", "Casa"], ["arbol", "Árbol"], ["perla", "Perla"], ["lampara", "Lámpara"], ["talentos", "Talentos"]];
+  const FICHA = {
+    biblicos: { uno: "personaje", nuevo: "+ Nuevo personaje", vacio: "Aún no hay personajes bíblicos en la biblioteca central.", nombre: (x) => x.nombre || "(sin nombre)", sub: (x) => x.titulo || "",
+      ayuda: "Los personajes aparecen en Biblia → Personajes bíblicos de todas las congregaciones. Los versículos marcan al personaje cuando los niños leen esos pasajes.",
+      campos: [["nombre", "Nombre", "text", "David"], ["titulo", "Cómo lo conocemos", "text", "El pastor que llegó a ser rey"], ["orden", "Orden", "number", ""],
+        ["descripcion", "Su historia para niños", "area", "Quién era, qué hizo y qué nos enseña."], ["citasTxt", "Versículos donde aparece (uno por línea)", "area", "1 Samuel 16:13\n1 Samuel 17:45-47\nSalmos 23"]] },
+    parabolas: { uno: "cuadro", nuevo: "+ Nuevo cuadro", vacio: "Aún no hay cuadros del museo en la biblioteca central. Mientras no haya, cada congregación ve los 10 cuadros de base.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
+      ayuda: "Los cuadros aparecen en Biblia → Museo de todas las congregaciones, junto a los suyos. Un cuadro con el mismo título que uno de los 10 de base lo reemplaza.",
+      campos: [["titulo", "Parábola", "text", "La oveja perdida"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo", "icono", ""],
+        ["resumen", "La historia", "area", ""], ["ensenanza", "¿Qué nos enseña?", "area", ""], ["pregunta", "Pregunta para conversar en familia", "area", ""]] }
+  };
+  function vFichas(seg) {
+    const col = ui.bib, F = FICHA[col];
+    const items = docsDe(CENTRAL, col).sort((a, b) => (Number(a.data.orden) || 0) - (Number(b.data.orden) || 0) || F.nombre(a.data).localeCompare(F.nombre(b.data), "es"));
+    const head = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div>
+    <button class="btn sm" data-act="nuevaFicha">${F.nuevo}</button></div><p class="muted">${F.ayuda} Con la columna "Plan" decides qué permiso lo libera.</p>`;
+    const d = ui.ficha && items.find((x) => x.id === ui.ficha);
+    if (d) return head + editorFicha(col, d);
+    return head + (items.length ? `<div class="tbl"><table><thead><tr><th class="num">Orden</th><th></th><th>${col === "biblicos" ? "Personaje" : "Cuadro"}</th><th>Plan</th><th class="num">${col === "biblicos" ? "Versículos" : ""}</th><th></th></tr></thead><tbody>
+      ${items.map((m) => `<tr><td class="num">${esc(m.data.orden ?? "")}</td>
+        <td>${col === "biblicos" ? ((m.data.fotos || [])[0] ? `<img class="thumb" src="${esc(blobUrl(m.data.fotos[0]))}" alt="" loading="lazy">` : '<span class="thumb vacio">👤</span>') : `<span class="thumb vacio">${esc((ICONOS_MUSEO.find(([k]) => k === m.data.icono) || ["", "🖼"])[1])}</span>`}</td>
+        <td><b>${esc(F.nombre(m.data))}</b><div class="small muted">${esc(F.sub(m.data))}</div></td>
+        <td>${planSelect(`data-fplan="${esc(m.id)}" aria-label="Plan"`, m.data.plan)}</td>
+        <td class="num">${col === "biblicos" ? (m.data.citas || []).length : ""}</td>
+        <td><button class="btn line sm" data-act="editFicha" data-id="${esc(m.id)}">Editar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">${F.vacio}</p>`);
+  }
+  function editorFicha(col, d) {
+    const F = FICHA[col], x = { ...d.data, citasTxt: (d.data.citas || []).map((c) => c.ref).join("\n") };
+    const campo = ([k, l, t, ph]) => `<div class="field" ${t === "area" ? 'style="grid-column:1/-1"' : ""}><label for="f_${k}">${l}</label>${
+      t === "area" ? `<textarea class="inp" id="f_${k}" rows="${k === "descripcion" || k === "resumen" ? 6 : 4}" placeholder="${esc(ph)}">${esc(x[k] || "")}</textarea>`
+      : t === "icono" ? `<select class="inp" id="f_${k}">${ICONOS_MUSEO.map(([v, n]) => `<option value="${v}" ${v === (x.icono || "semilla") ? "selected" : ""}>${n}</option>`).join("")}</select>`
+      : `<input class="inp" id="f_${k}" type="${t}" value="${esc(x[k] ?? "")}" placeholder="${esc(ph)}">`}</div>`;
+    const fotos = col === "biblicos" ? `<div class="mae-portada">${[0, 1].map((i) => (x.fotos || [])[i] ? `<img src="${esc(blobUrl(x.fotos[i]))}" alt="Foto ${i + 1}"><button class="btn ghost sm" type="button" data-act="quitarFotoFicha" data-i="${i}">Quitar foto ${i + 1}</button>` : "").join("")}
+        ${(x.fotos || []).length ? "" : `<div class="empty">Sin foto</div>`}
+        ${(x.fotos || []).length < 2 ? `<label class="btn line sm" for="fFoto">Agregar foto (PNG con fondo transparente)</label><input type="file" id="fFoto" accept="image/png,image/jpeg,image/webp" hidden>` : ""}</div>` : `<div class="mae-portada"><div class="empty">El dibujo del cuadro se elige en "Dibujo".</div></div>`;
+    return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Volver a la lista</button><button class="btn danger sm" data-act="borrarFicha" data-id="${esc(d.id)}">Eliminar ${F.uno}</button></div>
+      <div class="mae-grid">${fotos}<form class="form" id="fFicha">${F.campos.map(campo).join("")}
+        <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar ${F.uno}</button></div></form></div></section>`;
+  }
+  const fichaActual = () => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === ui.ficha);
+  async function guardarFicha(d, data) {
+    const ahora = new Date().toISOString();
+    const { error } = await sb.from("docs").upsert({ comunidad_id: CENTRAL, col: d.col, id: d.id, data, actualizado: ahora });
+    if (error) throw error; d.data = data; d.actualizado = ahora;
+  }
+  const citasDe = (txt) => String(txt || "").split(/[;\n]+/).map((r) => r.trim()).filter(Boolean).map((ref) => ({ ref }));
+
   const verNinos = (a) => a.ninos !== undefined ? !!a.ninos : a.para !== "Maestro";
   const verMaestros = (a) => a.maestros !== undefined ? !!a.maestros : true;
   async function guardarMaestra(d, data) {
@@ -371,8 +420,9 @@
   }
 
   function vBiblioteca() {
-    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"]];
+    const seg = [["maestras", "Clases"], ["cuentos", "Cuentos"], ["materiales", "Material para niños"], ["matprofes", "Material para profes"], ["biblicos", "Personajes bíblicos"], ["parabolas", "Museo"]];
     if (ui.bib === "maestras") return vMaestras(seg);
+    if (ui.bib === "biblicos" || ui.bib === "parabolas") return vFichas(seg);
     const items = docsDe(CENTRAL, ui.bib).sort((a, b) => ui.bib === "cuentos" ? (a.data.numero || 0) - (b.data.numero || 0) : (a.actualizado < b.actualizado ? 1 : -1));
     const pg = ui.subida;
     return `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
@@ -507,7 +557,7 @@
     try {
       if (b.dataset.tab) { ui.tab = b.dataset.tab; ui.com = null; ui.buscar = ""; render(); window.scrollTo(0, 0); return; }
       if (b.dataset.com && b.tagName === "TR") { ui.com = b.dataset.com; render(); window.scrollTo(0, 0); return; }
-      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; render(); return; }
+      if (b.dataset.bib) { ui.bib = b.dataset.bib; ui.subida = null; ui.maestra = null; ui.ficha = null; render(); return; }
       if (b.dataset.mover) {
         // ▲ ▼ en Cuentos: intercambia el número con el cuento vecino
         const dir = Number(b.dataset.mover); const arr = docsDe(CENTRAL, "cuentos").sort((x, y) => (x.data.numero || 0) - (y.data.numero || 0));
@@ -530,6 +580,25 @@
         if (error && error.code === "23505") { id = "clase-" + String(n).padStart(3, "0") + "-" + Date.now().toString(36); ({ error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() })); }
         if (error) throw error;
         D.docs.push({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); ui.maestra = id; render(); return;
+      }
+      if (act0(b) === "nuevaFicha") {
+        const col = ui.bib, items = docsDe(CENTRAL, col); const orden = Math.max(0, ...items.map((m) => Number(m.data.orden) || 0)) + 1;
+        const id = (col === "biblicos" ? "personaje-" : "cuadro-") + Date.now().toString(36);
+        const data = col === "biblicos" ? { nombre: "Nuevo personaje", orden, citas: [], fotos: [], plan: "gratis" } : { titulo: "Nuevo cuadro", orden, icono: "semilla", plan: "gratis" };
+        const ahora = new Date().toISOString(); const { error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); if (error) throw error;
+        D.docs.push({ comunidad_id: CENTRAL, col, id, data, actualizado: ahora }); ui.ficha = id; render(); window.scrollTo(0, 0); return;
+      }
+      if (act0(b) === "editFicha") { ui.ficha = b.dataset.id; render(); window.scrollTo(0, 0); return; }
+      if (act0(b) === "cerrarFicha") { ui.ficha = null; render(); return; }
+      if (act0(b) === "borrarFicha") {
+        if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "¿Eliminar? Desaparece de todas las congregaciones"; return; }
+        const d = fichaActual(); const fotos = (d && d.data.fotos) || [];
+        await borrarDoc(CENTRAL, ui.bib, b.dataset.id); if (fotos.length) await sb.storage.from(BUCKET).remove(fotos);
+        ui.ficha = null; toast("Eliminado"); render(); return;
+      }
+      if (act0(b) === "quitarFotoFicha") {
+        const d = fichaActual(); if (!d) return; const fotos = (d.data.fotos || []).slice(); const [f] = fotos.splice(Number(b.dataset.i), 1);
+        await guardarFicha(d, { ...d.data, fotos }); if (f) await sb.storage.from(BUCKET).remove([f]); toast("Foto quitada"); render(); return;
       }
       if (act0(b) === "editMaestra") { ui.maestra = b.dataset.id; ui.subida = null; render(); window.scrollTo(0, 0); return; }
       if (act0(b) === "cerrarMaestra") { ui.maestra = null; ui.subida = null; render(); return; }
@@ -614,6 +683,16 @@
         if (t.dataset.anombre !== undefined) as[i].nombre = t.value.trim(); else { as[i][t.dataset.k] = t.checked; if (!as[i].ninos && !as[i].maestros) { as[i].maestros = true; toast("Al menos un grupo debe verlo"); } delete as[i].para; }
         await guardarMaestra(d, { ...d.data, archivos: as }); toast("Guardado"); return;
       }
+      if (t.id === "fFoto") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const d = fichaActual(); if (!d) return;
+        if (!/^image\//.test(f.type)) { toast("Elige una imagen (PNG, JPG o WEBP)"); return; }
+        toast("Subiendo foto…"); const { path } = await subirArchivoCentral(f);
+        await guardarFicha(d, { ...d.data, fotos: (d.data.fotos || []).concat([path]).slice(0, 2) }); toast("Foto agregada"); render(); return;
+      }
+      if (t.dataset.fplan) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.fplan); if (!d) return;
+        await guardarFicha(d, { ...d.data, plan: t.value }); toast("Plan: " + planNombre(t.value)); return;
+      }
       if (t.dataset.mplan) {
         const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "maestras" && x.id === t.dataset.mplan); if (!d) return;
         await guardarMaestra(d, { ...d.data, plan: t.value }); toast("Plan: " + planNombre(t.value)); return;
@@ -693,6 +772,13 @@
         const data = { ...d.data }; CAMPOS_M.forEach(([k, , t]) => { const v = $("#m_" + k).value; data[k] = t === "number" ? Number(v) || null : v.trim(); });
         if (!data.titulo) return toast("Escribe el título");
         await guardarMaestra(d, data); toast("Clase guardada"); render(); return;
+      }
+      if (f.id === "fFicha") {
+        const d = fichaActual(); if (!d) return; const data = { ...d.data };
+        FICHA[ui.bib].campos.forEach(([k, , t]) => { const v = $("#f_" + k).value; data[k] = t === "number" ? (Number(v) || null) : v.trim(); });
+        if (ui.bib === "biblicos") { data.citas = citasDe(data.citasTxt); delete data.citasTxt; if (!data.nombre) return toast("Escribe el nombre"); }
+        else if (!data.titulo) return toast("Escribe el título de la parábola");
+        await guardarFicha(d, data); toast("Guardado"); render(); return;
       }
       if (f.id === "fForo") {
         const nombre = $("#foroNom").value.trim(); if (nombre.length < 2) return toast("Escribe el nombre del foro");

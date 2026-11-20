@@ -222,6 +222,29 @@ button.item:hover{border-color:var(--accent)}
 .dm-nota .btn{align-self:flex-start}
 .dm-verso{--nc:#FFE45C;--pin:#7A4DFF}.dm-verso blockquote{margin:0;font-family:var(--display);font-weight:500;font-size:1.2rem;line-height:1.35}.dm-verso cite{font-style:normal;font-weight:700}
 .dm-tarea{--nc:#C9F2D8;--pin:#FF7A1A}
+.dm-afiche .dm-afiche-img{border:0;padding:0;background:none;cursor:pointer;border-radius:6px;overflow:hidden;display:block}
+.dm-afiche .dm-afiche-img img{width:100%;height:auto;max-height:340px;object-fit:cover;display:block;border-radius:6px;border:2px solid rgba(42,30,92,.85)}
+.dd-dots{display:flex;gap:5px;flex-wrap:wrap}
+.dd-dot{width:32px;height:32px;border-radius:50%;border:2px solid rgba(42,30,92,.85);background:#fff;font-size:.95rem;display:grid;place-items:center;cursor:pointer}
+.dd-dot:disabled{opacity:.35;cursor:default}.dd-dot.ok{background:#16B3A3;color:#fff;font-weight:700}.dd-dot.hoy{box-shadow:0 0 0 3px #FFD23F}
+.dd .dd-une{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dd .dd-une>div{display:flex;flex-direction:column;gap:8px}
+.dd-card{text-align:left;padding:10px 12px;border-radius:14px;border:2.5px solid var(--edge,var(--line));background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.dd-card.der{background:#FFF4D6;color:#1E1548}.dd-card.sel{background:#FFD23F;color:#1E1548}.dd-card.ok{background:#C9F2D8;color:#1E1548;opacity:.8}
+.dd-cw{display:grid;gap:3px;max-width:420px}.dd-c{position:relative;aspect-ratio:1;border:2px solid var(--edge,#2A1E5C);background:#fff;color:#1E1548;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.05rem;border-radius:4px}
+.dd-c.vac{border:0;background:none}.dd-c i{position:absolute;left:2px;top:0;font-size:.6rem;font-style:normal}
+.dd-pistas{display:flex;flex-direction:column;gap:8px}.dd-pista.ok{opacity:.7}.dd-in{font:inherit;text-transform:uppercase;padding:8px 10px;border-radius:10px;border:2px solid var(--line);min-width:140px}
+.dd-sopa{display:grid;gap:3px;max-width:420px}.dd-l{aspect-ratio:1;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-family:var(--display);font-weight:700;font-size:1.05rem;border-radius:6px;cursor:pointer;padding:0}
+.dd-l.sel{background:#FFD23F;color:#1E1548}.dd-l.ok{background:#16B3A3;color:#fff}
+.dd-lista{display:flex;gap:8px;flex-wrap:wrap}.dd-lista span{padding:3px 10px;border-radius:999px;border:2px solid var(--line);font-weight:700;font-size:.85rem}.dd-lista span.ok{text-decoration:line-through;background:#C9F2D8;color:#1E1548}
+.dd-dif{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.dd-pan{position:relative;border:2.5px solid var(--edge,#2A1E5C);border-radius:12px;overflow:hidden;line-height:0}
+.dd-pan.der{cursor:crosshair}.dd-svg{width:100%;height:auto;display:block}.dd-fig{position:absolute;left:44%;bottom:4%;height:44%;width:auto;pointer-events:none}
+.dd-spot{position:absolute;width:15%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:0;background:transparent;cursor:crosshair;padding:0}.dd-spot.ok{border:4px solid #FF3D8B;background:rgba(255,61,139,.12)}
+.dd-lab{display:grid;max-width:340px;aspect-ratio:1;border:3px solid var(--edge,#2A1E5C);border-radius:6px;background:#FFF4E4}
+.dd-q{border:0 solid #2A1E5C;display:grid;place-items:center;font-size:1.2rem;line-height:1}.dd-q img{width:80%;height:80%;object-fit:cover;border-radius:50%}
+.dd-flechas{display:flex;flex-direction:column;align-items:center;gap:6px}.dd-flechas .btn{min-width:54px;font-size:1.2rem}
+.dd-fin{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;background:#FFF4D6;color:#1E1548}
+.dd-cont{display:inline-block;min-width:38px;padding:2px 8px;border-radius:999px;background:#E2D6FF;color:#1E1548;font-weight:700}.dd-cont.full{background:#16B3A3;color:#fff}
+.libro input.ex{min-width:90px}
 .dm-aviso{--pin:#FF7A1A}.dm-firma{font-size:.8rem;font-weight:700;opacity:.8}
 .dm-nuevo{--nc:rgba(255,255,255,.55);border-style:dashed;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:110px;font:inherit}.dm-nuevo>span:first-child{font-size:1.8rem}
 @media (prefers-reduced-motion:reduce){.dm-nota{transform:none!important}}
@@ -627,8 +650,8 @@ function criterios(){const c=S.config&&Array.isArray(S.config.criterios)?S.confi
 const MARCASf=()=>criterios().filter(c=>c.on).map(c=>[c.k,c.n,c.ico]);
 const PTS=new Proxy({},{get:(_,k)=>{const c=criterios().find(x=>x.k===k);return c?c.p:0;}});
 const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos","parabolas","muro","compromisos","cuentos","materiales","biblicos","fotos"];
-const COLS_EQUIPO=["matprofes","libro","maestras"];
-const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},biblicos:[],fotos:[],config:{}};
+const COLS_EQUIPO=["matprofes","libro","maestras","desafios"];
+const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},desafios:[],biblicos:[],fotos:[],config:{}};
 const loaded={};
 const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
@@ -839,6 +862,7 @@ function formClase(c){
       {k:"versiculoCita",label:"Cita del versículo",ph:"Salmo 56:3"},
       {k:"material",label:"Material de la semana",type:"textarea",ph:"Hoja para colorear | https://...\nVideo de la historia | https://...",hint:"Un material por línea: nombre | enlace"},
       {k:"tarea",label:"Tarea para la casa",type:"textarea"},
+      {k:"conceptos",label:"Conceptos para el desafío «Une los conceptos» (opcional)",type:"textarea",ph:"Primer amor = el amor del principio\nArrepentirse = darse la vuelta y volver a Dios",hint:"Uno por línea: concepto = significado. Si lo dejas vacío, el desafío se arma con el versículo."},
       {k:"consideraciones",label:"Consideraciones",type:"textarea",ph:"Traer Biblia, ensayo para el programa, cambios de horario…"},
       {k:"visible",label:"¿Las familias pueden ver esta clase?",type:"select",opts:[["si","Sí, visible para las familias"],["no","No, solo el equipo de maestros"]]},
       {k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date",hint:"Déjalo vacío para mostrarla de inmediato. Antes de esa fecha solo la ve el equipo."}
@@ -922,7 +946,8 @@ const corto=(t,n)=>{t=String(t||"").replace(/\s+/g," ").trim();if(t.length<=n)re
 function clasesMural(){const h=hoyISO();const vis=S.clases.filter(c=>c.fecha&&(ed()||!claseOculta(c)));
   const pasada=vis.filter(c=>c.fecha<h).sort((a,b)=>a.fecha<b.fecha?1:-1)[0]||null;
   const proxima=vis.filter(c=>c.fecha>=h).sort((a,b)=>a.fecha<b.fecha?-1:1)[0]||null;return {pasada,proxima};}
-function notaClase(c,eti,cls){if(!c)return "";const img=c.portadaMini||c.portada;const hoy=c.fecha===hoyISO();
+function notaClase(c,eti,cls){if(!c)return "";const img=cls==="proxima"?(c.portada||c.portadaMini):(c.portadaMini||c.portada);const hoy=c.fecha===hoyISO();
+  if(cls==="proxima"&&img)return `<article class="dm-nota dm-clase proxima dm-afiche"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p><button class="dm-afiche-img" data-act="verClase" data-id="${esc(c.id)}" aria-label="${esc("Ver la clase "+c.titulo)}"><img src="${esc(srcDe(img))}" alt="Afiche: ${esc(c.titulo)}" loading="lazy"></button><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">Ver la clase</button></article>`;
   return `<article class="dm-nota dm-clase ${cls}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p>
     <div class="dm-cl">${img?`<img src="${esc(srcDe(img))}" alt="" loading="lazy" width="78" height="117">`:`<span class="dm-sinimg" aria-hidden="true">📖</span>`}<div><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}<p class="small">${esc(corto(c.subtitulo||c.resumen,110))}</p></div></div>
     ${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">${cls==="pasada"?"Repasar la clase":"Ver la clase"}</button></article>`;}
@@ -937,14 +962,16 @@ function notaFaltaClase(){if(!ed())return "";const dom=proximoDomingo();const m=
     <div class="row">${m?`<button class="btn sm" data-act="adoptar" data-id="${esc(m.id)}">Programar para el domingo</button><button class="btn line sm" data-act="irBiblioClases">Elegir otra</button>`:`<button class="btn sm" data-act="nuevaClase">Agregar clase</button><button class="btn line sm" data-act="irBiblioClases">Biblioteca</button>`}</div></article>`;}
 function vDiarioMural(){const {pasada,proxima}=clasesMural();const h=hoyISO();
   const vcl=proxima&&proxima.versiculo?proxima:(pasada&&pasada.versiculo?pasada:null);
-  const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,4);
+  const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,1);
   if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed()&&!notaFotos(pasada))return "";
   const COL={amarillo:"#FFE45C",rosado:"#FFC2D9",celeste:"#BFE6FF",verde:"#C9F2D8",lila:"#E2D6FF"};
   let notas=(proxima?notaClase(proxima,proxima.fecha===h?"Hoy":"Este domingo","proxima"):notaFaltaClase())+notaClase(pasada,"El domingo pasado","pasada")+notaFotos(pasada);
   if(vcl)notas+=`<article class="dm-nota dm-verso"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Versículo para memorizar</p><blockquote>“${esc(vcl.versiculo)}”</blockquote>${vcl.versiculoCita?`<cite>${esc(vcl.versiculoCita)}</cite>`:""}<button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(vcl.id)}">🎮 Practicar</button></article>`;
-  if(proxima&&proxima.tarea)notas+=`<article class="dm-nota dm-tarea"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Tarea para la casa</p><p class="small">${esc(corto(proxima.tarea,160))}</p></article>`;
-  notas+=avisos.map((p,i)=>`<article class="dm-nota dm-aviso" style="--nc:${COL[p.color]||COL[["rosado","celeste","verde","lila"][i%4]]}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(p.texto,220))}</p><p class="dm-firma">${esc(p.autor||"")}${p.hasta?` · hasta el ${esc(fCorta(p.hasta).dia)} ${esc(fCorta(p.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</article>`).join("");
-  if(ed())notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
+  /* Diario mural: 6 notas -> próxima clase (con afiche), domingo pasado, fotos, versículo, desafío diario y 1 aviso */
+  notas+=notaDesafio();
+  const av=avisos[0];
+  if(av)notas+=`<article class="dm-nota dm-aviso" style="--nc:${COL[av.color]||COL.rosado}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(av.texto,220))}</p><p class="dm-firma">${esc(av.autor||"")}${av.hasta?` · hasta el ${esc(fCorta(av.hasta).dia)} ${esc(fCorta(av.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(av.id)}">Editar</button>`:""}</article>`;
+  if(ed()&&!avisos.length)notas+=`<button class="dm-nota dm-nuevo" data-act="nuevoPost"><span aria-hidden="true">📌</span><b>Espacio libre: clavar un aviso</b><span class="small">Lo verán todas las familias</span></button>`;
   return `<section class="diario" aria-label="Diario mural"><div class="dm-cab"><h2>📌 Diario mural</h2>${S.muro.length?`<button class="dm-link" data-act="verMuro">Ver todo el muro ›</button>`:""}</div><div class="dm-tablero">${notas}</div></section>`;}
 
 /* ---------- fotos de la semana (carpeta privada, enlaces que caducan) ---------- */
@@ -1117,7 +1144,7 @@ function vNino(n){
   return out;
 }
 
-function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat"><span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span><b>${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
+function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat"><span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span><b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
 function vMuseo(){
   if(ui.parabola){const p=S.parabolas.find(x=>x.id===ui.parabola);if(p)return vParabola(p);ui.parabola=null;}
   const ps=[...S.parabolas].sort((a,b)=>(a.orden||0)-(b.orden||0));
@@ -1134,7 +1161,7 @@ function vParabola(p){
   ${p.ensenanza?`<section class="card"><p class="eyebrow">Lo que nos enseña</p><p>${esc(p.ensenanza)}</p></section>`:""}
   ${p.pregunta?`<section class="verse"><p class="eyebrow">Para conversar en familia</p><blockquote style="font-size:1.2rem">${esc(p.pregunta)}</blockquote></section>`:""}
   <div class="row between">${prev?`<button class="btn line sm" data-act="verParabola" data-id="${esc(prev.id)}">‹ ${esc(prev.titulo)}</button>`:"<span></span>"}${next?`<button class="btn line sm" data-act="verParabola" data-id="${esc(next.id)}">${esc(next.titulo)} ›</button>`:""}</div>
-  ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar cuadro</button>`:""}`;
+  ${ed()&&!p._central?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editParabola" data-id="${esc(p.id)}">Editar cuadro</button>`:""}`;
 }
 
 function vMas(){
@@ -1186,14 +1213,17 @@ function vLibro(){
   const cs=clasesOrd();
   if(!cs.length)return emptyBox("Primero crea una clase","El libro de clases se llena por cada domingo: crea la lección en la vista Lecciones.","");
   if(!ui.libroClase||!cs.some(c=>c.id===ui.libroClase)){const h=hoyISO();ui.libroClase=(cs.find(c=>(c.fecha||"")<=h)||cs[cs.length-1]).id;}
-  const c=cs.find(x=>x.id===ui.libroClase);const a=S.asistencia[c.id]||{};const l=S.libro[c.id]||{};
+  const c=cs.find(x=>x.id===ui.libroClase);const a=S.asistencia[c.id]||{};const l=S.libro[c.id]||{};const campos=(S.config.libroCampos&&S.config.libroCampos.length===2)?S.config.libroCampos:["Campo 1","Campo 2"];
   const ninos=[...S.ninos].sort(byNombre);
   let out=`<section class="card"><div class="sec-h"><h2>Libro de clases</h2><span class="pill">Solo equipo</span></div>
   <label class="small" for="libroSel"><b>Domingo</b></label><select class="selclase" id="libroSel">${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===c.id?"selected":""}>${esc(fLarga(x.fecha))} · ${esc(x.titulo)}</option>`).join("")}</select>
-  <p class="muted small">Marca la asistencia, pon la nota (1,0 a 7,0) y escribe una observación. Se guarda solo al salir de cada casilla.</p>`;
+  <p class="muted small">Marca asistencia, Biblia, participación y tarea; el desafío diario se llena solo cuando las familias juegan (lunes a sábado). Pon la nota (1,0 a 7,0) y una observación. Se guarda solo al salir de cada casilla.</p><button class="btn ghost sm" data-act="libroCampos">✏️ Nombrar los 2 campos libres</button>`;
   if(!ninos.length)out+=`<p class="muted">Agrega a los niños en la pestaña Puntos.</p>`;
-  else out+=`<div class="reg libro"><table><thead><tr><th>Niño/a</th><th>Asistió</th><th>Nota</th><th style="text-align:left">Observación</th><th title="La familia ve esta observación en Mis hijos">👪 Familia</th></tr></thead><tbody>${ninos.map(n=>{const on=(a.presente||[]).includes(n.id);const nt=l.notas&&l.notas[n.id];const o=(l.obs&&l.obs[n.id])||"";
-    return `<tr><td>${esc(n.nombre)}</td><td><button class="tog" aria-pressed="${on}" aria-label="${esc("Asistió: "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="presente">${I.check}</button></td>
+  else out+=`<div class="reg libro"><table><thead><tr><th>Niño/a</th><th>Asistió</th><th>Trajo Biblia</th><th>Participa</th><th title="Desafíos diarios hechos en la semana (lunes a sábado)">Desafío diario</th><th>Tarea</th><th>${esc(campos[0])}</th><th>${esc(campos[1])}</th><th>Nota</th><th style="text-align:left">Observación</th><th title="La familia ve esta observación en Mis hijos">👪 Familia</th></tr></thead><tbody>${ninos.map(n=>{const on=(a.presente||[]).includes(n.id);const nt=l.notas&&l.notas[n.id];const o=(l.obs&&l.obs[n.id])||"";
+    const tg=(k,t)=>{const v=(a[k]||[]).includes(n.id);return `<td><button class="tog" aria-pressed="${v}" aria-label="${esc(t+": "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="${k}">${I.check}</button></td>`;};
+    const dd=hechosDD(c.id,n.id);const nd=Object.keys(dd).length;
+    const ex=k=>`<td><input class="obs ex" id="${k}_${esc(n.id)}" value="${esc((l[k]&&l[k][n.id])||"")}" placeholder="–" aria-label="${esc(campos[k==="extra1"?0:1]+" de "+n.nombre)}" data-libro="${k}" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td>`;
+    return `<tr><td>${esc(n.nombre)}</td><td><button class="tog" aria-pressed="${on}" aria-label="${esc("Asistió: "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="presente">${I.check}</button></td>${tg("biblia","Trajo Biblia")}${tg("participa","Participa en clases")}<td><span class="dd-cont${nd>=6?" full":""}" title="${esc(DIAS_DD.map((x,i)=>x[0]+": "+(dd[i+1]?"✓ "+(dd[i+1].pts||"")+" pts":"—")).join(" · "))}">${nd}/6</span></td>${tg("tarea","Tarea solicitada")}${ex("extra1")}${ex("extra2")}
     <td><input class="nota" id="nota_${esc(n.id)}" inputmode="decimal" value="${nt!=null?fmtNota(nt):""}" placeholder="–" aria-label="${esc("Nota de "+n.nombre)}" data-libro="notas" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td>
     <td><input class="obs" id="obs_${esc(n.id)}" value="${esc(o)}" placeholder="Participó, ayudó, necesita apoyo…" aria-label="${esc("Observación de "+n.nombre)}" data-libro="obs" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}"></td><td><input type="checkbox" class="obsfam" data-obsfam="1" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" ${l.obsFam&&l.obsFam[n.id]?"checked":""} aria-label="${esc("Mostrar a la familia de "+n.nombre)}"></td></tr>`;}).join("")}</tbody></table></div><p class="muted small">👪 Marca la casilla para que la familia vea esa observación. La nota y las demás observaciones solo las ve el equipo.</p>`;
   out+=`</section>`;
@@ -1210,13 +1240,18 @@ function vLibro(){
 }
 const libroTimers={};
 function setLibro(claseId,ninoId,campo,valor){
-  const l=JSON.parse(JSON.stringify(S.libro[claseId]||{}));l.notas=l.notas||{};l.obs=l.obs||{};l.obsFam=l.obsFam||{};
+  const l=JSON.parse(JSON.stringify(S.libro[claseId]||{}));l.notas=l.notas||{};l.obs=l.obs||{};l.obsFam=l.obsFam||{};l.extra1=l.extra1||{};l.extra2=l.extra2||{};l[campo]=l[campo]||{};
   if(valor===""||valor==null)delete l[campo][ninoId];else l[campo][ninoId]=valor;
   S.libro[claseId]=l;pendingLibro[claseId]=true;
   clearTimeout(libroTimers[claseId]);
   libroTimers[claseId]=setTimeout(()=>{const ref=db.collection("libro").doc(claseId);const cur=S.libro[claseId];
-    enqueue(ref.path,()=>ref.set({notas:cur.notas||{},obs:cur.obs||{},obsFam:cur.obsFam||{}})).then(()=>{pendingLibro[claseId]=false;toast("Libro guardado");}).catch(e=>{pendingLibro[claseId]=false;toast(errMsg(e));});},500);
+    enqueue(ref.path,()=>ref.set({notas:cur.notas||{},obs:cur.obs||{},obsFam:cur.obsFam||{},extra1:cur.extra1||{},extra2:cur.extra2||{}})).then(()=>{pendingLibro[claseId]=false;toast("Libro guardado");}).catch(e=>{pendingLibro[claseId]=false;toast(errMsg(e));});},500);
 }
+
+function formLibroCampos(){const c=S.config.libroCampos||["Campo 1","Campo 2"];
+  openForm({titulo:"Campos libres del libro de clases",ayuda:"Dos columnas extra que puedes usar para lo que necesites (por ejemplo: Ofrenda, Trajo a un amigo).",datos:{a:c[0],b:c[1]},
+    campos:[{k:"a",label:"Nombre del campo 1",req:true},{k:"b",label:"Nombre del campo 2",req:true}],
+    onSave:async v=>{const ref=db.doc("config/general");await enqueue(ref.path,()=>ref.set({...S.config,libroCampos:[v.a.slice(0,24),v.b.slice(0,24)]}));}});}
 
 /* ---------- recursos: cuentos y materiales ---------- */
 const fmtMB=b=>b?(b>=1048576?(b/1048576).toFixed(1).replace(".",",")+" MB":Math.max(1,Math.round(b/1024))+" KB"):"";
@@ -1376,7 +1411,7 @@ function recoLogos(){return `<section class="reco"><img src="img/logos-biblia.pn
 /* ---------- personajes bíblicos ---------- */
 function parseRefs(txt){const out=[];String(txt||"").split(/[;\n]+/).map(x=>x.trim()).filter(Boolean).forEach(r=>{const p=parseRef(r);if(!p)return;const m=r.match(/[:.]\s*(\d+)\s*-\s*(\d+)\s*$/);
   const code=CODES[p.li];if(!p.v)out.push({ref:r,k:[code+"."+p.cap]});else{const a=parseInt(p.v,10),z=m?Math.min(parseInt(m[2],10),a+60):a;const ks=[];for(let v=a;v<=z;v++)ks.push(code+"."+p.cap+"."+v);out.push({ref:r,k:ks});}});return out;}
-function indiceBiblicos(){const ix={};S.biblicos.forEach(b=>(b.citas||[]).forEach(c=>(c.k||[]).forEach(k=>{(ix[k]=ix[k]||[]).includes(b)||ix[k].push(b);})));return ix;}
+function indiceBiblicos(){const ix={};S.biblicos.forEach(b=>(b.citas||[]).forEach(c=>(c.k||((parseRefs(c.ref)[0]||{}).k)||[]).forEach(k=>{(ix[k]=ix[k]||[]).includes(b)||ix[k].push(b);})));return ix;}
 function fotoB(b,cls){const f=(b.fotos||[])[0];return f?`<img src="${esc(blobUrl(f))}" alt="${esc(b.nombre)}" ${cls||""}>`:`<span class="ini">${inicial(b.nombre)}</span>`;}
 function vBiblicos(){
   if(ui.biblico){const b=S.biblicos.find(x=>x.id===ui.biblico);if(b)return vBiblico(b);}
@@ -1662,11 +1697,11 @@ function render(){
   if(dbFailed)html+=`<div class="note"><b>No se pudieron cargar los datos de tu congregación.</b> Revisa tu conexión y vuelve a abrir la app.</div>`;
   if(window.EPK_OFFLINE)html+=`<div class="note">📶 <b>Sin conexión.</b> Estás viendo lo último que se guardó en este celular. Los cuentos que ya abriste se pueden leer igual.</div>`;
   else if(!loaded.clases)html+=`<div class="note">Cargando clases y puntos…</div>`;
-  html+=({inicio:vInicio,clases:vClases,recursos:vRecursos,puntos:vPuntos,biblia:vBiblia,museo:vMuseo,mas:vMas}[ui.tab]||vInicio)();
+  html+=ui.desafio&&DS?vDesafio():({inicio:vInicio,clases:vClases,recursos:vRecursos,puntos:vPuntos,biblia:vBiblia,museo:vMuseo,mas:vMas}[ui.tab]||vInicio)();
   $("#app").innerHTML=html;
   pintarFotos($("#app"));if(VF)pintarVisor();
 }
-function irA(tab){callar();ui.juego=false;ui.quiz=false;if(tab==="recursos"&&ed()&&!ui.uso)refrescarUso();ui.tab=tab;ui.clase=null;ui.nino=null;ui.parabola=null;try{history.replaceState(null,"","#"+tab);}catch(e){}render();window.scrollTo(0,0);}
+function irA(tab){callar();ui.juego=false;ui.desafio=false;ui.quiz=false;if(tab==="recursos"&&ed()&&!ui.uso)refrescarUso();ui.tab=tab;ui.clase=null;ui.nino=null;ui.parabola=null;try{history.replaceState(null,"","#"+tab);}catch(e){}render();window.scrollTo(0,0);}
 
 /* ---------- asistencia ---------- */
 const asisTimers={};
@@ -1764,6 +1799,150 @@ function formReprogramar(c){openForm({titulo:"Reprogramar: "+(c.titulo||"clase")
   datos:{fecha:c.fecha||"",visible:c.visible||"si",publicar:c.publicar||""},
   campos:[{k:"fecha",label:"Nueva fecha de la clase",type:"date",req:true},{k:"visible",label:"¿Las familias pueden verla?",type:"select",opts:[["si","Sí"],["no","Todavía no, solo el equipo"]]},{k:"publicar",label:"Mostrar a las familias desde (opcional)",type:"date"}],
   guardarTxt:"Guardar cambios",onSave:async v=>{await guardar("clases",c.id,{...c,...v});setTimeout(render,0);}});}
+
+/* ---------- desafío diario: 6 juegos cortos (lunes a sábado) de la clase del domingo ---------- */
+const DIAS_DD=[["Lunes","Une los conceptos","🔗"],["Martes","Crucigrama","✏️"],["Miércoles","Sopa de letras","🔎"],["Jueves","4 diferencias","👀"],["Viernes","Laberinto","🌀"],["Sábado","Completa el versículo","📖"]];
+const STOP_DD=new Set("PARA PORQUE COMO CUANDO DONDE ESTOS ESTAS ESTE ESTA ESTO ELLOS ELLAS NOSOTROS VOSOTROS TODOS TODAS TODO TODA SOBRE ENTRE HASTA DESDE TAMBIEN TANTO PUES ENTONCES AQUEL AQUELLA AQUELLOS SINO MISMO MISMA DICE DIJO TENGO TIENE TIENES SERA SEAN SIDO HABEIS HABIA HABER CUAL CUALES QUIEN SIEMPRE NUNCA MUCHO MUCHA MUCHOS OTRO OTRA OTROS".split(" "));
+let DS=null,DDF=null;
+function rngDD(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return ()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return (h>>>0)/4294967296;};}
+function mezclaDD(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const upDD=w=>String(w).normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-ZÑ]/g,"");
+function palabrasDD(c,min,max){const txt=[c.versiculo||"",c.titulo||"",c.subtitulo||""].join(" ");const vistos=new Set();const out=[];
+  txt.split(/\s+/).forEach(w=>{const u=upDD(w);if(u.length>=min&&u.length<=max&&!STOP_DD.has(u)&&!vistos.has(u)){vistos.add(u);out.push({u,orig:limpiaW(w)});}});
+  if(out.length<4)["JESUS","BIBLIA","AMOR","FE","ORAR","DIOS","PERDON","AMIGOS"].forEach(u=>{if(u.length>=min&&u.length<=max&&!vistos.has(u)){vistos.add(u);out.push({u,orig:u.toLowerCase()});}});
+  return out;}
+/* día del desafío: 1 = lunes después de la clase … 6 = sábado */
+function diaDD(c){if(!c||!c.fecha)return 0;const d=Math.round((new Date(hoyISO()+"T12:00:00")-new Date(c.fecha+"T12:00:00"))/864e5);return d<1?0:Math.min(d,7);}
+function claseDD(){const h=hoyISO();const vis=S.clases.filter(c=>c.fecha&&c.fecha<h&&(ed()||!claseOculta(c))&&c.versiculo).sort((a,b)=>a.fecha<b.fecha?1:-1);return vis[0]||null;}
+/* resultados: equipo los lee de S.desafios; la familia los pide con mis_desafios */
+function hechosDD(claseId,ninoId){if(ed()){const d=(S.desafios||[]).find(x=>x.id===claseId);return d&&d[ninoId]?d[ninoId]:{};}
+  const f=(DDF||[]).filter(r=>r.clase_id===claseId&&r.nino_id===ninoId)[0];return f&&f.dias?f.dias:{};}
+function cargarDDF(force){if(ed()||!window.EPK||!EPK.sb||!EPK.comunidad||(DDF&&!force))return;DDF=DDF||[];
+  EPK.sb.rpc("mis_desafios",{p_comunidad:EPK.comunidad.id}).then(({data,error})=>{if(!error){DDF=data||[];render();}});}
+function notaDesafio(){const c=claseDD();if(!c)return "";const d=diaDD(c);cargarDDF();
+  const hs=misHijos();const hoyD=Math.min(d,6);
+  const hecho=k=>hs.length?hs.every(n=>hechosDD(c.id,n.id)[k]):false;
+  const puntos=DIAS_DD.map((x,i)=>{const k=i+1;const ab=k<=Math.min(d,6);const ok=hecho(k);
+    return `<button class="dd-dot${ok?" ok":""}${k===hoyD&&d<7?" hoy":""}" ${ab?`data-act="jugarDD" data-id="${esc(c.id)}" data-dia="${k}"`:"disabled"} title="${esc(x[0]+": "+x[1])}" aria-label="${esc(x[0]+": "+x[1]+(ok?" (hecho)":ab?"":" (aún no)"))}">${ok?"✓":x[2]}</button>`;}).join("");
+  let cuerpo;
+  if(d>=7)cuerpo=`<p class="small">¡Completaste la semana! El lunes parte un nuevo desafío con la clase del domingo.</p>`;
+  else{const x=DIAS_DD[hoyD-1];cuerpo=`<p><b>${esc(x[0])}: ${esc(x[1])}</b></p><p class="small">Sobre «${esc(c.titulo)}». Se arma uno nuevo cada día hasta el sábado.</p><button class="btn sm" data-act="jugarDD" data-id="${esc(c.id)}" data-dia="${hoyD}">${hecho(hoyD)?"Jugar otra vez":"¡Jugar ahora!"}</button>`;}
+  return `<article class="dm-nota dm-tarea dm-dd"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">⭐ Desafío diario</p>${cuerpo}<div class="dd-dots">${puntos}</div></article>`;}
+
+function iniciarDD(claseId,dia){const c=S.clases.find(x=>x.id===claseId);if(!c)return;callar();
+  const r=rngDD(c.id+"#"+dia);DS={clase:c.id,dia,err:0,hecho:false,quien:{},guardado:false};
+  if(dia===1){let pares=String(c.conceptos||"").split(/\n/).map(l=>l.split(/\s*[=:]\s*/)).filter(p=>p.length>=2&&p[0]&&p[1]).slice(0,5).map(p=>[p[0].trim(),p.slice(1).join(": ").trim()]);
+    if(pares.length<3){const pal=String(c.versiculo||"").split(/\s+/).filter(Boolean);const n=Math.min(4,Math.max(2,Math.floor(pal.length/4)));const tam=Math.ceil(pal.length/n);pares=[];
+      for(let i=0;i<n;i++){const t=pal.slice(i*tam,(i+1)*tam);if(t.length<2)continue;const m=Math.ceil(t.length/2);pares.push([t.slice(0,m).join(" "),t.slice(m).join(" ")]);}DS.verso=true;}
+    DS.izq=pares.map((p,i)=>({i,t:p[0]}));DS.der=mezclaDD(pares.map((p,i)=>({i,t:p[1]})),r);DS.ok={};DS.sel=null;}
+  if(dia===2){const pal=mezclaDD(palabrasDD(c,4,8),r);DS.cw=armarCruci(pal,r);DS.ok={};}
+  if(dia===3){const pal=mezclaDD(palabrasDD(c,4,8),r).slice(0,5);armarSopa(pal,r);}
+  if(dia===4){DS.dif=mezclaDD([0,1,2,3,4,5,6,7],r).slice(0,4);DS.ok={};DS.fig=["santiago","maria","mateo","sara","simon"][Math.floor(r()*5)];}
+  if(dia===5){armarLaberinto(r);}
+  if(dia===6){const pal=String(c.versiculo).split(/\s+/).filter(Boolean);const cand=pal.map((w,i)=>i).filter(i=>normW(pal[i]).length>=4);
+    const hue=mezclaDD(cand,r).slice(0,Math.min(5,Math.max(2,Math.round(cand.length*.4)))).sort((a,b)=>a-b);DS.pal=pal;DS.hue=hue;DS.llenos={};DS.fichas=mezclaDD(hue,r);DS.mal=null;}
+  ui.desafio=true;render();window.scrollTo(0,0);}
+/* crucigrama pequeño: hasta 4 palabras que se cruzan */
+function armarCruci(lista,r){const N=13;let best=null;
+  for(let intento=0;intento<25;intento++){const ws=mezclaDD(lista,r).slice(0,8);const g={};const puestas=[];const put=(w,x,y,dx,dy)=>{for(let k=0;k<w.u.length;k++)g[(x+dx*k)+","+(y+dy*k)]=w.u[k];puestas.push({w,x,y,dx,dy});};
+    const cabe=(w,x,y,dx,dy)=>{let cruces=0;for(let k=-1;k<=w.u.length;k++){const cx=x+dx*k,cy=y+dy*k;if(cx<0||cy<0||cx>=N||cy>=N)return -1;const v=g[cx+","+cy];
+        if(k<0||k===w.u.length){if(v)return -1;continue;}if(v){if(v!==w.u[k])return -1;cruces++;}else{if(g[(cx+dy)+","+(cy+dx)]||g[(cx-dy)+","+(cy-dx)])return -1;}}return cruces;};
+    if(!ws.length)break;put(ws[0],1,Math.floor(N/2),1,0);
+    for(const w of ws.slice(1)){if(puestas.length>=4)break;let op=null;
+      for(const p of puestas){for(let a=0;a<p.w.u.length&&!op;a++){for(let b=0;b<w.u.length&&!op;b++){if(p.w.u[a]!==w.u[b])continue;const dx=p.dy,dy=p.dx;const x=p.x+p.dx*a-dx*b,y=p.y+p.dy*a-dy*b;if(cabe(w,x,y,dx,dy)>0)op=[x,y,dx,dy];}}}
+      if(op)put(w,...op);}
+    if(!best||puestas.length>best.p.length)best={p:puestas.slice(),g:{...g}};if(best.p.length>=4)break;}
+  const ks=Object.keys(best.g).map(k=>k.split(",").map(Number));const x0=Math.min(...ks.map(k=>k[0])),y0=Math.min(...ks.map(k=>k[1]));
+  const W=Math.max(...ks.map(k=>k[0]))-x0+1,H=Math.max(...ks.map(k=>k[1]))-y0+1;
+  return {W,H,p:best.p.map((q,i)=>({n:i+1,u:q.w.u,orig:q.w.orig,x:q.x-x0,y:q.y-y0,dx:q.dx,dy:q.dy}))};}
+function pistaCruci(c,p){const pal=String(c.versiculo||"").split(/\s+/);const i=pal.findIndex(w=>upDD(w)===p.u);
+  if(i>=0){const a=Math.max(0,i-4),b=Math.min(pal.length,i+3);return "«"+(a>0?"… ":"")+pal.slice(a,b).map((w,k)=>a+k===i?"_____":w).join(" ")+(b<pal.length?" …":"")+"»";}
+  return "Palabra del título de la clase ("+p.u.length+" letras)";}
+function armarSopa(pal,r){const N=9;const g=[];for(let y=0;y<N;y++)g.push(Array(N).fill(""));const ok=[];
+  for(const w of pal){if(w.u.length>N)continue;for(let t=0;t<60;t++){const hor=r()<.5;const x=Math.floor(r()*(hor?N-w.u.length+1:N)),y=Math.floor(r()*(hor?N:N-w.u.length+1));
+      let cabe=true;for(let k=0;k<w.u.length;k++){const cx=hor?x+k:x,cy=hor?y:y+k;if(cx>=N||cy>=N||(g[cy][cx]&&g[cy][cx]!==w.u[k])){cabe=false;break;}}
+      if(!cabe)continue;for(let k=0;k<w.u.length;k++){const cx=hor?x+k:x,cy=hor?y:y+k;g[cy][cx]=w.u[k];}ok.push({u:w.u,x,y,hor});break;}}
+  const AB="ABCDEFGHIJKLMNOPRSTUV";for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(!g[y][x])g[y][x]=AB[Math.floor(r()*AB.length)];
+  DS.sopa={N,g,pal:ok,hall:{},ini:null};}
+function armarLaberinto(r){const N=7;const m=[];for(let y=0;y<N;y++){m.push([]);for(let x=0;x<N;x++)m[y].push({n:1,s:1,e:1,o:1,v:0});}
+  const pila=[[0,0]];m[0][0].v=1;
+  while(pila.length){const [x,y]=pila[pila.length-1];const vec=mezclaDD([[0,-1,"n","s"],[0,1,"s","n"],[1,0,"e","o"],[-1,0,"o","e"]],r).filter(([dx,dy])=>{const a=x+dx,b=y+dy;return a>=0&&b>=0&&a<N&&b<N&&!m[b][a].v;});
+    if(!vec.length){pila.pop();continue;}const [dx,dy,p,q]=vec[0];m[y][x][p]=0;m[y+dy][x+dx][q]=0;m[y+dy][x+dx].v=1;pila.push([x+dx,y+dy]);}
+  DS.lab={N,m,pos:[0,0]};}
+function movDD(dir){const L=DS.lab;const [x,y]=L.pos;const c=L.m[y][x];const mv={n:[0,-1],s:[0,1],e:[1,0],o:[-1,0]}[dir];
+  if(c[dir]){DS.err++;toast("¡Hay una pared!");return;}L.pos=[x+mv[0],y+mv[1]];if(L.pos[0]===L.N-1&&L.pos[1]===L.N-1)terminarDD();else render();}
+function terminarDD(){DS.hecho=true;const hs=misHijos();if(hs.length===1)DS.quien={[hs[0].id]:true};render();}
+function guardarDD(){const ids=Object.keys(DS.quien).filter(k=>DS.quien[k]);if(!ids.length){toast("Marca quién hizo el desafío");return;}
+  const pts=Math.max(1,10-DS.err);
+  Promise.all(ids.map(id=>EPK.sb.rpc("registrar_desafio",{p_comunidad:EPK.comunidad.id,p_clase:DS.clase,p_nino:id,p_dia:DS.dia,p_puntos:pts}))).then(rs=>{
+    const e=rs.find(x=>x.error);if(e){toast("No se pudo guardar: "+(e.error.message||"intenta de nuevo"));return;}
+    DS.guardado=true;toast("¡Desafío guardado! El maestro lo verá en el libro de clases");cargarDDF(true);render();});}
+function difSVG(lado,f){const D=DS.dif;const on=k=>lado==="der"&&D.includes(k);
+  const col=(k,a,b)=>on(k)?b:a;
+  return `<svg viewBox="0 0 300 220" class="dd-svg" role="img" aria-label="${lado==="izq"?"Dibujo original":"Dibujo con 4 diferencias"}">
+  <rect width="300" height="220" fill="#BFE6FF"/><circle cx="${on(0)?60:250}" cy="38" r="22" fill="#FFD23F"/>
+  <ellipse cx="90" cy="45" rx="30" ry="11" fill="#fff"/><ellipse cx="${on(1)?205:175}" cy="62" rx="24" ry="9" fill="#fff"/>
+  <path d="M0 150 Q 80 120 160 145 T 300 140 V220 H0Z" fill="#7ED957"/>
+  <rect x="190" y="105" width="70" height="55" fill="${col(2,"#FFB36B","#FF7AA8")}"/><path d="M182 108 L225 75 L268 108Z" fill="#B5652E"/><rect x="216" y="130" width="16" height="30" fill="#6B4A2B"/>
+  ${on(3)?"":`<rect x="198" y="117" width="14" height="12" fill="#fff"/>`}
+  <rect x="35" y="110" width="10" height="45" fill="#8B5A3C"/><circle cx="40" cy="${on(4)?95:100}" r="${on(4)?30:24}" fill="#3FA34D"/>
+  ${on(5)?`<circle cx="135" cy="190" r="7" fill="#FF3D8B"/><circle cx="148" cy="194" r="6" fill="#FFD23F"/>`:`<circle cx="135" cy="190" r="7" fill="#FF3D8B"/>`}
+  <path d="M110 60 q5 -6 10 0 q5 -6 10 0" stroke="#3A3F5C" stroke-width="2.5" fill="none"/>${on(6)?`<path d="M140 50 q5 -6 10 0 q5 -6 10 0" stroke="#3A3F5C" stroke-width="2.5" fill="none"/>`:""}
+  <rect x="60" y="175" width="40" height="22" rx="4" fill="${col(7,"#7A4DFF","#16B3A3")}"/></svg>
+  <img class="dd-fig" src="img/${f}-full.webp" alt="" aria-hidden="true">`;}
+const DIF_POS=[[250,38],[190,62],[225,130],[205,123],[40,98],[148,194],[150,47],[80,186]];
+function vDesafio(){const c=S.clases.find(x=>x.id===DS.clase);if(!c){ui.desafio=false;return vInicio();}
+  const [dn,tn,ico]=DIAS_DD[DS.dia-1];let j="",ayuda="";
+  if(DS.dia===1){ayuda=DS.verso?"Une el comienzo de cada parte del versículo con su final. Toca uno a la izquierda y luego su pareja a la derecha.":"Toca un concepto a la izquierda y luego su significado a la derecha.";
+    j=`<div class="dd-une"><div>${DS.izq.map(p=>`<button class="dd-card${DS.ok[p.i]?" ok":""}${DS.sel===p.i?" sel":""}" ${DS.ok[p.i]?"disabled":`data-act="ddUneI" data-i="${p.i}"`}>${esc(p.t)}</button>`).join("")}</div>
+    <div>${DS.der.map(p=>`<button class="dd-card der${DS.ok[p.i]?" ok":""}" ${DS.ok[p.i]?"disabled":`data-act="ddUneD" data-i="${p.i}"`}>${esc(p.t)}</button>`).join("")}</div></div>`;}
+  if(DS.dia===2){const cw=DS.cw;ayuda="Lee cada pista, escribe la palabra y toca «Comprobar». Las palabras salen del versículo y del título de la clase.";
+    const cel={};cw.p.forEach(p=>{for(let k=0;k<p.u.length;k++){const key=(p.x+p.dx*k)+","+(p.y+p.dy*k);cel[key]=cel[key]||{l:p.u[k],v:false,n:null};if(DS.ok[p.n])cel[key].v=true;if(k===0)cel[key].n=p.n;}});
+    let g=`<div class="dd-cw" style="grid-template-columns:repeat(${cw.W},1fr)">`;for(let y=0;y<cw.H;y++)for(let x=0;x<cw.W;x++){const k=cel[x+","+y];g+=k?`<span class="dd-c">${k.n?`<i>${k.n}</i>`:""}${k.v?esc(k.l):""}</span>`:`<span class="dd-c vac"></span>`;}g+=`</div>`;
+    j=g+`<div class="dd-pistas">${cw.p.map(p=>`<div class="dd-pista${DS.ok[p.n]?" ok":""}"><p class="small"><b>${p.n}. ${p.dx?"Horizontal":"Vertical"}</b> · ${p.u.length} letras · ${esc(pistaCruci(c,p))}</p>${DS.ok[p.n]?`<p class="small">✓ ${esc(p.u)}</p>`:`<div class="row"><input id="cw_${p.n}" class="dd-in" maxlength="${p.u.length}" autocomplete="off" aria-label="${esc("Palabra "+p.n)}"><button class="btn sm" data-act="ddCruci" data-i="${p.n}">Comprobar</button></div>`}</div>`).join("")}</div>`;}
+  if(DS.dia===3){const s=DS.sopa;ayuda="Busca las palabras escondidas (horizontales y verticales). Toca la primera letra y después la última.";
+    const marc={};s.pal.forEach((p,i)=>{if(s.hall[i])for(let k=0;k<p.u.length;k++)marc[(p.hor?p.x+k:p.x)+","+(p.hor?p.y:p.y+k)]=true;});
+    j=`<div class="dd-sopa" style="grid-template-columns:repeat(${s.N},1fr)">${s.g.map((f,y)=>f.map((l,x)=>`<button class="dd-l${marc[x+","+y]?" ok":""}${s.ini&&s.ini[0]===x&&s.ini[1]===y?" sel":""}" data-act="ddSopa" data-x="${x}" data-y="${y}">${l}</button>`).join("")).join("")}</div>
+    <p class="dd-lista">${s.pal.map((p,i)=>`<span class="${s.hall[i]?"ok":""}">${esc(p.u)}</span>`).join("")}</p>`;}
+  if(DS.dia===4){ayuda="Mira los dos dibujos. Toca en el dibujo de la derecha las 4 cosas que cambiaron.";
+    j=`<div class="dd-dif"><div class="dd-pan">${difSVG("izq",DS.fig)}</div><div class="dd-pan der" data-act="ddDifMal">${difSVG("der",DS.fig)}${DS.dif.map(k=>{const [x,y]=DIF_POS[k];return `<button class="dd-spot${DS.ok[k]?" ok":""}" style="left:${x/3}%;top:${y/2.2}%" data-act="ddDif" data-i="${k}" aria-label="Diferencia"></button>`;}).join("")}</div></div><p class="small">Encontradas: <b>${Object.keys(DS.ok).length} de 4</b></p>`;}
+  if(DS.dia===5){const L=DS.lab;ayuda="Lleva a Simón hasta la Biblia usando las flechas.";
+    let g=`<div class="dd-lab" style="grid-template-columns:repeat(${L.N},1fr)">`;for(let y=0;y<L.N;y++)for(let x=0;x<L.N;x++){const q=L.m[y][x];const st=`border-top-width:${q.n?3:0}px;border-bottom-width:${q.s?3:0}px;border-right-width:${q.e?3:0}px;border-left-width:${q.o?3:0}px`;
+      g+=`<span class="dd-q" style="${st}">${L.pos[0]===x&&L.pos[1]===y?`<img src="img/simon.jpg" alt="Simón">`:x===L.N-1&&y===L.N-1?"📖":""}</span>`;}
+    j=g+`</div><div class="dd-flechas"><button class="btn sm" data-act="ddMov" data-k="n" aria-label="Arriba">⬆</button><div class="row"><button class="btn sm" data-act="ddMov" data-k="o" aria-label="Izquierda">⬅</button><button class="btn sm" data-act="ddMov" data-k="s" aria-label="Abajo">⬇</button><button class="btn sm" data-act="ddMov" data-k="e" aria-label="Derecha">➡</button></div></div>`;}
+  if(DS.dia===6){const sig=DS.hue.find(i=>!DS.llenos[i]);ayuda="Toca las palabras en orden para completar el versículo de la semana.";
+    j=`<p class="jv-texto">${DS.pal.map((w,i)=>DS.hue.includes(i)?(DS.llenos[i]?`<span class="jv-ok">${esc(w)}</span>`:`<span class="jv-hueco${i===sig?" act":""}">${"&nbsp;".repeat(Math.min(10,Math.max(4,normW(w).length)))}</span>`):esc(w)).join(" ")}</p>${c.versiculoCita?`<p class="jv-cita">${esc(c.versiculoCita)}</p>`:""}
+    <div class="jv-fichas">${DS.fichas.filter(i=>!DS.llenos[i]).map(i=>`<button class="jv-ficha${DS.mal===i?" mal":""}" data-act="ddFicha" data-i="${i}">${esc(limpiaW(DS.pal[i]))}</button>`).join("")}</div>`;}
+  let fin="";
+  if(DS.hecho){const hs=misHijos();
+    fin=`<div class="dd-fin"><h3>🎉 ¡Desafío logrado!</h3><p>${DS.err?`Con ${DS.err} intento${DS.err>1?"s":""} de más.`:"¡Sin ningún error!"} Puntaje: <b>${Math.max(1,10-DS.err)} de 10</b>.</p>`;
+    if(ed())fin+=`<p class="small muted">Vista de equipo: este resultado no se guarda.</p>`;
+    else if(!hs.length)fin+=`<p class="small">Para que el desafío cuente en el libro de clases, vincula a tu hijo con el código que te dio el maestro.</p><button class="btn sm line" data-act="verMisHijos">Vincular a mi hijo</button>`;
+    else if(DS.guardado)fin+=`<p class="small">✓ Guardado. El maestro lo verá en el libro de clases.</p>`;
+    else fin+=`<p class="small"><b>¿Quién hizo el desafío?</b></p><div class="row">${hs.map(n=>`<button class="btn sm${DS.quien[n.id]?"":" line"}" aria-pressed="${!!DS.quien[n.id]}" data-act="ddQuien" data-id="${esc(n.id)}">${esc(n.nombre)}</button>`).join("")}</div><button class="btn" data-act="ddGuardar">Guardar desafío</button>`;
+    fin+=`<div class="row"><button class="btn line" data-act="salirDD">Volver al inicio</button></div></div>`;}
+  return `<button class="back" data-act="salirDD">‹ Volver al inicio</button><section class="juego dd"><div class="jv-top">${figura(DS.hecho?"santiago":["mateo","sara","maria","simon","santiago","mateo"][DS.dia-1],"jv-fig")}<div><p class="eyebrow">${ico} Desafío del ${esc(dn.toLowerCase())}</p><h2>${esc(tn)}</h2><p class="small muted">Clase: ${esc(c.titulo)}</p></div></div>
+  ${DS.hecho?"":`<p class="small">${esc(ayuda)}</p>`}${DS.hecho&&DS.dia!==6?"":j}${fin}</section>`;}
+function accionDD(act,b){
+  if(act==="ddUneI"){DS.sel=Number(b.dataset.i);render();return;}
+  if(act==="ddUneD"){if(DS.sel==null){toast("Primero toca una opción de la izquierda");return;}const i=Number(b.dataset.i);
+    if(i===DS.sel){DS.ok[i]=true;DS.sel=null;if(Object.keys(DS.ok).length===DS.izq.length)return terminarDD();}else{DS.err++;toast("¡Casi! Prueba con otra");}render();return;}
+  if(act==="ddCruci"){const n=Number(b.dataset.i);const p=DS.cw.p.find(x=>x.n===n);const el=document.getElementById("cw_"+n);const v=upDD(el?el.value:"");
+    if(v===p.u){DS.ok[n]=true;if(DS.cw.p.every(x=>DS.ok[x.n]))return terminarDD();}else{DS.err++;toast("Esa no es. ¡Revisa la pista!");return;}render();return;}
+  if(act==="ddSopa"){const s=DS.sopa;const x=Number(b.dataset.x),y=Number(b.dataset.y);
+    if(!s.ini){s.ini=[x,y];render();return;}const [x0,y0]=s.ini;s.ini=null;
+    const i=s.pal.findIndex((p,k)=>!s.hall[k]&&((p.x===x0&&p.y===y0&&(p.hor?(x===p.x+p.u.length-1&&y===p.y):(x===p.x&&y===p.y+p.u.length-1)))||(p.x===x&&p.y===y&&(p.hor?(x0===p.x+p.u.length-1&&y0===p.y):(x0===p.x&&y0===p.y+p.u.length-1)))));
+    if(i>=0){s.hall[i]=true;if(s.pal.every((p,k)=>s.hall[k]))return terminarDD();}else{DS.err++;toast("No hay una palabra ahí");}render();return;}
+  if(act==="ddDif"){const k=Number(b.dataset.i);DS.ok[k]=true;if(Object.keys(DS.ok).length===4)return terminarDD();render();return;}
+  if(act==="ddDifMal"){DS.err++;toast("Ahí no cambió nada");return;}
+  if(act==="ddMov"){movDD(b.dataset.k);return;}
+  if(act==="ddFicha"){const i=Number(b.dataset.i);const sig=DS.hue.find(k=>!DS.llenos[k]);if(sig==null)return;
+    if(normW(DS.pal[i])===normW(DS.pal[sig])){DS.llenos[sig]=true;if(i!==sig){const a=DS.fichas.indexOf(i),c=DS.fichas.indexOf(sig);DS.fichas[a]=sig;DS.fichas[c]=i;}DS.mal=null;if(DS.hue.every(k=>DS.llenos[k]))return terminarDD();}
+    else{DS.err++;DS.mal=i;toast("¡Casi! Esa palabra va más adelante");}render();return;}
+  if(act==="ddQuien"){const id=b.dataset.id;DS.quien[id]=!DS.quien[id];render();return;}
+  if(act==="ddGuardar"){guardarDD();return;}
+  if(act==="salirDD"){ui.desafio=false;DS=null;render();window.scrollTo(0,0);return;}
+}
 
 /* ---------- juego del versículo ---------- */
 let JV={};
@@ -1917,6 +2096,9 @@ document.addEventListener("click",async e=>{
     case "adoptar":{const m=S.maestras.find(x=>x.id===id);if(m)adoptarClase(m);break;}
     case "abrirArch":{const c=S.clases.find(x=>x.id===id);const a=c&&archivosDe(c)[Number(b.dataset.i)];if(a)abrirLector({titulo:a.nombre||c.titulo,asset:a.asset,archivo:a.archivo||a.asset});break;}
     case "jvFicha":jvFicha(Number(b.dataset.i));break;
+    case "jugarDD":iniciarDD(id,Number(b.dataset.dia));break;
+    case "ddUneI":case "ddUneD":case "ddCruci":case "ddSopa":case "ddDif":case "ddDifMal":case "ddMov":case "ddFicha":case "ddQuien":case "ddGuardar":case "salirDD":accionDD(act,b);break;
+    case "libroCampos":formLibroCampos();break;
     case "salirJuego":ui.juego=false;render();window.scrollTo(0,0);break;
     case "quiz":iniciarQuiz(id);break;
     case "qzResp":qzResp(Number(b.dataset.k));break;
@@ -2019,7 +2201,8 @@ setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
         const arr=snap.docs.map(x=>({id:x.id,...x.data()}));
         if(c==="libro"){const keep={};for(const k in S.libro)if(pendingLibro[k])keep[k]=S.libro[k];S.libro={};arr.forEach(a=>S.libro[a.id]=a);Object.assign(S.libro,keep);}
         else if(c==="asistencia"){const keep={};for(const k in S.asistencia)if(pendingAsis[k])keep[k]=S.asistencia[k];S.asistencia={};arr.forEach(a=>S.asistencia[a.id]=a);Object.assign(S.asistencia,keep);}
-        else if(c==="parabolas"&&!arr.length)S[c]=BASE.parabolas.slice();
+        else if(c==="parabolas"){const cen=arr.filter(x=>x._central),pro=arr.filter(x=>!x._central);const tit=t=>String(t||"").trim().toLowerCase();
+          S[c]=(pro.length?pro:BASE.parabolas.filter(b=>!cen.some(x=>tit(x.titulo)===tit(b.titulo)))).concat(cen);}
         else S[c]=arr;
         loaded[c]=true;dbFailed=false;render();if(c==="fotos"||c==="clases")limpiarFotos();
       },err=>{console.warn(c,err);loaded[c]=true;render();});
