@@ -124,11 +124,11 @@
   const semana = (d) => { const t = new Date(d); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t; };
 
   /* ---------- vistas ---------- */
-  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["foros", "Foros"], ["moderacion", "Moderación"]];
+  const TABS = [["resumen", "Resumen"], ["congregaciones", "Congregaciones"], ["usuarios", "Usuarios"], ["biblioteca", "Biblioteca central"], ["permisos", "Permisos"], ["premium", "⭐ Premium"], ["foros", "Foros"], ["moderacion", "Moderación"]];
   function render() {
     const cnt = { congregaciones: congregaciones().length, usuarios: D.usuarios.length, biblioteca: docsDe(CENTRAL).length, foros: D.mensajes.filter((m) => m.estado === "pendiente" || m.reportes > 0).length || null, permisos: D.solicitudes.filter((x) => x.estado === "pendiente").length || null };
     $("#nav").innerHTML = TABS.map(([k, n]) => `<button data-tab="${k}" ${ui.tab === k ? 'aria-current="page"' : ""}><span>${n}</span>${cnt[k] != null ? `<span class="cnt">${cnt[k]}</span>` : ""}</button>`).join("");
-    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, foros: vForos, moderacion: vModeracion }[ui.tab];
+    const v = { resumen: vResumen, congregaciones: vCongregaciones, usuarios: vUsuarios, biblioteca: vBiblioteca, permisos: vPermisos, premium: vPremiumAdm, foros: vForos, moderacion: vModeracion }[ui.tab];
     $("#main").innerHTML = v();
   }
 
@@ -238,6 +238,34 @@
       ${items.map((d) => { const e = excepcion(c.id, d.col, d.id); const ok = liberado(c, d); return `<tr><td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : ""}</td><td><b>${d.data.numero != null ? esc(d.data.numero) + ". " : ""}${esc(d.data.titulo || d.data.nombre || d.id)}</b></td><td>${esc(planNombre(d.data.plan))}</td>
         <td><select class="inp" data-exc="${esc(d.id)}" data-col="${esc(d.col)}" aria-label="Acceso"><option value="">Según el permiso</option><option value="1" ${e && e.liberado ? "selected" : ""}>Liberado siempre</option><option value="0" ${e && !e.liberado ? "selected" : ""}>Bloqueado siempre</option></select>${e ? `<div class="small muted" style="margin-top:4px">desde <input class="inp" type="date" data-excdesde="${esc(d.id)}" data-col="${esc(d.col)}" value="${esc(e.desde || "")}" aria-label="Aplicar desde"></div>` : ""}</td>
         <td>${ok ? '<span class="pill ok">Liberado</span>' : '<span class="pill warn">🔒 Bloqueado</span>'}</td></tr>`; }).join("")}</tbody></table></div>` : `<p class="empty">No hay material de este tipo en la biblioteca central.</p>`}</section>`;
+  }
+
+  /* ---------- Recursos Premium: códigos y familias ---------- */
+  const CAT_PREMIUM = [["salon", "Recursos para el salón"], ["clases", "Material completo de clases"], ["apoderados", "Material para apoderados"], ["otros", "Otros"]];
+  const catPremiumDef = (col) => col === "maestras" ? "clases" : col === "matprofes" ? "salon" : col === "materiales" ? "apoderados" : "otros";
+  const PREM = { lista: null, codigos: null, nuevo: null };
+  async function cargarPremiumAdm() {
+    const [l, c] = await Promise.all([sb.rpc("super_premium_lista"), sb.from("premium_codigos").select("*").order("creado", { ascending: false }).limit(60)]);
+    PREM.lista = l.error ? { error: l.error.message } : l.data || []; PREM.codigos = c.data || []; render();
+  }
+  function vPremiumAdm() {
+    if (!PREM.lista) { cargarPremiumAdm(); return `<div class="head"><h1>⭐ Recursos Premium</h1></div><p class="muted">Cargando…</p>`; }
+    if (PREM.lista.error) return `<div class="head"><h1>⭐ Recursos Premium</h1></div><p class="empty">Falta instalar <b>supabase/premium.sql</b> (${esc(PREM.lista.error)}).</p>`;
+    const hoy = new Date().toISOString().slice(0, 10);
+    return `<div class="head"><div><p class="eyebrow">Acceso pagado</p><h1>⭐ Recursos Premium</h1></div></div>
+    <p class="muted">Hay dos formas de dar Premium: <b>a una congregación completa</b> (en Congregaciones, permiso «Premium») o <b>a una familia</b>, con un código o directo por su correo. Cuando Flow te avise de un abono, crea un código de 30 días (mensual) o 365 días (anual) y envíaselo a esa familia.</p>
+    <div class="grid2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+    <section class="card"><h2>🎟️ Crear código Premium</h2><form class="form" id="fCodigo">
+      <div class="field"><label for="cDias">Duración</label><select class="inp" id="cDias"><option value="30">Abono mensual · 30 días</option><option value="365">Abono anual · 365 días</option><option value="7">Prueba · 7 días</option></select></div>
+      <div class="field"><label for="cNota">Nota (para ti)</label><input class="inp" id="cNota" placeholder="Familia Pérez · pago Flow 20/11"></div>
+      <div class="field"><button class="btn" type="submit">Crear código</button></div></form>
+      ${PREM.nuevo ? `<div class="note" style="margin-top:10px"><p>Código creado:</p><p style="font-size:1.6rem;font-weight:800;letter-spacing:.08em">${esc(PREM.nuevo)}</p><button class="btn line sm" data-act="copiarCodigo">📋 Copiar con mensaje</button></div>` : ""}</section>
+    <section class="card"><h2>📧 Activar por correo</h2><form class="form" id="fPremCorreo">
+      <div class="field"><label for="pEmail">Correo con el que la familia entra a la app</label><input class="inp" id="pEmail" type="email" required placeholder="familia@correo.cl"></div>
+      <div class="field"><label for="pDias">Duración</label><select class="inp" id="pDias"><option value="30">30 días</option><option value="365">365 días</option></select></div>
+      <div class="field"><button class="btn" type="submit">Activar Premium</button></div></form></section></div>
+    <section class="card"><h2>Familias Premium</h2>${PREM.lista.length ? `<div class="tbl"><table><thead><tr><th>Correo</th><th>Hasta</th><th>Origen</th></tr></thead><tbody>${PREM.lista.map((f) => `<tr><td>${esc(f.email)}</td><td>${f.hasta < hoy ? '<span style="color:var(--rose)">Venció</span> ' : ""}${esc(f.hasta)}</td><td>${esc(f.origen || "")}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Aún no hay familias Premium.</p>`}</section>
+    <section class="card"><h2>Códigos</h2>${PREM.codigos.length ? `<div class="tbl"><table><thead><tr><th>Código</th><th class="num">Días</th><th>Nota</th><th>Estado</th></tr></thead><tbody>${PREM.codigos.map((c) => `<tr><td><b>${esc(c.codigo)}</b></td><td class="num">${c.dias}</td><td>${esc(c.nota || "")}</td><td>${c.usado_por ? "✅ Usado " + esc(String(c.usado_en || "").slice(0, 10)) : "⏳ Sin usar"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="muted">Aún no has creado códigos.</p>`}</section>`;
   }
 
   function vPermisos() {
@@ -508,7 +536,7 @@
     ${items.map((d, i) => `<tr>${ui.bib === "cuentos" ? `<td class="num"><div class="mover"><button class="flecha" data-mover="-1" data-id="${esc(d.id)}" ${i === 0 ? "disabled" : ""} aria-label="Subir ${esc(d.data.titulo || "cuento")}">▲</button><input class="inp" style="width:64px;text-align:right" type="number" data-edit="numero" data-id="${esc(d.id)}" value="${esc(d.data.numero ?? "")}" aria-label="Número"><button class="flecha" data-mover="1" data-id="${esc(d.id)}" ${i === items.length - 1 ? "disabled" : ""} aria-label="Bajar ${esc(d.data.titulo || "cuento")}">▼</button></div></td>` : ""}
       <td>${d.data.thumb ? `<img class="thumb" src="${esc(blobUrl(d.data.thumb))}" alt="" loading="lazy">` : '<span class="thumb vacio">PDF</span>'}</td>
       <td><input class="inp" style="width:100%;min-width:200px" data-edit="titulo" data-id="${esc(d.id)}" value="${esc(d.data.titulo || "")}" aria-label="Título"></td>
-      <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}${ui.bib === "cuentos" ? `<div><button class="link" data-preg="${esc(d.id)}">Preguntas (${(d.data.preguntas || []).length})</button></div>` : ""}</td>
+      <td>${planSelect(`data-plan="${esc(d.id)}" aria-label="Plan que lo libera"`, d.data.plan)}${(d.data.plan || "gratis") !== "gratis" ? `<select class="inp" style="margin-top:4px" data-catp="${esc(d.id)}" aria-label="Categoría Premium">${CAT_PREMIUM.map(([k, n]) => `<option value="${k}" ${k === (d.data.catPremium || catPremiumDef(ui.bib)) ? "selected" : ""}>${n}</option>`).join("")}</select>` : ""}${ui.bib === "cuentos" ? `<div><button class="link" data-preg="${esc(d.id)}">Preguntas (${(d.data.preguntas || []).length})</button></div>` : ""}</td>
       <td><input class="inp" type="date" data-libdesde="${esc(d.id)}" value="${esc(d.data.libera_desde || "")}" aria-label="Liberar desde"></td>
       <td class="small">${d.data.asset ? `<a href="${esc(blobUrl(d.data.asset))}" target="_blank" rel="noopener">${esc(d.data.archivo || "Abrir")}</a> <span class="muted">${fmtMB(d.data.tamano)}</span>` : (d.data.url ? `<a href="${esc(d.data.url)}" target="_blank" rel="noopener">Enlace</a>` : "–")}</td>
       <td class="small">${fmtFecha(d.actualizado)}</td><td><button class="btn danger sm" data-borrar="${esc(d.id)}" data-col="${esc(ui.bib)}" data-com="${CENTRAL}">Eliminar</button></td></tr>
@@ -652,6 +680,10 @@
         if (error && error.code === "23505") { id = "clase-" + String(n).padStart(3, "0") + "-" + Date.now().toString(36); ({ error } = await sb.from("docs").insert({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() })); }
         if (error) throw error;
         D.docs.push({ comunidad_id: CENTRAL, col: "maestras", id, data, actualizado: new Date().toISOString() }); ui.maestra = id; render(); return;
+      }
+      if (act0(b) === "copiarCodigo") {
+        const txt = `¡Gracias por tu abono a Eterno Pacto KIDS! 💛\n\nTu código Premium es: ${PREM.nuevo}\n\nPara activarlo: entra a la app → Recursos → ⭐ Premium → «Tengo un código».\n\nCon tu aporte seguimos creando material para los niños. ¡Dios te bendiga!`;
+        try { await navigator.clipboard.writeText(txt); toast("Mensaje copiado: pégalo en tu correo"); } catch (e) { toast(PREM.nuevo); } return;
       }
       if (act0(b) === "nuevaFicha") {
         const col = ui.bib, items = docsDe(CENTRAL, col); const orden = Math.max(0, ...items.map((m) => Number(m.data.orden) || 0)) + 1;
@@ -828,7 +860,13 @@
         const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.plan); if (!d) return;
         const data = { ...d.data, plan: t.value };
         const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", ui.bib).eq("id", d.id);
-        if (error) throw error; d.data = data; toast("Plan del material: " + planNombre(t.value)); return;
+        if (error) throw error; d.data = data; toast("Plan del material: " + planNombre(t.value)); render(); return;
+      }
+      if (t.dataset.catp) {
+        const d = D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === ui.bib && x.id === t.dataset.catp); if (!d) return;
+        const data = { ...d.data, catPremium: t.value };
+        const { error } = await sb.from("docs").update({ data, actualizado: new Date().toISOString() }).eq("comunidad_id", CENTRAL).eq("col", ui.bib).eq("id", d.id);
+        if (error) throw error; d.data = data; toast("Categoría Premium: " + (CAT_PREMIUM.find(([k]) => k === t.value) || ["", ""])[1]); return;
       }
       if (t.dataset.foro) {
         const v = t.dataset.k === "ninos" ? t.value === "true" : t.value;
@@ -868,6 +906,14 @@
       if (f.id === "fLamina") {
         await guardarLamina(ui.ficha, { nombre: $("#l_nombre").value.trim(), cita: $("#l_cita").value.trim(), biblico: $("#l_biblico").value || null, frase: $("#l_frase").value.trim(), quien: $("#l_quien").value.trim(), leer: $("#l_leer").value.trim(), recordamos: $("#l_recordamos").value.trim(), valor: $("#l_valor").value.trim(), sabias: $("#l_sabias").value.trim(), aprendo: $("#l_aprendo").value.trim() });
         toast("Lámina " + ui.ficha + " guardada"); if (ui.ficha < LAM_TOTAL) ui.ficha++; render(); window.scrollTo(0, 0); return;
+      }
+      if (f.id === "fCodigo") {
+        const { data, error } = await sb.rpc("super_crear_codigo_premium", { p_dias: Number($("#cDias").value), p_nota: $("#cNota").value.trim() || null });
+        if (error) throw error; PREM.nuevo = data; toast("Código creado"); await cargarPremiumAdm(); return;
+      }
+      if (f.id === "fPremCorreo") {
+        const { data, error } = await sb.rpc("super_premium_por_correo", { p_email: $("#pEmail").value.trim(), p_dias: Number($("#pDias").value) });
+        if (error) throw error; toast("Premium activo hasta " + data); await cargarPremiumAdm(); return;
       }
       if (f.id === "fFicha") {
         const d = fichaActual(); if (!d) return; const data = { ...d.data };

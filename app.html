@@ -439,6 +439,34 @@ button.item:hover{border-color:var(--accent)}
 .lt-ch{opacity:0;animation:ltSube var(--dur) var(--d) ease-out infinite}
 @keyframes ltSube{0%{opacity:0;transform:translate(0,0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-150px) scale(1.2)}}
 @media (prefers-reduced-motion:reduce){.lt-manos .m-borde,.lt-manos .m-linea{animation:none;stroke-dashoffset:0;fill-opacity:1}.lt-halo,.lt-anillo,.lt-haz,.lt-ch{animation:none}.lt-anillo,.lt-ch{opacity:0}}
+.cinta-ofrenda{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-radius:18px;background:linear-gradient(135deg,#FFF4D6,#FFE1EC);color:#1E1548;border:2px dashed #FF8FB8}
+.cinta-ofrenda p{flex:1;min-width:200px;margin:0;font-size:.92rem}.co-ico{font-size:1.8rem}
+.lt-ofrenda{padding:12px 12px 0}.pie-marca{font-size:.7rem;color:var(--muted);text-align:center;margin:6px 0 0}
+.of-hero{display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:24px;background:radial-gradient(ellipse at 90% 0%,rgba(255,201,60,.35),transparent 55%),linear-gradient(160deg,#FFF8EA,#FFE9F1);color:#1E1548;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
+.of-hero h2{margin:2px 0 6px;font-size:clamp(1.4rem,5vw,1.9rem)}.of-hero p{margin:0 0 8px}.of-logo{width:86px;flex:none}
+.of-verso{font-style:italic;padding:10px 12px;border-left:5px solid #FFC93C;background:rgba(255,255,255,.6);border-radius:10px}.of-verso span{display:block;font-style:normal;font-weight:800;font-size:.8rem;margin-top:4px}
+@media (max-width:520px){.of-hero{flex-direction:column}.of-logo{width:70px}}
+.of-planes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.of-plan{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px 16px;border-radius:20px;background:var(--surface);border:2.5px solid var(--line)}
+.of-plan.dest{border:3px solid #7B4DFF;box-shadow:0 6px 0 #5A2FD6;background:linear-gradient(180deg,#F7F2FF,var(--surface))}
+.of-cinta{position:absolute;top:-12px;right:14px;padding:3px 10px;border-radius:999px;background:#FFC93C;color:#1E1548;font-weight:800;font-size:.75rem;border:2px solid #2A1E5C}
+.of-ico{font-size:2.2rem}.of-plan h3{margin:0}.of-precio{margin:0;font-weight:800;color:#7B4DFF}.of-plan ul{margin:0;padding-left:18px;font-size:.88rem}.of-plan .btn{margin-top:auto;text-align:center}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.pr-hero .btn.line{background:rgba(255,255,255,.12);color:#fff;border-color:#FFD98A}
+.of-qr summary{cursor:pointer;font-size:.8rem;color:var(--muted)}.of-qr img{display:block;width:150px;margin:6px auto 2px;border-radius:10px;border:2px solid #2A1E5C}.of-qr span{display:block;text-align:center}
+.of-pasos ol{margin:6px 0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.of-transfer{display:flex!important;flex-direction:row!important;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.of-transfer h3,.of-transfer p{margin:0}
+.of-gracias{text-align:center;font-size:.92rem;margin:4px 8px}
+.of-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;border-radius:16px;background:var(--sunk)}.of-pie>img{height:46px}.of-pie p{flex:1;min-width:180px;margin:0;font-size:.7rem;text-align:center;color:var(--muted)}.of-pie .lt-jat img{height:26px}.of-pie .lt-jat{color:var(--muted)}
+.pr-hero{position:relative;overflow:hidden;padding:20px;border-radius:22px;color:#EDEBFF;background:radial-gradient(ellipse at 85% 10%,rgba(255,201,60,.45),transparent 50%),linear-gradient(150deg,#3B2A86,#14104A);border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
+.pr-hero.activo{background:radial-gradient(ellipse at 85% 10%,rgba(255,255,255,.4),transparent 50%),linear-gradient(150deg,#16B3A3,#0E6E66)}
+.pr-hero h2{color:#FFD98A;margin:2px 0 6px}.pr-hero.activo h2{color:#fff}.pr-hero .eyebrow{color:#FFD98A}.pr-hero p{max-width:560px}
+.pr-estrella{position:absolute;right:-10px;top:-14px;font-size:6rem;opacity:.25;transform:rotate(15deg)}
+.pr-cat{display:flex;flex-direction:column;gap:8px}.pr-cat h3{margin:0}
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}.pr-fila{grid-column:1/-1}
+.pr-item{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:16px;background:var(--surface);border:2px solid var(--line)}
+.pr-item.bloq{background:linear-gradient(180deg,var(--surface),#F4EEFF)}.pr-img{position:relative;display:block;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--sunk)}
+.pr-img img{width:100%;height:100%;object-fit:cover}.pr-item.bloq .pr-img img{filter:saturate(.6) blur(1px)}.pr-ph{display:grid;place-items:center;height:100%;font-size:2.2rem}
+.pr-lock{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;background:rgba(30,21,72,.35)}
 .ini-linea{position:relative;overflow:hidden;border-radius:22px;padding:18px;color:#EDEBFF;background:radial-gradient(ellipse at 80% 20%,rgba(255,201,60,.35),transparent 50%),radial-gradient(ellipse at 10% 90%,rgba(123,77,255,.5),transparent 55%),#0b0f2e;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
 .ini-linea h2{margin:2px 0;color:#FFD98A}.ini-linea p{margin:0 0 8px}.ini-linea .eyebrow{color:#FFD98A}
 @media (prefers-reduced-motion:reduce){.lt-nube,.lt-rayos,.lt-mano,.lt-linea,.lt-est{animation:none}.lt-cinta{animation:none;stroke-dashoffset:0}}
@@ -1276,6 +1304,7 @@ function vInicio(){cargarAlbum();
   else if(S.ninos.length)out+=metaClase();
   out+=`<section class="ini-linea"><div class="il-txt"><p class="eyebrow">Nuevo · ${LT.length} momentos</p><h2>⏳ La gran historia de Dios</h2><p>Viaja por la línea de tiempo desde la Creación hasta el año 100 d.C. con los personajes de tu álbum.</p><button class="btn sm" data-act="ltAbrirSeccion">Viajar en el tiempo</button></div></section>`;
   out+=`<section class="card ini-album" style="--pc:var(--p-simon)"><img src="img/album/portada.webp" alt="" loading="lazy"><div><h2>⭐ Álbum bíblico</h2><p class="muted small">Junta puntos, cámbialos por sobres de 5 láminas y completa los 100 personajes. Las repetidas se cambian en el mercado del foro.</p><button class="btn sm" data-act="irInsignias">${ed()?"Ver los álbumes":"Abrir mi álbum"}</button></div></section>`;
+  out+=cintaOfrenda("<b>Necesitamos tus recursos para seguir trabajando y creciendo.</b> Con tu ofrenda ilustramos nuevos personajes, preparamos clases y llegamos a más niños.");
   return out;
 }
 
@@ -1471,11 +1500,12 @@ function vParabola(p){const k=p.sala||"parabolas",s=salaDe(k);
 function vMas(){
   if(ui.mas==="familia"){ui.tab="biblia";ui.bib="familia";return vBiblia();}
   if(ui.mas==="personajes")ui.mas="info";if(ui.mas==="links")ui.mas="contactos";
-  const seg=[["muro","📌 Avisos"],["foro","💬 Foro"],["compromiso","✍️ Compromiso"],["contactos","📇 Contactos y enlaces"],["info","ℹ️ La pandilla y la app"]];
+  const seg=[["muro","📌 Avisos"],["foro","💬 Foro"],["ofrenda","💛 Ofrenda"],["compromiso","✍️ Compromiso"],["contactos","📇 Contactos y enlaces"],["info","ℹ️ La pandilla y la app"]];
   let out=(ui.mas==="info"&&ui.personaje?"":guia("maria","El amor también se demuestra. Aquí está nuestra comunidad: los avisos del equipo, el foro con el mercado de láminas, nuestro compromiso y a quién escribir."))+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
   if(ui.mas==="foro"){out+=`<div class="seg" role="group" aria-label="Foro"><button aria-pressed="${ui.foroSec!=="mercado"}" data-act="foroSec" data-k="foro">💬 Conversaciones</button><button aria-pressed="${ui.foroSec==="mercado"}" data-act="foroSec" data-k="mercado">🛒 Mercado de láminas</button></div>`;
     out+=ui.foroSec==="mercado"?vMercadoForo():(window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`);}
   else if(ui.mas==="familia"){out+=vFamilia();}
+  else if(ui.mas==="ofrenda"){out+=vOfrenda();}
   else if(ui.mas==="compromiso"){
     const cs=[...S.compromisos].sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1);
     out+=`<div class="sec-h"><h2>Carta de compromiso</h2>${ed()?`<button class="btn sm" data-act="nuevoCompromiso">Nueva carta</button>`:""}</div>`;
@@ -1618,8 +1648,9 @@ function listaCuentosHTML(){
 }
 function vRecursos(){
   if(ui.quiz){const c=S.cuentos.find(x=>x.id===QZ.cuento);if(c)return vQuiz(c);ui.quiz=false;}
-  const seg=[["cuentos","Cuentos"],["ninos","Para niños"]].concat(ed()?[["profes","Para profes"]]:[]);
+  const seg=[["cuentos","Cuentos"],["ninos","Para niños"]].concat(ed()?[["profes","Para profes"]]:[]).concat([["premium","⭐ Premium"]]);
   if(!seg.some(x=>x[0]===ui.rec))ui.rec="cuentos";
+  if(ui.rec==="premium")return guia("maria","Aquí están los Recursos Premium: material más preparado para maestros y familias. Lo básico siempre será para todos.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`+vPremium();
   let out=guia("maria","El amor también se demuestra. Aquí están los cuentos de cada semana y los materiales para descargar.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.progreso){const pg=ui.progreso;out+=`<section class="card"><p><b>${pg.hecho<pg.total?`Subiendo cuentos: ${pg.hecho} de ${pg.total}`:`Listo: ${pg.total-pg.errores.length} de ${pg.total} cuentos subidos`}</b></p><div class="prog"><i style="width:${pg.total?pg.hecho/pg.total*100:0}%"></i></div>${pg.hecho<pg.total?`<p class="muted small">No cierres la app hasta que termine.</p>`:""}${pg.errores.length?`<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>`:""}${pg.hecho>=pg.total?`<button class="link-btn" style="align-self:flex-start" data-act="cerrarProg">Ocultar</button>`:""}</section>`;}
   if(adm()&&ui.uso)out+=`<p class="muted small">Espacio de archivos: ${fmtMB(ui.uso.bytes)} de ${fmtMB(ui.uso.maxBytes)} · ${ui.uso.files} de ${ui.uso.maxFiles} archivos</p>`;
@@ -2414,7 +2445,7 @@ function vLinea(){cargarAlbum();const ci=ltClaseIdx();const vistos=Object.keys(L
     <div class="lt-mini" role="group" aria-label="Viajar a una época">${mini}<i class="lt-mini-yo" id="ltYo"></i></div>
     <div class="lt-ctrl"><button class="lt-flecha" data-act="ltPaso" data-d="-1" aria-label="Momento anterior">‹</button><span id="ltDonde" class="lt-donde">Arrastra para viajar en el tiempo</span><button class="lt-flecha" data-act="ltPaso" data-d="1" aria-label="Momento siguiente">›</button></div>
     <p class="lt-prog">⭐ Has visitado <b>${vistos}</b> de ${LT.length} momentos · cada momento nuevo suma puntos para tus sobres</p>
-    <footer class="lt-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. Fechas aproximadas · línea esquemática, no a escala.<br>JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></span></footer></section>`;}
+    <div class="lt-ofrenda">${cintaOfrenda("¿Te gustó viajar por la historia? <b>Ayúdanos a seguir creando</b> nuevos momentos, personajes y aventuras.")}</div><footer class="lt-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. Fechas aproximadas · línea esquemática, no a escala.<br>JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></span></footer></section>`;}
 const LT_GRANDES=new Set(["Dios crea el universo","El diluvio","Dios llama a Abraham","El mar Rojo se abre","Los Diez Mandamientos","Caen los muros de Jericó","David y Goliat","El templo de Jerusalén","Daniel en el foso de los leones","Nace Jesús en Belén","Jesús muere en la cruz","¡Jesús resucitó!","Pentecostés","Saulo en el camino a Damasco"]);
 const LT_FONDOS=["linear-gradient(160deg,#FFFDF6,#FFF1D0)","linear-gradient(160deg,#F2FFF8,#CFF5E3)","linear-gradient(160deg,#F7F2FF,#E2D6FF)","linear-gradient(160deg,#FFF6F0,#FFD9C4)","linear-gradient(160deg,#F0F8FF,#CFE6FF)","linear-gradient(160deg,#FFF2F7,#FFD0E2)","linear-gradient(160deg,#FFFBEA,#FFE9A8)"];
 function ltLayout(i){const r=k=>{const x=Math.sin((i+1)*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);};
@@ -2492,6 +2523,78 @@ function accionLT(act,b){switch(act){
   case "ltCerrar":$("#sheetRoot").innerHTML="";const p=document.getElementById("ltPista");if(p){/* refrescar ✓ */const i=LTS.cerca;render();}break;
   case "ltAbrirSeccion":callar();ui.tab="biblia";ui.bib="linea";render();window.scrollTo(0,0);break;}}
 
+/* ---------- Recursos Premium y Ofrenda ---------- */
+const OFRENDA={correo:"jose.antonio.tapia@gmail.com",
+  libre:"https://www.flow.cl/btn.php?token=h449d44b80fb03200491b2d2a8c510af0022856c",
+  mensual:"https://www.flow.cl/btn.php?token=s8cca24059ed474fe078fee5f512af40677bf64b",
+  anual:"https://www.flow.cl/btn.php?token=h12e1f95df1f0a70dad5964bf7e1498fe217c3fb"};
+const CAT_PREM=[["salon","🧑‍🏫","Recursos para el salón","Dinámicas, decoración y apoyo para la sala de clases"],["clases","📚","Material completo de clases","Guías, presentaciones y fichas listas para cada domingo"],["apoderados","👪","Material para apoderados","Para acompañar la fe de los niños en casa"],["otros","✨","Otros","Más recursos especiales para la congregación"]];
+const catPremDef=col=>col==="maestras"?"clases":col==="matprofes"?"salon":col==="materiales"?"apoderados":"otros";
+const PRM={cargado:false,familia:null,com:null,comHasta:null};
+function cargarPremium(force){const sb=albSB();if(!sb||(PRM.cargado&&!force)||PRM.cargando)return;PRM.cargando=true;
+  Promise.all([sb.rpc("mi_premium"),sb.from("comunidades").select("plan_id,plan_hasta").eq("id",EPK.comunidad.id).maybeSingle()]).then(([m,c])=>{PRM.cargando=false;PRM.cargado=true;
+    PRM.familia=(m.data&&m.data.familia_hasta)||null;const d=c.data||{};PRM.com=d.plan_id&&d.plan_id!=="gratis"&&!(d.plan_hasta&&d.plan_hasta<hoyISO());PRM.comHasta=d.plan_hasta||null;render();}).catch(()=>{PRM.cargando=false;});}
+const premFamiliaActiva=()=>PRM.familia&&PRM.familia>=hoyISO();
+const premActivo=()=>!!(PRM.com||premFamiliaActiva()||(window.EPK&&EPK.super));
+const fechaBonita=f=>f?new Date(f+"T12:00:00").toLocaleDateString("es-CL",{day:"numeric",month:"long",year:"numeric"}):"";
+const mailTransfer=()=>`mailto:${OFRENDA.correo}?subject=${encodeURIComponent("Datos para transferencia · Ofrenda Eterno Pacto KIDS")}&body=${encodeURIComponent("Hola, me gustaría apoyar a Eterno Pacto KIDS con una ofrenda por transferencia. ¿Me pueden enviar los datos?\n\nMi nombre: \nMi congregación: \n\n¡Gracias!")}`;
+const mailCodigo=()=>`mailto:${OFRENDA.correo}?subject=${encodeURIComponent("Mi abono Premium · Eterno Pacto KIDS")}&body=${encodeURIComponent("Hola, hice mi abono Premium por Flow.\n\nNombre: \nCorreo con el que entro a la app: \nCongregación: \nFecha del pago: \n\n¡Gracias!")}`;
+function cintaOfrenda(txt){return `<aside class="cinta-ofrenda"><span class="co-ico" aria-hidden="true">💛</span><p>${txt||"Este material se hace con amor y con tu ayuda. <b>Tu ofrenda nos permite seguir creando.</b>"}</p><button class="btn sm" data-act="irOfrenda">Quiero apoyar</button></aside>`;}
+const pieMarca=()=>`<p class="pie-marca">© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados · Prohibida su venta y reproducción · Desarrollado por JAT®</p>`;
+
+function vOfrenda(){cargarPremium();
+  const tarjeta=(k,ico,tit,precio,txt,lista,btn,destacada)=>`<article class="of-plan${destacada?" dest":""}">${destacada?`<span class="of-cinta">⭐ Más elegido</span>`:""}
+    <span class="of-ico">${ico}</span><h3>${tit}</h3><p class="of-precio">${precio}</p><p class="small">${txt}</p>${lista?`<ul>${lista.map(x=>`<li>${x}</li>`).join("")}</ul>`:""}
+    <a class="btn${destacada?"":" line"}" href="${OFRENDA[k]}" target="_blank" rel="noopener">${btn}</a>
+    <details class="of-qr"><summary>Ver código QR</summary><img src="img/qr-${k==="libre"?"ofrenda":k}.png" alt="Código QR para pagar: ${tit}" loading="lazy"><span class="small muted">Escanéalo con la cámara del celular</span></details></article>`;
+  return `<section class="of-hero"><img class="of-logo" src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><div><p class="eyebrow">Para papás, mamás y amigos del ministerio</p><h2>💛 Siembra en Eterno Pacto KIDS</h2>
+    <p>Cada cuento, cada lámina del álbum, cada clase y cada línea de esta app se hacen con amor, horas de trabajo y la convicción de que los niños merecen lo mejor para conocer a Dios.</p>
+    <p><b>Necesitamos tus recursos para seguir trabajando y creciendo:</b> ilustrar nuevos personajes, preparar más clases, mantener la app funcionando y llegar a más congregaciones.</p>
+    <p class="of-verso">«Cada uno dé como propuso en su corazón: no con tristeza, ni por necesidad, porque Dios ama al dador alegre.» <span>2 Corintios 9:7</span></p></div></section>
+  <div class="of-planes">
+    ${tarjeta("libre","🌱","Ofrenda libre","Desde $1.000","Da lo que Dios ponga en tu corazón, una vez o cuando quieras.",["Sostiene el material gratuito para todos","Ayuda a crear nuevas ilustraciones"],"Dar una ofrenda")}
+    ${tarjeta("mensual","📅","Abono mensual","Premium por un mes","Apoya el ministerio cada mes y recibe acceso a los Recursos Premium.",["Material completo de clases","Recursos para el salón y para apoderados","Nuevos recursos cada mes"],"Abonar mensual",true)}
+    ${tarjeta("anual","🌟","Abono anual","Premium por un año","La forma más generosa de sembrar: un año completo de Recursos Premium.",["Todo lo del abono mensual","Un año sin preocuparte de renovar","Gracias por tu compromiso 💛"],"Abonar anual")}
+  </div>
+  <section class="card of-pasos"><h3>¿Cómo recibo mis Recursos Premium?</h3><ol>
+    <li><b>Haz tu abono</b> mensual o anual con el botón (pago seguro con Flow: tarjeta, transferencia o Webpay).</li>
+    <li><b>Escríbenos</b> con el correo con que entras a la app: <a href="${mailCodigo()}">${OFRENDA.correo}</a>.</li>
+    <li><b>Te enviaremos tu código Premium</b> y lo ingresas en Recursos → ⭐ Premium → «Tengo un código». ¡Listo!</li></ol>
+    <p class="small muted">¿Tu congregación quiere Premium para todas sus familias? Escríbenos y lo activamos para la congregación completa.</p></section>
+  <section class="card of-transfer"><div><h3>🏦 ¿Prefieres transferir?</h3><p class="small">Te enviamos los datos de la cuenta por correo. Así los cuidamos y los compartimos solo con quien los pide.</p></div><a class="btn line" href="${mailTransfer()}">✉️ Pedir datos de transferencia</a></section>
+  <section class="card of-codigo"><h3>🎟️ ¿Ya tienes tu código Premium?</h3>${premFamiliaActiva()?`<p>✅ Tu familia tiene Premium hasta el <b>${fechaBonita(PRM.familia)}</b>. ¡Gracias por sembrar!</p>`:""}
+    <div class="alb-enviar"><input class="dd-in" id="codPrem" placeholder="EPK-XXXX-XXXX" maxlength="14" aria-label="Código Premium" autocomplete="off" style="text-transform:uppercase"><button class="btn sm" data-act="canjearPrem">Activar</button></div></section>
+  <p class="of-gracias">🙏 Gracias a cada familia y congregación que sostiene este ministerio. Todo lo que recibimos vuelve a los niños en forma de material, ilustraciones y nuevas herramientas.</p>
+  <footer class="of-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-negro.svg" alt="JAT · José Antonio Tapia"></span></footer>`;}
+
+function premItems(){const cols=["materiales","cuentos"].concat(ed()?["matprofes","maestras"]:[]);const out=[];
+  cols.forEach(col=>(S[col]||[]).forEach(x=>{if((x.plan||"gratis")!=="gratis")out.push({x,col,cat:x.catPremium||catPremDef(col)});}));return out;}
+function premTarjeta({x,col}){const bl=x._bloqueado&&!(window.EPK&&EPK.super);const tit=x.titulo||x.nombre||(col==="cuentos"?"Cuento "+(x.numero||""):"Material");
+  const img=x.thumb?`<img src="${esc(blobUrl(x.thumb))}" alt="" loading="lazy">`:`<span class="pr-ph">${col==="cuentos"?"📖":col==="maestras"?"📚":"📄"}</span>`;
+  if(bl)return `<div class="pr-item bloq"><span class="pr-img">${img}<span class="pr-lock">🔒</span></span><b>${esc(tit)}</b>${x.desc?`<span class="small muted">${esc(x.desc)}</span>`:""}<button class="btn sm" data-act="irOfrenda">Cómo obtenerlo</button></div>`;
+  if(col==="materiales"||col==="matprofes")return `<div class="pr-fila">${filaMaterial(x,col)}</div>`;
+  const act=col==="cuentos"?`data-act="rec" data-k="cuentos"`:`data-act="irBibClases"`;
+  return `<div class="pr-item"><span class="pr-img">${img}</span><b>${esc(tit)}</b>${x.desc?`<span class="small muted">${esc(x.desc)}</span>`:""}<button class="btn line sm" ${act}>Abrir</button></div>`;}
+function vPremium(){cargarPremium();const its=premItems();const act=premActivo();
+  let out=`<section class="pr-hero${act?" activo":""}"><div><p class="eyebrow">⭐ Recursos Premium</p><h2>${act?"¡Tienes acceso Premium!":"Material más preparado para maestros y familias"}</h2>
+    <p>${act?(PRM.com?`Tu congregación tiene Premium${PRM.comHasta?` hasta el ${fechaBonita(PRM.comHasta)}`:""}.`:`Tu familia tiene Premium hasta el <b>${fechaBonita(PRM.familia)}</b>.`)+" Todo lo de esta sección está abierto para ti. ¡Gracias por sembrar! 💛"
+      :"El material básico es para todos y siempre será gratis. Los Recursos Premium son clases completas, recursos para el salón y material para apoderados, preparados con más detalle. Se abren con un abono mensual o anual que sostiene este ministerio."}</p>
+    <div class="row">${act?"":`<button class="btn" data-act="irOfrenda">Ver abonos</button>`}<button class="btn line" data-act="premCodigo">🎟️ Tengo un código</button></div></div><span class="pr-estrella" aria-hidden="true">⭐</span></section>`;
+  if(ui.premCod)out+=`<section class="card"><h3>Activar código Premium</h3><p class="small muted">Lo recibes por correo después de tu abono.</p><div class="alb-enviar"><input class="dd-in" id="codPrem" placeholder="EPK-XXXX-XXXX" maxlength="14" aria-label="Código Premium" autocomplete="off" style="text-transform:uppercase"><button class="btn sm" data-act="canjearPrem">Activar</button></div></section>`;
+  CAT_PREM.forEach(([k,ico,tit,desc])=>{const xs=its.filter(i=>i.cat===k);
+    out+=`<section class="pr-cat"><div class="sec-h"><div><h3>${ico} ${esc(tit)}</h3><p class="small muted">${esc(desc)}</p></div><span class="pill">${xs.length}</span></div>
+      ${xs.length?`<div class="pr-grid">${xs.map(premTarjeta).join("")}</div>`:`<p class="muted small">Pronto habrá material en esta categoría.</p>`}</section>`;});
+  if(ed())out+=`<p class="small muted">Para que un material aparezca aquí, en el panel de la Biblioteca central márcalo con el plan «Premium» y elige su categoría.</p>`;
+  return out+cintaOfrenda()+pieMarca();}
+
+async function accionPrem(act,b){switch(act){
+  case "irOfrenda":callar();$("#sheetRoot").innerHTML="";ui.tab="mas";ui.mas="ofrenda";try{history.replaceState(null,"","#mas");}catch(e){}render();window.scrollTo(0,0);break;
+  case "premCodigo":ui.premCod=!ui.premCod;render();setTimeout(()=>{const i=document.getElementById("codPrem");if(i)i.focus();},50);break;
+  case "irBibClases":ui.tab="clases";ui.claseSeg="biblioteca";render();window.scrollTo(0,0);break;
+  case "canjearPrem":{const i=document.getElementById("codPrem");const sb=albSB();if(!i||!sb)break;const v=i.value.trim().toUpperCase();if(!v){i.focus();break;}b.disabled=true;
+    const {data,error}=await sb.rpc("canjear_codigo_premium",{p_codigo:v});b.disabled=false;
+    if(error){toast(error.message||"No se pudo activar");break;}toast(`⭐ ¡Premium activo hasta el ${fechaBonita(data)}! Abriendo tus recursos…`);setTimeout(()=>location.reload(),1600);break;}}}
+
 /* ---------- álbum bíblico: puntos → sobres de 5 láminas, libro con páginas que se dan vuelta, mercado de láminas ---------- */
 const ALB_TOTAL=100,ALB_POR_SOBRE=5;
 const ALB_SECC=[[1,7,"Los comienzos","#2FB36B"],[8,22,"Los patriarcas","#FF8A1A"],[23,27,"Éxodo y conquista","#2E7CF6"],[28,38,"Jueces y transición al reino","#8B5CF6"],[39,47,"Reyes de Israel","#E5383B"],[48,63,"Reyes y profetas","#E0A100"],[64,73,"Exilio y regreso","#1AA3A3"],[74,79,"La llegada de Jesús","#F59E0B"],[80,96,"Jesús y sus discípulos","#E0457B"],[97,100,"La Iglesia comienza","#F25C05"]];
@@ -2566,7 +2669,7 @@ function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
   if(ALB.vista==="repetidas")return out+vAlbRepetidas(nid);
   if(ALB.vista==="mercado")return out+vAlbMercado(nid);
   if(ALB.vista==="curso"&&ed())return out+vAlbCurso();
-  return out+vAlbLibro(nid);}
+  return out+vAlbLibro(nid)+(ed()?"":cintaOfrenda("Cada lámina se ilustra con amor y muchas horas de trabajo. <b>Tu ofrenda nos ayuda a crear más.</b>"));}
 
 /* sonido de página: papel que se da vuelta, hecho con Web Audio (sin archivos) */
 try{ALB.mudo=localStorage.getItem("epk_alb_mudo")==="1";}catch(e){}
@@ -2827,6 +2930,7 @@ document.addEventListener("click",async e=>{
   if(act.startsWith("fx_")){if(window.EPKX)EPKX.accion(act,b);return;}
   if(act.startsWith("alb")){accionAlb(act,b);return;}
   if(act.startsWith("lt")){accionLT(act,b);return;}
+  if(act==="irOfrenda"||act==="premCodigo"||act==="irBibClases"||act==="canjearPrem"){accionPrem(act,b);return;}
   switch(act){
     case "tab":if(b.tagName==="A")e.preventDefault();if(VF){VF=null;pintarVisor();}irA(b.dataset.tab);break;
     case "ptsSeg":ui.pts=b.dataset.k;ui.nino=null;render();break;
