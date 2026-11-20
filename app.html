@@ -2078,11 +2078,11 @@ function albSelector(ns,nid){return ns.length>1?`<div class="row" role="group" a
 function albPrevio(){let out="";
   if(!albSB())return emptyBox("Álbum bíblico","Entra con tu cuenta de la congregación para ver tu álbum.","");
   if(ALB.error)return emptyBox("El álbum aún no está listo","Falta instalar el álbum en la base de datos ("+ALB.error+").","");
-  if(!albNinos().length)return emptyBox("Aún no hay un niño vinculado","Pide al maestro el código para vincular a tu hijo o hija y su álbum aparecerá aquí.","");
   if(!ALB.cargado)return `<p class="muted">Abriendo el álbum…</p>`;
   return null;}
 
 function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
+  if(!albNinos().length)return `<section class="card"><h3>👀 Vista previa del álbum</h3><p class="muted small">${ed()?"Aún no hay niños registrados en esta congregación. Cuando los agregues en Puntos, cada uno tendrá su propio álbum.":"Aún no hay un niño vinculado a tu cuenta. Pide al maestro el código para vincular a tu hijo o hija y su álbum aparecerá aquí."} Mientras tanto, puedes hojear el álbum completo.</p></section>`+vAlbLibro(null,true);
   const ns=albNinos(),nid=albNinoSel(),e=albEst(nid),pa=albPorAbrir(nid),precio=e.precio||albPrecio(),falta=Math.max(0,precio-e.saldo);
   const recibidas=ALB.inter.filter(t=>t.estado==="pendiente"&&t.para_nino===nid).length;
   const reg=ALB.regalos.find(r=>r.nino_id===nid&&(Date.now()-new Date(r.creado))<14*864e5);
@@ -2101,26 +2101,26 @@ function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
   return out+vAlbLibro(nid);}
 
 /* libro: portada, línea del tiempo, 10 épocas y contraportada, con páginas que se dan vuelta */
-function vAlbLibro(nid){ALB.pag=Math.max(0,Math.min(ALB.pag,ALB_HOJAS-1));const p=ALB.pag;const dir=ALB.dir;ALB.dir=0;
-  const llenasDe=x=>Array.from({length:x[1]-x[0]+1},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);
+function vAlbLibro(nid,todo){todo=todo||ALB.verTodo;ALB.pag=Math.max(0,Math.min(ALB.pag,ALB_HOJAS-1));const p=ALB.pag;const dir=ALB.dir;ALB.dir=0;
+  const llenasDe=x=>todo?x[1]-x[0]+1:Array.from({length:x[1]-x[0]+1},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);
   let hoja;
   if(p===0)hoja=`<div class="alb-hoja tapa"><img src="img/album/portada.webp" alt="Álbum de Personajes Bíblicos · Eterno Pacto KIDS"><div class="alb-dueno">Este álbum pertenece a: <b>${esc((S.ninos.find(n=>n.id===nid)||{}).nombre||"")}</b></div></div>`;
   else if(p===1)hoja=`<div class="alb-hoja linea"><p class="eyebrow">Una gran historia</p><h3>Línea del tiempo</h3><p class="small muted">Toca una época para ir a su página.</p>
     <ol class="alb-tl">${ALB_SECC.map((x,i)=>{const tot=x[1]-x[0]+1,ok=llenasDe(x);return `<li style="--era:${x[3]}"><button data-act="albPag" data-p="${i+2}"><span class="tl-dot">${ok===tot?"✓":i+1}</span><span class="tl-t"><b>${esc(x[2])}</b><span class="small">${esc((albCat(x[0])||{}).nombre||"N° "+x[0])} → ${esc((albCat(x[1])||{}).nombre||"N° "+x[1])}</span></span><span class="pill">${ok}/${tot}</span></button></li>`;}).join("")}</ol></div>`;
   else if(p===ALB_HOJAS-1)hoja=`<div class="alb-hoja contra"><img class="contra-logo" src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><h3>Álbum de Personajes Bíblicos</h3><p>100 personajes · Una gran historia</p>
-    <p class="contra-tot">Llevas <b>${albEst(nid).pegadas}</b> de ${ALB_TOTAL} láminas</p>
+    ${nid?`<p class="contra-tot">Llevas <b>${albEst(nid).pegadas}</b> de ${ALB_TOTAL} láminas</p>`:""}
     <div class="contra-jat"><span class="small">Desarrollado por</span><img src="img/jat-horizontal-negro.svg" alt="JAT · José Antonio Tapia"></div>
     <p class="contra-legal">JAT® es marca registrada de José Antonio Tapia Meneses.<br>© ${new Date().getFullYear()} Eterno Pacto KIDS · Material de uso exclusivo de la congregación. Prohibida su venta y reproducción.</p></div>`;
   else{const x=ALB_SECC[p-2],[ini,fin,tit,col]=x;
-    let celdas="";for(let n=ini;n<=fin;n++){const c=albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
+    let celdas="";for(let n=ini;n<=fin;n++){const c=todo?1:albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
     const ok=llenasDe(x),tot=fin-ini+1;
-    hoja=`<div class="alb-hoja era" style="--era:${col}"><div class="sec-h"><div><p class="eyebrow">Época ${p-1} de ${ALB_SECC.length} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div><span class="pill${ok===tot?" sun":""}">${ok===tot?"¡Completa! ":""}${ok}/${tot}</span></div><div class="alb-grid">${celdas}</div></div>`;}
+    hoja=`<div class="alb-hoja era" style="--era:${col}"><div class="sec-h"><div><p class="eyebrow">Época ${p-1} de ${ALB_SECC.length} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div>${nid&&!todo?`<span class="pill${ok===tot?" sun":""}">${ok===tot?"¡Completa! ":""}${ok}/${tot}</span>`:""}</div><div class="alb-grid">${celdas}</div></div>`;}
   const nom=p===0?"Portada":p===1?"Línea del tiempo":p===ALB_HOJAS-1?"Contraportada":ALB_SECC[p-2][2];
   return `<section class="alb-libro" id="albLibro"><div class="alb-pliego${dir>0?" pasa-sig":dir<0?" pasa-ant":""}">${hoja}</div>
     <div class="alb-nav"><button class="btn line sm" data-act="albPag" data-d="-1" ${p?"":"disabled"} aria-label="Página anterior">‹</button>
     <span class="alb-nav-t"><b>${esc(nom)}</b><span class="small muted">Página ${p+1} de ${ALB_HOJAS}${p>1?` · <button class="link-btn" data-act="albPag" data-p="1">Índice</button>`:""}</span></span>
     <button class="btn line sm" data-act="albPag" data-d="1" ${p<ALB_HOJAS-1?"":"disabled"} aria-label="Página siguiente">›</button></div>
-    <p class="small muted alb-desliza">Desliza o usa las flechas para dar vuelta la página</p></section>`;}
+    <p class="small muted alb-desliza">Desliza o usa las flechas para dar vuelta la página${ed()&&nid?` · <button class="link-btn" data-act="albVerTodo">${ALB.verTodo?"Ver solo las pegadas":"👀 Ver las 100 láminas"}</button>`:""}</p></section>`;}
 
 function vAlbRepetidas(nid){const mias=Object.entries(ALB.tengo[nid]||{}).filter(([,c])=>c>1).map(([n,c])=>[Number(n),c]).sort((a,b)=>a[0]-b[0]);
   if(!mias.length)return emptyBox("Aún no tienes repetidas","Cuando te salga una lámina que ya tienes, aparecerá aquí para cambiarla en el mercado.","");
@@ -2205,6 +2205,7 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
     case "albCanjear":{if(!sb)break;b.disabled=true;const {error}=await sb.rpc("canjear_sobres",{p_comunidad:EPK.comunidad.id,p_nino:nid,p_cantidad:1});
       if(albToast(error,"🎁 ¡Sobre listo! Ábrelo para descubrir tus 5 láminas")){await cargarAlbum(true);}else b.disabled=false;break;}
     case "albAbrir":albAbrir();break;
+    case "albVerTodo":ALB.verTodo=!ALB.verTodo;render();break;
     case "albRasgar":if(ALB.sobre){ALB.sobre.roto=true;pintarSobre();}break;
     case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
     case "albCerrarSobre":{const s=ALB.sobre;ALB.sobre=null;pintarSobre();ALB.vista="album";
