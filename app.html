@@ -343,6 +343,9 @@ button.item:hover{border-color:var(--accent)}
 .frame .art.retrato{aspect-ratio:4/3}
 .sala-epoca{margin:14px 0 6px;color:var(--era);border-left:6px solid var(--era);padding-left:8px}
 @media (prefers-reduced-motion:reduce){.p-hoja{transition:none}}
+.guia-mini{border-radius:16px;background:var(--surface);border:2px solid var(--pc);padding:4px 10px;align-self:flex-start;max-width:100%}.guia-mini summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none;font-size:.88rem}.guia-mini summary::-webkit-details-marker{display:none}.guia-mini img{width:30px;height:30px;object-fit:cover;object-position:top;border-radius:50%;background:var(--pc)}.guia-mini p{margin:6px 0 4px;font-size:.92rem}.guia-mini[open] .gm-mas{display:none}
+.ini-album{flex-direction:row!important;gap:14px;align-items:center}.ini-album img{width:84px;aspect-ratio:2/3;object-fit:cover;border-radius:10px;border:2.5px solid #2A1E5C;flex:none}.ini-album h2{margin:0}
+.meta-clase{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,#FFF4D6,#FFE2A8);color:#1E1548;border:2.5px solid #2A1E5C;box-shadow:0 4px 0 #2A1E5C}.meta-clase h3{margin:2px 0;font-size:1.1rem}.mc-ico{font-size:2.2rem}
 .alb-cartas{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.alb-cartas>*{width:min(30%,140px)}
 @media (prefers-reduced-motion:reduce){.pasa-sig .alb-hoja,.pasa-ant .alb-hoja{animation:none}}
 .alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
@@ -707,7 +710,7 @@ button.item:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--edge
 .pj-afiche summary{cursor:pointer;font-family:var(--display);font-weight:600;color:var(--accent);padding:6px 0}
 .pj-afiche img{display:block;width:100%;max-width:420px;height:auto;margin:8px auto 0;border:var(--bd);border-radius:20px;box-shadow:var(--sh)}
 
-/* insignias con personajes de cuerpo entero */
+/* figuras de cuerpo entero de la pandilla */
 .medal{width:92px;height:108px;border-radius:44% 56% 30px 30px/40% 40% 30px 30px;padding:0;background:var(--pc);border:2px solid var(--edge);display:grid;place-items:end center;overflow:hidden}
 .medal img{width:100%;height:104%;border:0;border-radius:0;object-fit:contain;object-position:bottom}
 .badge.off .medal{background:var(--sunk)}
@@ -764,7 +767,7 @@ const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos",
 const COLS_EQUIPO=["matprofes","libro","maestras","desafios"];
 const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},desafios:[],biblicos:[],fotos:[],laminas:[],config:{}};
 const loaded={};
-const ui={pts:"estrellas",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
+const ui={pts:"hijos",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
 let db=null,canEdit=false,dbFailed=false;
 const pendingAsis={};
@@ -779,8 +782,8 @@ if(h==="museo")ui.tab="biblia";else if(["inicio","clases","recursos","puntos","b
 let isOwner=false;
 const ROLES_VISTA={
  admin:["Administrador","Todo lo del maestro, más invitar, nombrar maestros, los datos de la congregación y el espacio de archivos."],
- maestro:["Maestro","Crea clases, marca asistencia, pone notas, da estrellas, sube material y publica en el muro."],
- familia:["Niño / familia","Solo mira y usa: la clase, el versículo, cuentos, estrellas, Biblia, álbum y museo."]};
+ maestro:["Maestro","Crea clases, marca asistencia, pone notas, da puntos y sobres, sube material y publica en el muro."],
+ familia:["Niño / familia","Solo mira y usa: la clase, el versículo, cuentos, puntos, álbum, Biblia y museo."]};
 function rolReal(){return isOwner?"admin":canEdit?"maestro":"familia";}
 function vistasPosibles(){return isOwner?["admin","maestro","familia"]:canEdit?["maestro","familia"]:["familia"];}
 function vista(){const v=vistasPosibles();return v.includes(vistaGuardada)?vistaGuardada:v[0];}
@@ -842,13 +845,14 @@ const PERS={
 const HISTORIAS={"santiago": {"titulo": "Santiago y la noche de la tormenta", "p": ["Era sábado en la noche y los amigos estaban en la casa del árbol preparando la clase del domingo. De pronto, ¡BUM!, sonó un trueno enorme y la lluvia empezó a golpear el techo.", "Sara se tapó los oídos y abrazó fuerte a Zanahoria. Simón se escondió debajo de una manta y solo se le veía la cola temblando. Hasta Mateo dejó de comer su galleta.", "Santiago respiró hondo, se sentó junto a ellos y abrió su Biblia. «¿Saben qué? Los amigos de Jesús también tuvieron miedo una vez», dijo con calma. Y les leyó cómo Jesús iba en una barca, se levantó en medio de la tormenta y le dijo al viento: «¡Calla, enmudece!». Y todo quedó en calma.", "«Pero el trueno sigue sonando», susurró Sara. Santiago sonrió: «Jesús no siempre quita la tormenta de inmediato, pero siempre está con nosotros en la barca». María tomó la mano de Sara, Mateo apoyó su cabeza en el hombro de Santiago y juntos oraron.", "Poco a poco la lluvia se volvió suave, como una canción. Simón salió de la manta, se estiró y se quedó dormido sobre la Biblia abierta. Sara ya no tenía miedo: había aprendido que la Palabra de Dios es como una linterna en la noche."], "verso": "Lámpara es a mis pies tu palabra, y lumbrera a mi camino.", "cita": "Salmo 119:105", "pregunta": "¿Qué te da miedo a ti? ¿Qué versículo podrías recordar cuando sientas miedo?"}, "maria": {"titulo": "María y el niño nuevo", "p": ["Un domingo llegó a la escuela dominical un niño que nadie conocía. Se llamaba Tomás. Se sentó en la última silla, miraba el suelo y no hablaba con nadie.", "Los demás estaban tan entretenidos con el juego de preguntas que no se dieron cuenta. Pero María sí. Ella siempre se da cuenta cuando alguien está triste, porque siente con el corazón.", "María tomó su cuaderno de dibujo y, en silencio, dibujó un árbol enorme con muchas ramas, y en cada rama un niño sonriendo. En la rama más grande escribió: «Tomás». Se acercó y le regaló el dibujo.", "«¿Por qué estoy yo en el árbol?», preguntó Tomás. «Porque en la familia de Dios hay espacio para todos, y ahora tú también eres parte de la nuestra», respondió María. Después lo invitó a su equipo. Santiago le explicó las reglas, Mateo le prestó su lupa y Sara le dejó abrazar a Zanahoria.", "Al final de la clase, Tomás estaba riendo con todos. Esa noche, María escribió en su cuaderno: «El amor también se demuestra». Y le dio gracias a Dios por su nuevo amigo."], "verso": "Amados, amémonos unos a otros; porque el amor es de Dios.", "cita": "1 Juan 4:7", "pregunta": "¿Conoces a alguien que esté solo en tu curso o en tu iglesia? ¿Cómo podrías demostrarle el amor de Dios esta semana?"}, "mateo": {"titulo": "Mateo y la semilla diminuta", "p": ["Mateo estaba agachado en el jardín con su lupa, como siempre. «¡Encontré algo!», gritó. En la palma de su mano había una semilla tan pequeña que casi no se veía.", "«¿Cómo puede algo tan chiquitito convertirse en un árbol gigante?», preguntó. Y siguió: «¿Y quién le dice a la semilla que crezca? ¿Y por qué Dios hizo las semillas tan pequeñas?». Mateo es así: una pregunta lleva a otra pregunta.", "Santiago abrió la Biblia y le mostró que Jesús habló justamente de eso: el Reino de Dios es como una semilla de mostaza, la más pequeña de todas, que crece hasta ser un árbol donde los pájaros hacen sus nidos.", "Mateo se quedó pensando mientras mordía su galleta. «Entonces… ¿la fe también puede empezar chiquitita y crecer?». «¡Exacto!», dijo María. Ese mismo día plantaron la semilla en un macetero y Mateo anotó en su libreta: «Día 1: semilla. Pregunta: ¿cuánto crecerá mi fe?».", "Cada mañana, Mateo revisaba el macetero con su lupa. Al décimo día apareció un brote verde. Mateo descubrió que hacer preguntas no es malo: cada pregunta lo ayudaba a conocer mejor a Dios."], "verso": "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", "cita": "Jeremías 33:3", "pregunta": "¿Qué pregunta te gustaría hacerle a Dios? Escríbela y conversa con tu familia o tu maestro sobre ella."}, "sara": {"titulo": "Sara y la ovejita perdida", "p": ["En un paseo al campo, Sara caminaba feliz con Zanahoria bajo el brazo y su jugo en la mano. De pronto escuchó un sonido muy suave: «Beee…».", "Detrás de unos arbustos encontró una ovejita blanca enredada entre las ramas. Estaba asustada y sola. «No tengas miedo, pequeñita», le dijo Sara con su voz más dulce. «Jesús es el Buen Pastor y no se olvida de ninguna oveja».", "Sara cerró los ojos y oró: «Señor, ayúdanos a llevarla a casa». Luego llamó a sus amigos. Santiago apartó las ramas con cuidado, Mateo encontró con su lupa las huellas que llevaban al corral, María acarició a la ovejita para calmarla y Simón saltó adelante mostrando el camino.", "Al llegar, Don Elías, el pastor, corrió a abrazar a su ovejita. «¡La busqué toda la tarde!», dijo con lágrimas de alegría. «Así de feliz se pone Jesús cuando encuentra a alguien que estaba perdido», le explicó Santiago a Sara.", "Esa noche, Sara le contó todo a Zanahoria antes de dormir: «¿Sabes? Si alguna vez me pierdo, Jesús también me va a buscar». Y se durmió sonriendo, con el corazón lleno de fe."], "verso": "Gozaos conmigo, porque he encontrado mi oveja que se había perdido.", "cita": "Lucas 15:6", "pregunta": "¿Cómo crees que se sintió la ovejita cuando la encontraron? ¿Cómo te cuida Jesús a ti?"}, "simon": {"titulo": "Simón y la travesura de Zanahoria", "p": ["Simón es un gatito que no puede quedarse quieto. Salta, trepa, da volteretas… ¡y siempre tiene una idea divertida! Ese día, su idea fue jugar con Zanahoria, el peluche favorito de Sara, sin pedirlo prestado.", "Corrió con Zanahoria en la boca, saltó a una rama, después a otra más alta, y otra más… hasta que miró hacia abajo y se dio cuenta de que estaba muy, muy alto. «¡Miau!», maulló asustado. No sabía cómo bajar.", "Sara llegó llorando: «¡Zanahoria no está!». Pero cuando vio a Simón temblando en la rama, se le olvidó el enojo. «¡Hay que ayudarlo!». Santiago trajo una escalera, Mateo calculó la rama más segura y María abrió los brazos abajo por si acaso.", "Simón bajó con cuidado y dejó a Zanahoria en las manos de Sara. Luego bajó las orejas: «Perdón, Sara. Debí pedírtela». Sara lo abrazó: «Te perdono, Simón. ¡Y la próxima vez jugamos los tres juntos!».", "Desde ese día, Simón sigue siendo travieso, pero aprendió algo importante: entre amigos se pide permiso, se pide perdón y se perdona. Y como siempre dice él: «¡Miau! Aprender también puede ser divertido»."], "verso": "Sed benignos unos con otros, misericordiosos, perdonándoos unos a otros.", "cita": "Efesios 4:32", "pregunta": "¿Alguna vez tuviste que pedir perdón o perdonar a alguien? ¿Cómo te sentiste después?"}};
 const ORDEN_PERS=["santiago","maria","mateo","sara","simon"];
 const VIVO={santiago:"#1E7BFF",maria:"#FF3D8B",mateo:"#7A4DFF",sara:"#FF7A1A",simon:"#16B3A3"};
-function guia(k,msg){const p=PERS[k];return `<div class="guia" style="--pc:${VIVO[k]}"><button class="guia-fig" data-act="verPersonaje" data-id="${k}" aria-label="Conocer a ${esc(p.nombre)}"><img src="img/${k}-full.webp" alt="" loading="lazy"></button><div class="bubble"><b>${esc(p.nombre)} · ${esc(p.titulo)}</b><p>${msg}</p></div></div>`;}
+let GUIAS_ANT=new Set(),GUIAS_NUE=new Set();try{GUIAS_ANT=new Set(JSON.parse(localStorage.getItem("epk_guias")||"[]"));}catch(e){}
+function guiaVista(key){if(GUIAS_NUE.has(key)||GUIAS_ANT.has(key))return;GUIAS_NUE.add(key);try{localStorage.setItem("epk_guias",JSON.stringify([...GUIAS_ANT,...GUIAS_NUE].slice(-200)));}catch(e){}}
+function guia(k,msg){const p=PERS[k];const key=k+"|"+String(msg).slice(0,48);
+  if(GUIAS_ANT.has(key))return `<details class="guia-mini" style="--pc:${VIVO[k]}"><summary><img src="img/${k}-full.webp" alt="" loading="lazy"><span><b>${esc(p.nombre)}</b> tiene un consejo</span><span class="gm-mas" aria-hidden="true">💬</span></summary><p>${msg}</p></details>`;
+  guiaVista(key);return `<div class="guia" style="--pc:${VIVO[k]}"><button class="guia-fig" data-act="verPersonaje" data-id="${k}" aria-label="Conocer a ${esc(p.nombre)}"><img src="img/${k}-full.webp" alt="" loading="lazy"></button><div class="bubble"><b>${esc(p.nombre)} · ${esc(p.titulo)}</b><p>${msg}</p></div></div>`;}
 function figura(k,cls){return `<img class="${cls||"fig"}" src="img/${k}-full.webp" alt="${esc(PERS[k].nombre)}" loading="lazy">`;}
 function pandilla(){
   return `<section class="pandilla"><img class="pandilla-foto" src="img/grupo.webp" alt="Santiago, Mateo, Sara, María y el gatito Simón en un jardín" width="1536" height="1024"><div class="pandilla-txt"><img class="pandilla-logo" src="img/logo-kids.webp" alt="Eterno Pacto Kids" width="160" height="193"><p>Aprendiendo juntos las maravillas de Dios</p></div></section>`;}
-function tiraPersonajes(){
-  return `<section class="tira-wrap"><div class="sec-h"><h2 class="marca">Conoce a la pandilla</h2><button class="link-btn" data-act="verPersonaje" data-id="">Ver todos ›</button></div>
-  <div class="tira">${ORDEN_PERS.map((k,i)=>{const p=PERS[k];return `<button class="pj-card" style="--pc:${VIVO[k]};--rot:${[-3,2,-1.5,3,-2][i]}deg" data-act="verPersonaje" data-id="${k}"><span class="pj-blob"></span>${figura(k)}<b>${esc(p.nombre)}</b><span>${esc(p.titulo)}</span></button>`;}).join("")}</div></section>`;}
 function vPersonajes(){
   const k=ui.personaje;
   if(!k||!PERS[k]){
@@ -999,12 +1003,12 @@ async function formNino(n){
 }
 function formBono(n){
   openForm({titulo:"Puntos para "+(n.nombre||""),ayuda:"Usa un número negativo para descontar.",datos:{pts:5,fecha:hoyISO()},
-    campos:[{k:"pts",label:"Estrellas",type:"number",req:true},{k:"motivo",label:"Motivo",req:true,ph:"Ayudó a ordenar la sala"},{k:"fecha",label:"Fecha",type:"date"}],
+    campos:[{k:"pts",label:"Puntos",type:"number",req:true},{k:"motivo",label:"Motivo",req:true,ph:"Ayudó a ordenar la sala"},{k:"fecha",label:"Fecha",type:"date"}],
     onSave:async v=>{await guardar("bonos",null,{...v,ninoId:n.id});}});
 }
 function formPremio(p){
   openForm({titulo:p?"Editar premio":"Nuevo premio",datos:p||{costo:100},
-    campos:[{k:"nombre",label:"Premio",req:true,ph:"Biblia ilustrada"},{k:"costo",label:"Estrellas necesarias",type:"number",req:true},{k:"desc",label:"Descripción",type:"textarea"}],
+    campos:[{k:"nombre",label:"Premio",req:true,ph:"Biblia ilustrada"},{k:"costo",label:"Puntos necesarios",type:"number",req:true},{k:"desc",label:"Descripción",type:"textarea"}],
     onSave:async v=>{await guardar("premios",p&&p.id,{...(p||{}),...v});},
     onDelete:p?async()=>borrar("premios",p.id):null});
 }
@@ -1159,7 +1163,7 @@ function pintarVisor(){let el=$("#visorF");const al=VF&&S.fotos.find(a=>a.id===V
     <p class="visor-pie">Fotos solo para las familias de la congregación. Por favor no las compartas fuera.</p>`;
   pintarFotos(el);const sig=fs[(VF.i+1)%fs.length];if(sig&&window.EPK&&EPK.fotos)EPK.fotos.urls([sig.p]).catch(()=>{});}
 
-function vInicio(){
+function vInicio(){cargarAlbum();
   const c=claseActual();let out=vCheckin()+(window.EPKX&&ed()?EPKX.avisoPermiso():"")+avisoClase()+pandilla()+tarjetaHijosInicio()+vCumples()+guia("sara","¡Hola! Jesús ama a los niños. Mira el Diario mural: la clase de este domingo, la del domingo pasado, el versículo y los avisos.");
   const dm=vDiarioMural();
   if(!c&&!ed()&&!dm){
@@ -1168,13 +1172,13 @@ function vInicio(){
     out+=dm;
     if(!c&&ed())out+=emptyBox("Aún no hay clases publicadas","Agrega la lección del próximo domingo o usa una de la Biblioteca de clases. Las familias la verán en el Diario mural.",`<div class="row"><button class="btn" data-act="nuevaClase">Agregar clase</button><button class="btn line" data-act="irBiblioClases">Biblioteca de clases</button></div>`);
   }
-  out+=tiraPersonajes();
-  const r=ranking().slice(0,3);
-  out+=`<section class="card"><div class="sec-h"><h2>Puntos de la clase</h2><button class="link-btn" data-act="tab" data-tab="puntos">Ver todos</button></div>`;
-  out+=r.length?`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`
-    :`<p class="muted">${ed()?"Agrega a los niños en la pestaña Puntos para empezar a contar estrellas.":"Pronto verás aquí a los niños con más estrellas."}</p>`;
-  out+=`</section>`;
-  out+=`<section class="card" style="--pc:var(--p-simon)"><div class="sec-h"><h2>⭐ Álbum bíblico</h2><button class="link-btn" data-act="irInsignias">Ver mi álbum</button></div><p class="muted">Todo lo que haces suma puntos: venir a clases con tu versículo y tu Biblia, los desafíos diarios y leer en la app. Cambia tus puntos por sobres de 5 láminas de 100 personajes bíblicos, cambia tus repetidas en el mercado del foro y ¡completa el álbum!</p><div class="row"><button class="btn sm" data-act="irInsignias">Abrir mi álbum</button></div></section>`;
+  if(ed()){const r=ranking().slice(0,3);
+    out+=`<section class="card"><div class="sec-h"><h2>Puntos de la clase</h2><button class="link-btn" data-act="verRanking">Ver todos</button></div><p class="small muted">🔒 Solo lo ve el equipo.</p>`;
+    out+=r.length?`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b></span><span class="stars">${I.starFill}${x.p.ganados||0}</span></button>`).join("")}</div>`
+      :`<p class="muted">Agrega a los niños en Premios → Puntos de la clase para empezar a contar puntos.</p>`;
+    out+=`</section>`;}
+  else if(S.ninos.length)out+=metaClase();
+  out+=`<section class="card ini-album" style="--pc:var(--p-simon)"><img src="img/album/portada.webp" alt="" loading="lazy"><div><h2>⭐ Álbum bíblico</h2><p class="muted small">Junta puntos, cámbialos por sobres de 5 láminas y completa los 100 personajes. Las repetidas se cambian en el mercado del foro.</p><button class="btn sm" data-act="irInsignias">${ed()?"Ver los álbumes":"Abrir mi álbum"}</button></div></section>`;
   return out;
 }
 
@@ -1210,8 +1214,8 @@ function vClase(c){
   if(ex.length)out+=`<div class="grid2">${ex.join("")}</div>`;
   const cnt=k=>(a[k]||[]).length;
   if(ed()){
-    out+=`<section class="card"><div class="sec-h"><h2>Registro del domingo</h2><button class="btn ghost sm" data-act="criterios">⚙️ Criterios</button></div><p class="muted small">${MARCASf().map(([k,n,i])=>`${i} ${esc(n)} ${PTS[k]}`).join(" · ")} estrellas</p>`;
-    if(!S.ninos.length)out+=`<p class="muted">Primero agrega a los niños en la pestaña Puntos.</p>`;
+    out+=`<section class="card"><div class="sec-h"><h2>Registro del domingo</h2><button class="btn ghost sm" data-act="criterios">⚙️ Criterios</button></div><p class="muted small">${MARCASf().map(([k,n,i])=>`${i} ${esc(n)} ${PTS[k]}`).join(" · ")} puntos</p>`;
+    if(!S.ninos.length)out+=`<p class="muted">Primero agrega a los niños en Premios → Puntos de la clase.</p>`;
     else out+=`<div class="reg"><table><thead><tr><th>Niño/a</th>${MARCASf().map(m=>`<th title="${esc(m[1])}"><span aria-hidden="true">${m[2]}</span><br>${esc(m[1])}</th>`).join("")}</tr></thead><tbody>${[...S.ninos].sort(byNombre).map(n=>`<tr><td>${esc(n.nombre)}</td>${MARCASf().map(([k,l])=>{const on=(a[k]||[]).includes(n.id);return `<td><button class="tog" aria-pressed="${on}" aria-label="${esc(l+": "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="${k}">${I.check}</button></td>`;}).join("")}</tr>`).join("")}</tbody></table></div>
     <p class="muted small">Asistieron ${cnt("presente")} de ${S.ninos.length} · ${cnt("versiculo")} recitaron el versículo</p>`;
     out+=`</section>`;
@@ -1221,21 +1225,31 @@ function vClase(c){
   return out;
 }
 
+function metaClase(){const r=ranking();const tot=r.reduce((a,x)=>a+Math.max(0,x.p.ganados||0),0);const lam=Object.values(ALB.estado).reduce((a,e)=>a+(e.pegadas||0),0);
+  return `<section class="meta-clase"><span class="mc-ico" aria-hidden="true">🙌</span><div><p class="eyebrow">Meta de la clase</p><h3>¡Entre todos llevamos ${tot.toLocaleString("es-CL")} puntos${lam?` y ${lam} láminas pegadas`:""}!</h3><p class="small">Cada domingo, cada desafío y cada lectura suman para todo el grupo.</p></div></section>`;}
+function vPremios(){const pr=[...S.premios].sort((a,b)=>(a.costo||0)-(b.costo||0));const hs=ed()?[]:misHijos();const p=puntos();
+  let out=`<div class="sec-h"><h2>🎁 Premios</h2>${ed()?`<button class="btn sm" data-act="nuevoPremio">Nuevo premio</button>`:""}</div>
+  <p class="muted small">Los puntos se pueden cambiar por <b>sobres de láminas</b> (en ⭐ Álbum bíblico) o por estos premios, que entrega el maestro en la clase.</p>`;
+  if(hs.length)out+=`<div class="row">${hs.map(n=>`<span class="pill">${esc(albNom(n.id))}: ⭐ ${(p[n.id]||{}).total||0} puntos</span>`).join("")}</div>`;
+  out+=pr.length?`<div class="prizes">${pr.map(x=>`<${ed()?"button":"div"} class="prize" ${ed()?`data-act="editPremio" data-id="${esc(x.id)}"`:""}><span class="stars">${I.starFill}${Number(x.costo)||0}</span><b>${esc(x.nombre)}</b>${x.desc?`<span class="muted small">${esc(x.desc)}</span>`:""}</${ed()?"button":"div"}>`).join("")}</div>`
+    :`<p class="muted">${ed()?"Define premios que los niños pueden canjear con sus puntos.":"Pronto se anunciarán los premios."}</p>`;
+  return out;}
+function vRanking(){const r=ranking();const max=Math.max(1,...r.map(x=>x.p.ganados||0));
+  let out=`<div class="sec-h"><h2>Puntos de la clase</h2><button class="btn sm" data-act="nuevoNino">Agregar niño/a</button></div>
+  <div class="note">Cada domingo se ganan puntos: ${MARCASf().map(([k,n,i])=>`${i} ${esc(n.toLowerCase())} <b>${PTS[k]}</b>`).join(" · ")}. También suman los desafíos diarios (hasta 10 por día) y leer en la app. <button class="link-btn" data-act="criterios">⚙️ Cambiar puntos</button></div>
+  <p class="small muted">🔒 Esta tabla solo la ve el equipo. Las familias ven el avance de sus hijos y la meta de toda la clase.</p>`;
+  if(!r.length)return out+emptyBox("Aún no hay niños en la clase","Agrega a cada niño con su nombre y apoderado. Luego marca la asistencia en cada clase.","");
+  return out+`<div class="list">${r.map((x,i)=>{const e=ALB.estado[x.n.id];return `<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b><span class="bar" style="margin-top:6px"><i style="width:${Math.max(0,x.p.ganados||0)/max*100}%"></i></span><span class="small muted">${x.p.ganados||0} ganados · ${x.p.total} para gastar${e?` · ${e.pegadas}/100 láminas`:""}</span></span><span class="stars">${I.starFill}${x.p.total}</span></button>`;}).join("")}</div>`;}
 function vPuntos(){cargarAlbum();
   if(ui.nino){const n=S.ninos.find(x=>x.id===ui.nino);if(n)return vNino(n);ui.nino=null;}
-  const segP=`<div class="seg" role="group" aria-label="Puntos"><button aria-pressed="${ui.pts==="hijos"}" data-act="ptsSeg" data-k="hijos">Mis hijos</button><button aria-pressed="${ui.pts==="estrellas"}" data-act="ptsSeg" data-k="estrellas">Estrellas y premios</button><button aria-pressed="${ui.pts==="retos"}" data-act="ptsSeg" data-k="retos">Retos entre familias${window.EPKX&&EPKX.pendientes()?` <span class="pill sun">${EPKX.pendientes()}</span>`:""}</button></div>`;
-  if(ui.pts==="hijos")return guia("simon","¡Miau! Aquí ves cómo van tus hijos en la clase: asistencia, estrellas y logros de cada domingo.")+segP+vMisHijos();
+  const segs=(ed()?[["clase","📋 Puntos de la clase"]]:[["hijos","👦 Mis hijos"]]).concat([["album","⭐ Álbum bíblico"],["premios","🎁 Premios"],["retos","🏁 Retos"]]);
+  if(!segs.some(x=>x[0]===ui.pts))ui.pts=segs[0][0];
+  const segP=`<div class="seg" role="group" aria-label="Premios">${segs.map(([k,n])=>`<button aria-pressed="${ui.pts===k}" data-act="ptsSeg" data-k="${k}">${n}${k==="retos"&&window.EPKX&&EPKX.pendientes()?` <span class="pill sun">${EPKX.pendientes()}</span>`:""}</button>`).join("")}</div>`;
+  if(ui.pts==="album")return guia("simon","¡Miau! Todo lo que haces suma puntos: venir a clases con tu versículo y tu Biblia, los desafíos diarios y leer en la app. Cambia tus puntos por sobres de 5 láminas y completa el álbum. ¡Las repetidas se cambian en el mercado del foro!")+segP+vAlbum();
   if(ui.pts==="retos")return guia("simon","¡Miau! ¿Quién lee más en familia? Reta a otra familia o únete a los desafíos de la congregación.")+segP+(window.EPKX?EPKX.vRetos():"");
-  const r=ranking();const max=Math.max(1,...r.map(x=>x.p.total));
-  let out=guia("simon","¡Miau! Todo suma puntos: venir a clases, el versículo, la Biblia, los desafíos diarios y leer en la app. Cámbialos por sobres para tu álbum bíblico o por premios.")+segP+`<div class="sec-h"><h2>Estrellas y premios</h2>${ed()?`<button class="btn sm" data-act="nuevoNino">Agregar niño/a</button>`:""}</div>
-  <div class="note">Cada domingo se ganan puntos: ${MARCASf().map(([k,n,i])=>`${i} ${esc(n.toLowerCase())} <b>${PTS[k]}</b>`).join(" · ")}.</div>`;
-  if(!r.length)out+=emptyBox("Aún no hay niños en la clase",ed()?"Agrega a cada niño con su nombre y apoderado. Luego marca la asistencia en cada clase.":"Los maestros agregarán a los niños de la clase.","");
-  else out+=`<div class="list">${r.map((x,i)=>`<button class="item" data-act="verNino" data-id="${esc(x.n.id)}"><span class="rank">${i+1}</span>${avatar(x.n)}<span class="grow"><b>${esc(x.n.nombre)}</b><span class="bar" style="margin-top:6px"><i style="width:${Math.max(0,x.p.total)/max*100}%"></i></span></span><span class="stars">${I.starFill}${x.p.total}</span></button>`).join("")}</div>`;
-  out+=`<div class="sec-h" style="margin-top:6px"><h2>Premios</h2>${ed()?`<button class="btn ghost sm" data-act="nuevoPremio">Nuevo premio</button>`:""}</div>`;
-  const pr=[...S.premios].sort((a,b)=>(a.costo||0)-(b.costo||0));
-  out+=pr.length?`<div class="prizes">${pr.map(p=>`<${ed()?"button":"div"} class="prize" ${ed()?`data-act="editPremio" data-id="${esc(p.id)}"`:""}><span class="stars">${I.starFill}${Number(p.costo)||0}</span><b>${esc(p.nombre)}</b>${p.desc?`<span class="muted small">${esc(p.desc)}</span>`:""}</${ed()?"button":"div"}>`).join("")}</div>`
-    :`<p class="muted">${ed()?"Define premios que los niños pueden canjear con sus estrellas.":"Pronto se anunciarán los premios."}</p>`;
-  return out;
+  if(ui.pts==="premios")return guia("simon","¡Miau! Junta puntos y cámbialos por sobres para tu álbum o por los premios de la clase.")+segP+vPremios();
+  if(ui.pts==="clase")return guia("simon","¡Miau! Aquí está el avance de cada niño. Toca a uno para darle puntos, regalarle un sobre o ver su ficha.")+segP+vRanking();
+  return guia("simon","¡Miau! Aquí ves cómo van tus hijos: puntos, asistencia y logros de cada domingo.")+segP+metaClase()+vMisHijos();
 }
 
 function vNino(n){
@@ -1252,7 +1266,7 @@ function vNino(n){
   if(ed()){const obs=[];const notas=[];clasesOrd().forEach(c=>{const l=S.libro[c.id];if(!l)return;const nt=l.notas&&l.notas[n.id];if(nt!=null)notas.push(Number(nt));const o=l.obs&&l.obs[n.id];if(o||nt!=null)obs.push({c,o,nt});});
     const prom=notas.length?(notas.reduce((a,b)=>a+b,0)/notas.length):null;
     out+=`<section class="card"><div class="sec-h"><p class="eyebrow">Libro de clases (solo equipo)</p>${prom!=null?`<span class="pill ${prom<4?"":"leaf"}">Promedio ${fmtNota(prom)}</span>`:""}</div>${obs.length?`<div class="list">${obs.slice(0,12).map(x=>`<div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><span style="min-width:0"><b>${esc(x.c.titulo)}</b><span class="muted small" style="display:block">${esc(fLarga(x.c.fecha))}${x.o?" · "+esc(x.o):""}</span></span>${x.nt!=null?`<span class="pill ${Number(x.nt)<4?"":"sun"}">${fmtNota(x.nt)}</span>`:""}</div>`).join("")}</div>`:`<p class="muted small">Sin notas ni observaciones todavía.</p>`}</section>`;}
-  out+=`<section class="card"><p class="eyebrow">Puntos extra y canjes</p>${bonos.length?`<div class="list">${bonos.map(b=>`<div class="row between" style="flex-wrap:nowrap"><span style="min-width:0"><b>${esc(b.motivo)}</b><span class="muted small" style="display:block">${esc(fLarga(b.fecha))}</span></span><span class="row" style="flex-wrap:nowrap"><span class="pill ${Number(b.pts)<0?"":"sun"}">${Number(b.pts)>0?"+":""}${Number(b.pts)||0}</span>${ed()?`<button class="copy" data-act="borrarBono" data-id="${esc(b.id)}">Quitar</button>`:""}</span></div>`).join("")}</div>`:`<p class="muted small">Sin estrellas extra todavía.</p>`}</section>`;
+  out+=`<section class="card"><p class="eyebrow">Puntos extra y canjes</p>${bonos.length?`<div class="list">${bonos.map(b=>`<div class="row between" style="flex-wrap:nowrap"><span style="min-width:0"><b>${esc(b.motivo)}</b><span class="muted small" style="display:block">${esc(fLarga(b.fecha))}</span></span><span class="row" style="flex-wrap:nowrap"><span class="pill ${Number(b.pts)<0?"":"sun"}">${Number(b.pts)>0?"+":""}${Number(b.pts)||0}</span>${ed()?`<button class="copy" data-act="borrarBono" data-id="${esc(b.id)}">Quitar</button>`:""}</span></div>`).join("")}</div>`:`<p class="muted small">Sin puntos extra todavía.</p>`}</section>`;
   return out;
 }
 
@@ -1358,8 +1372,10 @@ function vParabola(p){const k=p.sala||"parabolas",s=salaDe(k);
 }
 
 function vMas(){
-  const seg=[["personajes","Personajes"],["foro","Foro"],["familia","Mi familia"],["muro","Muro"],["compromiso","Compromiso"],["links","Enlaces"],["contactos","Contactos"],["info","Acerca"]];
-  let out=(ui.mas==="personajes"?"":guia("maria","El amor también se demuestra. Aquí están los avisos, nuestro compromiso, los personajes y a quién escribir."))+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
+  if(ui.mas==="familia"){ui.tab="biblia";ui.bib="familia";return vBiblia();}
+  if(ui.mas==="personajes")ui.mas="info";if(ui.mas==="links")ui.mas="contactos";
+  const seg=[["muro","📌 Avisos"],["foro","💬 Foro"],["compromiso","✍️ Compromiso"],["contactos","📇 Contactos y enlaces"],["info","ℹ️ La pandilla y la app"]];
+  let out=(ui.mas==="info"&&ui.personaje?"":guia("maria","El amor también se demuestra. Aquí está nuestra comunidad: los avisos del equipo, el foro con el mercado de láminas, nuestro compromiso y a quién escribir."))+`<div class="seg" role="group" aria-label="Secciones">${seg.map(s=>`<button aria-pressed="${ui.mas===s[0]}" data-act="mas" data-k="${s[0]}">${s[1]}</button>`).join("")}</div>`;
   if(ui.mas==="foro"){out+=`<div class="seg" role="group" aria-label="Foro"><button aria-pressed="${ui.foroSec!=="mercado"}" data-act="foroSec" data-k="foro">💬 Conversaciones</button><button aria-pressed="${ui.foroSec==="mercado"}" data-act="foroSec" data-k="mercado">🛒 Mercado de láminas</button></div>`;
     out+=ui.foroSec==="mercado"?vMercadoForo():(window.EPKX?EPKX.vForo():`<p class="muted">El foro no está disponible.</p>`);}
   else if(ui.mas==="familia"){out+=vFamilia();}
@@ -1376,25 +1392,24 @@ function vMas(){
       <p class="firma">${esc(c.firma||"")}</p>${c.firmantes?`<p class="small muted">Firmaron: ${esc(c.firmantes)}</p>`:""}<span class="stamp">Firmada por los niños</span>
       ${ed()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="editCompromiso" data-id="${esc(c.id)}">Editar carta</button>`:""}</article>`;
     });
-  }else if(ui.mas==="personajes"){
-    out+=vPersonajes();
   }else if(ui.mas==="muro"){
     out+=`<div class="sec-h"><h2>Muro de la clase</h2>${ed()?`<button class="btn sm" data-act="nuevoPost">Publicar</button>`:""}</div><p class="muted small">Avisos, fotos de actividades descritas y mensajes del equipo. Solo los maestros publican, así el muro es un espacio cuidado para los niños.</p>`;
     const ps=[...S.muro].sort((a,b)=>((b.destacado==="si")-(a.destacado==="si"))||((a.fecha||"")<(b.fecha||"")?1:-1));
     out+=ps.length?ps.map(p=>`<article class="post${p.destacado==="si"?" dest":""}"><p>${esc(p.texto)}</p><div class="row between"><span class="muted small">${esc(p.autor||"")} · ${esc(p.fecha?new Date(p.fecha).toLocaleDateString("es-CL",{day:"numeric",month:"long"}):"")}</span>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</div></article>`).join("")
       :emptyBox("Sin publicaciones",ed()?"Publica el primer aviso para las familias.":"Aquí verás los avisos del equipo de maestros.","");
-  }else if(ui.mas==="links"){
-    out+=recoLogos()+`<div class="sec-h"><h2>Enlaces de interés</h2>${ed()?`<button class="btn sm" data-act="nuevoLink">Agregar</button>`:""}</div>`;
-    out+=S.links.length?`<div class="list">${[...S.links].sort((a,b)=>String(a.titulo).localeCompare(String(b.titulo),"es")).map(l=>`<div class="item"><span class="grow"><b>${safeUrl(l.url)?`<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener noreferrer">${esc(l.titulo)} ↗</a>`:esc(l.titulo)}</b>${l.desc?`<span class="muted small">${esc(l.desc)}</span>`:""}</span>${ed()?`<button class="copy" data-act="editLink" data-id="${esc(l.id)}">Editar</button>`:""}</div>`).join("")}</div>`
-      :emptyBox("Sin enlaces",ed()?"Agrega Biblias en línea, videos o canales de alabanza para niños.":"Pronto habrá recursos recomendados.","");
   }else if(ui.mas==="contactos"){
     out+=`<div class="sec-h"><h2>Contactos</h2>${ed()?`<button class="btn sm" data-act="nuevoContacto">Agregar</button>`:""}</div>`;
     out+=S.contactos.length?`<div class="list">${[...S.contactos].sort(byNombre).map(c=>`<div class="card" style="gap:6px"><div class="row between"><span><b>${esc(c.nombre)}</b>${c.rol?` <span class="pill">${esc(c.rol)}</span>`:""}</span>${ed()?`<button class="copy" data-act="editContacto" data-id="${esc(c.id)}">Editar</button>`:""}</div>${c.telefono?`<div class="row"><span class="sel">${esc(c.telefono)}</span><button class="copy" data-act="copiar" data-v="${esc(c.telefono)}">Copiar</button></div>`:""}${c.correo?`<div class="row"><span class="sel">${esc(c.correo)}</span><button class="copy" data-act="copiar" data-v="${esc(c.correo)}">Copiar</button></div>`:""}</div>`).join("")}</div>`
       :emptyBox("Sin contactos",ed()?"Agrega a pastores y maestros para que las familias sepan a quién escribir.":"Pronto estarán los contactos del equipo.","");
+
+    out+=recoLogos()+`<div class="sec-h"><h2>Enlaces de interés</h2>${ed()?`<button class="btn sm" data-act="nuevoLink">Agregar</button>`:""}</div>`;
+    out+=S.links.length?`<div class="list">${[...S.links].sort((a,b)=>String(a.titulo).localeCompare(String(b.titulo),"es")).map(l=>`<div class="item"><span class="grow"><b>${safeUrl(l.url)?`<a href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener noreferrer">${esc(l.titulo)} ↗</a>`:esc(l.titulo)}</b>${l.desc?`<span class="muted small">${esc(l.desc)}</span>`:""}</span>${ed()?`<button class="copy" data-act="editLink" data-id="${esc(l.id)}">Editar</button>`:""}</div>`).join("")}</div>`
+      :emptyBox("Sin enlaces",ed()?"Agrega Biblias en línea, videos o canales de alabanza para niños.":"Pronto habrá recursos recomendados.","");
   }else{
+    out+=vPersonajes();if(ui.personaje)return out;
     out+=`<section class="card"><h2>Acerca de Eterno Pacto Kids</h2><p>App de seguimiento de la escuela dominical${S.config.iglesia?" de "+esc(S.config.iglesia):""}.${S.config.horario?" Clases: "+esc(S.config.horario)+".":""}</p>
     ${adm()?`<button class="btn ghost sm" style="align-self:flex-start" data-act="config">Editar datos de la congregación</button>`:""}</section>
-    <section class="card"><p class="eyebrow">Quién puede hacer qué</p><p class="small"><b>Administradores</b>: invitan a las familias y nombran maestros (menú ☰ → Miembros y roles). Con el botón del ojo, arriba, pueden ver la app como maestro o como niño.</p><p class="small"><b>Maestros</b>: crean clases, marcan asistencia, ponen notas, dan estrellas, suben material y publican en el muro.</p><p class="small"><b>Familias</b>: ven la clase, el versículo, los cuentos y las estrellas, y leen la Biblia con su perfil. Los niños usan la app junto a sus padres.</p></section>
+    <section class="card"><p class="eyebrow">Quién puede hacer qué</p><p class="small"><b>Administradores</b>: invitan a las familias y nombran maestros (menú ☰ → Miembros y roles). Con el botón del ojo, arriba, pueden ver la app como maestro o como niño.</p><p class="small"><b>Maestros</b>: crean clases, marcan asistencia, ponen notas, dan puntos y sobres, suben material y publican en el muro.</p><p class="small"><b>Familias</b>: ven la clase, el versículo, los cuentos, sus puntos y su álbum, y leen la Biblia con su perfil. Los niños usan la app junto a sus padres.</p></section>
     <section class="card"><p class="eyebrow">Cuidado de los niños</p><p class="small">Guarda solo nombre y apoderado. No publiques apellidos, direcciones, teléfonos de niños ni datos de salud. El muro es solo para el equipo de maestros.</p></section>
     <section class="card"><p class="eyebrow">Contacto</p><p class="small">¿Dudas, sugerencias o quieres sumar a tu congregación? Escríbenos a <a href="mailto:contacto@eternopactokids.cl">contacto@eternopactokids.cl</a>.</p><p class="small"><a href="/privacidad">Privacidad</a> · <a href="/terminos">Términos</a></p></section>`;
   }
@@ -1412,7 +1427,7 @@ function vLibro(){
   let out=`<section class="card"><div class="sec-h"><h2>Libro de clases</h2><span class="pill">Solo equipo</span></div>
   <label class="small" for="libroSel"><b>Domingo</b></label><select class="selclase" id="libroSel">${cs.map(x=>`<option value="${esc(x.id)}" ${x.id===c.id?"selected":""}>${esc(fLarga(x.fecha))} · ${esc(x.titulo)}</option>`).join("")}</select>
   <p class="muted small">Marca asistencia, Biblia, participación y tarea; el desafío diario se llena solo cuando las familias juegan (lunes a sábado). Pon la nota (1,0 a 7,0) y una observación. Se guarda solo al salir de cada casilla.</p><button class="btn ghost sm" data-act="libroCampos">✏️ Nombrar los 2 campos libres</button>`;
-  if(!ninos.length)out+=`<p class="muted">Agrega a los niños en la pestaña Puntos.</p>`;
+  if(!ninos.length)out+=`<p class="muted">Agrega a los niños en Premios → Puntos de la clase.</p>`;
   else out+=`<div class="reg libro"><table><thead><tr><th>Niño/a</th><th>Asistió</th><th>Trajo Biblia</th><th>Participa</th><th title="Desafíos diarios hechos en la semana (lunes a sábado)">Desafío diario</th><th>Tarea</th><th>${esc(campos[0])}</th><th>${esc(campos[1])}</th><th>Nota</th><th style="text-align:left">Observación</th><th title="La familia ve esta observación en Mis hijos">👪 Familia</th></tr></thead><tbody>${ninos.map(n=>{const on=(a.presente||[]).includes(n.id);const nt=l.notas&&l.notas[n.id];const o=(l.obs&&l.obs[n.id])||"";
     const tg=(k,t)=>{const v=(a[k]||[]).includes(n.id);return `<td><button class="tog" aria-pressed="${v}" aria-label="${esc(t+": "+n.nombre)}" data-act="marcar" data-clase="${esc(c.id)}" data-nino="${esc(n.id)}" data-k="${k}">${I.check}</button></td>`;};
     const dd=hechosDD(c.id,n.id);const nd=Object.keys(dd).length;
@@ -1596,7 +1611,7 @@ function lector(){return perfil(BIB.actual);}
 const ROLES=["Papá","Mamá","Hijo","Hija","Abuelo","Abuela","Tío","Tía","Otro"];
 function avatarP(n,cls){const L=perfil(n);return `<span class="avatar ${cls||""}" style="background:${COLORS[(L&&L.color)||0]}">${inicial(n)}</span>`;}
 function lectorBar(msg){const ns=Object.keys(BIB.lectores);
-  return `<section class="card" style="gap:8px"><div class="sec-h"><b>${lector()?"Leyendo: "+esc(BIB.actual):"¿Quién está leyendo?"}</b><span class="row"><button class="link-btn" data-act="nuevoLector">Agregar</button><button class="link-btn" data-act="irFamilia">Mi familia</button></span></div>${ns.length?`<div class="chips">${ns.map(n=>`<button class="chip" aria-pressed="${n===BIB.actual}" data-act="lector" data-n="${esc(n)}">${esc(n)}</button>`).join("")}</div>`:`<p class="muted small">${esc(msg||"Crea el perfil de cada integrante de la familia para ganar insignias con cada lectura.")}</p>`}</section>`;}
+  return `<section class="card" style="gap:8px"><div class="sec-h"><b>${lector()?"Leyendo: "+esc(BIB.actual):"¿Quién está leyendo?"}</b><span class="row"><button class="link-btn" data-act="nuevoLector">Agregar</button><button class="link-btn" data-act="irFamilia">Lectores</button></span></div>${ns.length?`<div class="chips">${ns.map(n=>`<button class="chip" aria-pressed="${n===BIB.actual}" data-act="lector" data-n="${esc(n)}">${esc(n)}</button>`).join("")}</div>`:`<p class="muted small">${esc(msg||"Crea el perfil de cada integrante de la familia para ganar insignias con cada lectura.")}</p>`}</section>`;}
 const selRef={libro:"Génesis",cap:1,vers:""};
 function refActual(){return selRef.libro+" "+selRef.cap+(selRef.vers?":"+selRef.vers:"");}
 /* ---------- app recomendada ---------- */
@@ -1719,11 +1734,12 @@ function vLeerBiblia(){
 function textoSel(){const d=BCACHE[BR.ver+"/"+CODES[BR.li]];const vs=(d&&d[String(BR.cap)])||[];return vs.filter(x=>BR.sel.has(x[0])).map(x=>x[1]).join(" ");}
 function vBiblia(){
   if(ui.bib==="biblicos"){ui.bib="museo";ui.sala="personajes";ui.subsala="fichas";}
-  const seg=[["leer","Leer la Biblia"],["lectura","Mi lectura"],["album","⭐ Álbum bíblico"],["museo","🏛️ Museo Bíblico"]];
+  if(ui.bib==="album"||ui.bib==="insignias"){ui.tab="puntos";ui.pts="album";ui.bib="leer";return vPuntos();}
+  const seg=[["leer","📖 Leer la Biblia"],["lectura","✅ Mi lectura"],["familia","👪 Lectores"],["museo","🏛️ Museo Bíblico"]];
   let out=`<div class="seg" role="group" aria-label="Biblia">${seg.map(x=>`<button aria-pressed="${ui.bib===x[0]}" data-act="bib" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
   if(ui.bib==="museo")return out+vMuseo();
   if(ui.bib==="biblicos")return guia("santiago","La sabiduría de Dios es para todos. Conoce a los héroes de la Biblia y descubre en qué versículos aparecen.")+out+vBiblicos();
-  if(ui.bib==="album"||ui.bib==="insignias")return guia("simon","¡Miau! Todo lo que haces suma puntos: venir a clases, el versículo, la Biblia, los desafíos y leer en la app. Cambia tus puntos por sobres de 5 láminas y completa el álbum. ¡Las repetidas se cambian en el mercado!")+out+vAlbum();
+  if(ui.bib==="familia")return guia("maria","Cada integrante de la familia tiene su perfil de lectura. Cuando leen juntos, la lectura se suma a todos, y los niños ganan puntos para sus sobres.")+out+vFamilia();
   if(ui.bib==="leer")return guia("mateo","Cada pregunta nos ayuda a conocer mejor a Dios. Elige un libro y un capítulo, escúchalo, marca tus versículos y compara versiones.")+out+vLeerBiblia();
   return guia("mateo","¡Vamos a explorar la Biblia! Marca cada historia que leas y guarda tus versículos favoritos.")+out+vLectura();
 }
@@ -1747,7 +1763,7 @@ function vLectura(){
   out+=lectorBar("Agrega el nombre del niño o niña. Su avance se guarda en este celular o computador.");
   const L=lector();if(!L)return out;
   const hechas=PLAN.filter((_,i)=>L.plan[i]).length;const caps=Object.keys(L.leidos).length;
-  out+=`<section class="stats"><div class="stat"><span class="muted small">Historias leídas</span><b>${hechas}<span class="muted small"> / ${PLAN.length}</span></b></div><div class="stat"><span class="muted small">Cuentos leídos</span><b>${nK(L.cuentos)}</b></div><div class="stat"><span class="muted small">Insignias</span><b>${nK(L.insignias)}<span class="muted small"> / ${INSIGNIAS.length}</span></b></div><div class="stat"><span class="muted small">Capítulos marcados</span><b>${caps}</b></div><div class="stat"><span class="muted small">Versículos favoritos</span><b>${L.favs.length}</b></div></section>
+  out+=`<section class="stats"><div class="stat"><span class="muted small">Historias leídas</span><b>${hechas}<span class="muted small"> / ${PLAN.length}</span></b></div><div class="stat"><span class="muted small">Cuentos leídos</span><b>${nK(L.cuentos)}</b></div><div class="stat"><span class="muted small">Versículos guardados</span><b>${(L.favs||[]).length}</b></div><div class="stat"><span class="muted small">Capítulos marcados</span><b>${caps}</b></div><div class="stat"><span class="muted small">Versículos favoritos</span><b>${L.favs.length}</b></div></section>
   <div class="prog"><i style="width:${hechas/PLAN.length*100}%;background:var(--sun)"></i></div>`;
   out+=`<section class="card plan"><div class="sec-h"><h2>Mis 30 historias</h2><span class="muted small">Toca ✓ cuando la termines</span></div><div class="list">${PLAN.map((p,i)=>`<div class="item ${L.plan[i]?"done":""}"><span class="numchip">${i+1}</span><span class="grow"><b>${esc(p[0])}</b><span class="muted small">${esc(p[1])}</span></span><button class="btn line sm" data-act="leerRef" data-ref="${esc(p[1])}">Leer</button><button class="tog" aria-pressed="${!!L.plan[i]}" aria-label="${esc("Leída: "+p[0])}" data-act="planTog" data-i="${i}">${I.check}</button></div>`).join("")}</div></section>`;
   out+=`<section class="card"><div class="sec-h"><h2>Mis versículos marcados</h2><button class="btn sm" data-act="nuevoFav">Marcar versículo</button></div>
@@ -1759,49 +1775,11 @@ function vLectura(){
 }
 function actualizarLinks(){const ref=refActual();const set=(id,v)=>{const a=$(id);if(a)a.href=bgUrl(ref,v);};set("#lnkNTV","NTV");set("#lnkNVI","NVI");set("#lnkCMP","NTV;NVI");const r=$("#bibRef");if(r)r.textContent=ref;}
 
-/* ---------- insignias ---------- */
+/* ---------- avance de lectura ---------- */
 const nK=o=>Object.keys(o||{}).length;
 function semanaDe(iso){const d=fecha(String(iso).slice(0,10));if(!d)return "";const t=new Date(d);t.setDate(t.getDate()-((t.getDay()+6)%7));return t.toISOString().slice(0,10);}
 function semanas(L){const ds=[...Object.values(L.cuentos),...Object.values(L.plan),...Object.values(L.mats),...Object.values(L.leidos)].map(semanaDe).filter(Boolean);return new Set(ds).size;}
 const totalLect=L=>nK(L.cuentos)+nK(L.plan)+nK(L.mats)+nK(L.leidos);
-const INSIGNIAS=[
- {id:"semilla",p:"sara",n:"Semillita de fe",d:"Completa tu primera lectura",meta:1,v:totalLect},
- {id:"gatito",p:"simon",n:"Gatito lector",d:"Lee 5 cuentos",meta:5,v:L=>nK(L.cuentos)},
- {id:"explorador",p:"mateo",n:"Explorador curioso",d:"Lee 5 historias de la Biblia",meta:5,v:L=>nK(L.plan)},
- {id:"versiculos",p:"sara",n:"Guardián del versículo",d:"Marca 5 versículos favoritos",meta:5,v:L=>L.favs.length},
- {id:"creativa",p:"maria",n:"Manos creativas",d:"Completa 3 actividades",meta:3,v:L=>nK(L.mats)},
- {id:"museo",p:"mateo",n:"Visitante del museo",d:"Visita 10 cuadros del museo",meta:10,v:L=>nK(L.museo)},
- {id:"amigos",p:"maria",n:"Amigo de los héroes",d:"Conoce a 8 personajes bíblicos",meta:8,v:L=>nK(L.biblicos)},
- {id:"memorion",p:"santiago",n:"Memorión",d:"Practica 4 versículos de la semana",meta:4,v:L=>nK(L.versos)},
- {id:"detective",p:"mateo",n:"Detective de cuentos",d:"Responde las preguntas de 5 cuentos",meta:5,v:L=>nK(L.quiz)},
- {id:"constante",p:"simon",n:"Constante como Simón",d:"Lee en 4 semanas distintas",meta:4,v:semanas},
- {id:"investigador",p:"mateo",n:"Gran investigador",d:"Lee 15 historias de la Biblia",meta:15,v:L=>nK(L.plan)},
- {id:"acrobata",p:"simon",n:"Acróbata de cuentos",d:"Lee 25 cuentos",meta:25,v:L=>nK(L.cuentos)},
- {id:"guia",p:"santiago",n:"Guía de la Palabra",d:"Lee las 30 historias de la Biblia",meta:30,v:L=>nK(L.plan)},
- {id:"sabio",p:"santiago",n:"Sabio lector",d:"Lee 50 cuentos",meta:50,v:L=>nK(L.cuentos)},
- {id:"cien",p:"maria",n:"Corazón de 100 cuentos",d:"Lee los 100 cuentos",meta:100,v:L=>nK(L.cuentos)}
-];
-function revisarInsignias(){return;}
-function revisarInsigniasViejo(nombres){nombres=nombres||[BIB.actual];const nuevas=[];
-  nombres.forEach(n=>{const L=perfil(n);if(!L)return;INSIGNIAS.forEach(b=>{if(!L.insignias[b.id]&&b.v(L)>=b.meta){L.insignias[b.id]=hoyISO();nuevas.push({...b,quien:n});}});});
-  bibSave();if(nuevas.length)celebrar(nuevas);}
-function celebrar(lista){const b=lista[0];const p=PERS[b.p];const cols=["var(--sun)","var(--p-sara)","var(--accent)","var(--leaf)","var(--p-santiago)"];
-  const conf=Array.from({length:28},(_,i)=>`<i style="left:${(i*37)%100}%;background:${cols[i%cols.length]};animation-delay:${(i%7)*0.12}s"></i>`).join("");
-  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet celebra" style="--pc:var(--p-${b.p})"><div class="confeti">${conf}</div>
-  <p class="eyebrow">¡Nueva insignia${lista.length>1?" (+"+(lista.length-1)+" más)":""}!</p><img class="cel-fig" src="img/${b.p}-full.webp" alt="${esc(p.nombre)}"><h2>${esc(b.n)}</h2><p>${esc(b.d)}. ¡Muy bien, ${esc(b.quien||BIB.actual)}!</p><p class="muted">${esc(p.nombre)} dice: “${esc(p.frase)}”</p>
-  <button class="btn" id="celOk">¡Genial!</button></div></div>`;
-  const close=()=>{$("#sheetRoot").innerHTML="";if(lista.length>1)celebrar(lista.slice(1));};
-  $("#celOk").onclick=close;$("#celOk").focus();}
-function vInsignias(){
-  let out=lectorBar();const L=lector();if(!L)return out;
-  const ok=INSIGNIAS.filter(b=>L.insignias[b.id]).length;
-  out+=`<div class="sec-h"><h2>Insignias de ${esc(BIB.actual)}</h2><span class="pill sun">${ok} de ${INSIGNIAS.length}</span></div>
-  <div class="badges">${INSIGNIAS.map(b=>{const on=!!L.insignias[b.id];const v=Math.min(b.v(L),b.meta);
-    return `<div class="badge ${on?"on":"off"}" style="--pc:var(--p-${b.p})"><span class="medal"><img src="img/${b.p}-full.webp" alt="" loading="lazy">${on?`<span class="star">${I.starFill}</span>`:""}</span><b>${esc(b.n)}</b><span class="muted small">${esc(b.d)}</span>${on?`<span class="pill sun">Ganada ${esc(fCorta(L.insignias[b.id]).dia+" "+fCorta(L.insignias[b.id]).mes)}</span>`:`<span class="bar"><i style="width:${v/b.meta*100}%"></i></span><span class="muted small">${v} de ${b.meta}</span>`}</div>`;}).join("")}</div>
-  <p class="muted small">Las insignias se guardan en este dispositivo. ¡Muéstraselas a tu maestro el domingo!</p>`;
-  return out;
-}
-
 /* ---------- lector de cuentos y materiales ---------- */
 let PDFLIB=null;const RD={doc:null,page:1,total:0,tok:0,onDone:null};
 function cargarScript(src){return new Promise((res,rej)=>{const sc=document.createElement("script");sc.src=src;sc.onload=res;sc.onerror=rej;document.head.appendChild(sc);});}
@@ -1827,7 +1805,7 @@ async function abrirLector({titulo,asset,archivo,url,onDone}){
   }catch(e){body.innerHTML=`<div class="empty"><h3>No se pudo abrir aquí</h3><p class="muted">Ábrelo en otra pestaña y vuelve para marcarlo como leído.</p><a class="btn" href="${esc(blobUrl(asset))}" target="_blank" rel="noopener noreferrer">Abrir el archivo</a></div>`;RD.total=1;RD.page=1;navLector();}
 }
 function cerrarLector(){$("#reader").hidden=true;document.body.style.overflow="";RD.tok++;RD.doc=null;$("#rBody").innerHTML="";}
-function acreditar(col,id,nombres){nombres.forEach(n=>{const L=perfil(n);if(L)L[col][id]=hoyISO();});bibSave();ptsActividad(col,id,nombres);toast(nombres.length>1?"¡Leyeron juntos! Lectura sumada a "+nombres.length:"¡Lectura completada!");render();revisarInsignias(nombres);}
+function acreditar(col,id,nombres){nombres.forEach(n=>{const L=perfil(n);if(L)L[col][id]=hoyISO();});bibSave();ptsActividad(col,id,nombres);toast(nombres.length>1?"¡Leyeron juntos! Lectura sumada a "+nombres.length:"¡Lectura completada!");render();}
 function quienesLeyeron(alFinal){const ns=Object.keys(BIB.lectores);
   if(ns.length<=1){alFinal(ns.length?[BIB.actual||ns[0]]:[]);return;}
   $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><form class="sheet" id="qForm"><h2>¿Quiénes leyeron?</h2><p class="muted small">Si leyeron en familia, marca a todos: cada uno suma la lectura para sus insignias.</p>
@@ -1839,11 +1817,12 @@ function terminar(col,id){cerrarLector();
   if(!Object.keys(BIB.lectores).length){toast("Crea tu perfil para sumar tus lecturas");formLector(null,()=>acreditar(col,id,[BIB.actual]));return;}
   quienesLeyeron(ns=>acreditar(col,id,ns));}
 function formLector(nombre,despues){const L=nombre?perfil(nombre):null;
-  openForm({titulo:L?"Editar perfil":"Nuevo integrante",ayuda:"Cada integrante tiene su propio avance. Se guarda en este dispositivo.",datos:L?{n:nombre,rol:L.rol||"Otro",color:String(L.color||0)}:{rol:Object.keys(BIB.lectores).length?"Hijo":"Papá",color:String(Object.keys(BIB.lectores).length%6)},
-    campos:[{k:"n",label:"Nombre",req:true,ph:"Sofía"},{k:"rol",label:"En la familia es",type:"select",opts:ROLES.map(r=>[r,r])},{k:"color",label:"Color",type:"select",opts:[["0","Azul"],["1","Verde"],["2","Rojo"],["3","Morado"],["4","Naranjo"],["5","Turquesa"]]}],
+  openForm({titulo:L?"Editar perfil":"Nuevo integrante",ayuda:"Cada integrante tiene su propio avance. Se guarda en este dispositivo.",datos:L?{n:nombre,rol:L.rol||"Otro",color:String(L.color||0),nino:L.nino||""}:{rol:Object.keys(BIB.lectores).length?"Hijo":"Papá",color:String(Object.keys(BIB.lectores).length%6)},
+    campos:[{k:"n",label:"Nombre",req:true,ph:"Sofía"},{k:"rol",label:"En la familia es",type:"select",opts:ROLES.map(r=>[r,r])},{k:"color",label:"Color",type:"select",opts:[["0","Azul"],["1","Verde"],["2","Rojo"],["3","Morado"],["4","Naranjo"],["5","Turquesa"]]}]
+      .concat(misHijos().length?[{k:"nino",label:"¿Es uno de tus hijos de la clase? (sus lecturas le suman puntos para el álbum)",type:"select",opts:[["","No / es un adulto"]].concat(misHijos().map(h=>[h.id,h.nombre]))}]:[]),
     guardarTxt:L?"Guardar":"Agregar",
     onSave:async v=>{const n=v.n.slice(0,30);if(n!==nombre&&BIB.lectores[n])throw "Ya existe alguien con ese nombre.";
-      const datos=L||{};datos.rol=v.rol;datos.color=Number(v.color)||0;if(nombre&&n!==nombre){delete BIB.lectores[nombre];if(BIB.actual===nombre)BIB.actual=n;}
+      const datos=L||{};datos.rol=v.rol;datos.color=Number(v.color)||0;if("nino" in v)datos.nino=v.nino||null;if(nombre&&n!==nombre){delete BIB.lectores[nombre];if(BIB.actual===nombre)BIB.actual=n;}
       BIB.lectores[n]=datos;if(!L)BIB.actual=n;bibSave();render();if(despues)setTimeout(despues,50);},
     onDelete:L?async()=>{delete BIB.lectores[nombre];if(BIB.actual===nombre)BIB.actual=Object.keys(BIB.lectores)[0]||"";bibSave();render();}:null});}
 
@@ -1861,20 +1840,20 @@ function vFamilia(){
   let out=(window.EPKX?EPKX.vAvisos():"")+`<section class="card"><div class="sec-h"><h2>${fam?esc(fam):"Mi familia"}</h2><button class="btn ghost sm" data-act="nombreFamilia">${fam?"Cambiar nombre":"Ponerle nombre"}</button></div>
   <p class="muted">Papá, mamá, abuelos e hijos: cada uno con su perfil y su avance. Cuando lean juntos, la lectura se suma a todos, y los niños ganan puntos para sus sobres.</p></section>`;
   if(!ns.length)return out+emptyBox("Crea el primer perfil","Empieza por ti y luego agrega a cada integrante de la familia.",`<button class="btn" data-act="nuevoLector">Agregar integrante</button>`);
-  let tot=0,ins=0;
-  out+=`<div class="sec-h"><h2>Integrantes</h2><button class="btn sm" data-act="nuevoLector">Agregar integrante</button></div><div class="fam">${ns.map(n=>{const L=perfil(n);tot+=totalLect(L);ins+=nK(L.insignias);const yo=n===BIB.actual;
+  let tot=0;
+  out+=`<div class="sec-h"><h2>Integrantes</h2><button class="btn sm" data-act="nuevoLector">Agregar integrante</button></div><div class="fam">${ns.map(n=>{const L=perfil(n);tot+=totalLect(L);const yo=n===BIB.actual;
     return `<div class="miembro ${yo?"yo":""}"><div class="row" style="flex-wrap:nowrap">${avatarP(n)}<span style="min-width:0;flex:1"><b>${esc(n)}</b><span class="muted small" style="display:block">${esc(L.rol||"")}</span></span>${yo?`<span class="pill leaf">Usando ahora</span>`:""}</div>
-    <p class="small muted">${nK(L.cuentos)} cuentos · ${nK(L.plan)} historias</p>
+    <p class="small muted">${nK(L.cuentos)} cuentos · ${nK(L.plan)} historias</p>${(()=>{const h=L.nino&&S.ninos.find(x=>x.id===L.nino);return h?`<p class="small">⭐ Suma puntos para <b>${esc(h.nombre)}</b></p>`:(misHijos().length&&L.nino===undefined&&/^(Hij)/.test(L.rol||"")?`<p class="small" style="color:var(--rose)">Edita el perfil y elige a cuál de tus hijos corresponde para que sume puntos.</p>`:"");})()}
     <div class="row">${yo?"":`<button class="btn sm" data-act="lector" data-n="${esc(n)}">Soy yo</button>`}<button class="btn line sm" data-act="editLector" data-n="${esc(n)}">Editar</button></div></div>`;}).join("")}</div>`;
   const meta=Math.max(50,Math.ceil((tot+1)/50)*50);
-  out+=`<section class="card" style="--pc:var(--p-maria)"><p class="eyebrow">Meta familiar</p><h2>${tot} lecturas en familia</h2><div class="prog"><i style="width:${Math.min(100,tot/meta*100)}%;background:var(--p-maria)"></i></div><p class="muted small">Próxima meta: ${meta} lecturas · ${ins} insignias entre todos</p></section>`;
+  out+=`<section class="card" style="--pc:var(--p-maria)"><p class="eyebrow">Meta familiar</p><h2>${tot} lecturas en familia</h2><div class="prog"><i style="width:${Math.min(100,tot/meta*100)}%;background:var(--p-maria)"></i></div><p class="muted small">Próxima meta: ${meta} lecturas en familia</p></section>`;
   out+=`<section class="card"><p class="eyebrow">En todos tus dispositivos</p><p class="small">Los perfiles y el avance se guardan en la cuenta de tu familia. Para verlos en el celular de mamá, papá o los abuelos, ingresen con el mismo correo y contraseña.</p></section>`;
   return out;
 }
 
 /* ---------- render ---------- */
 function renderTabs(){
-  const t=[["inicio","Inicio",I.home],["clases","Clases",I.book],["recursos","Recursos",I.folder],["puntos","Puntos",I.star],["biblia","Biblia",I.bible],["mas","Más",I.more]];
+  const t=[["inicio","Inicio",I.home],["clases","Clases",I.book],["recursos","Recursos",I.folder],["puntos","Premios",I.star],["biblia","Biblia",I.bible],["mas","Comunidad",I.more]];
   const nueva=!!claseNueva();
   $("#tabs").innerHTML=t.map(x=>`<button class="tab" data-act="tab" data-tab="${x[0]}" ${ui.tab===x[0]?'aria-current="page"':""}>${x[2]}<span>${x[1]}</span>${x[0]==="clases"&&nueva?`<i class="tab-dot" aria-label="Hay una clase nueva"></i>`:""}</button>`).join("");
 }
@@ -1953,9 +1932,9 @@ function vArchivosClase(c){const as=archivosDe(c);if(!as.length)return "";
 
 /* ---------- criterios de evaluación ---------- */
 function formCriterios(){const cr=criterios();const datos={};cr.forEach(c=>{datos["p_"+c.k]=c.p;datos["on_"+c.k]=c.on?"si":"no";});
-  const campos=[];cr.forEach(c=>{campos.push({k:"on_"+c.k,label:c.ico+" "+c.n,type:"select",opts:[["si","Se evalúa"],["no","No se evalúa"]]},{k:"p_"+c.k,label:"Estrellas por "+c.n.toLowerCase(),type:"number"});});
-  campos.push({k:"nuevo",label:"Agregar otro criterio (opcional)",ph:"Ej: Trajo ofrenda, Llegó puntual"},{k:"nuevoP",label:"Estrellas del nuevo criterio",type:"number"});
-  openForm({titulo:"Criterios de evaluación",ayuda:"Elige qué se marca cada domingo y cuántas estrellas da. Vale para toda tu congregación.",datos:{...datos,nuevoP:5},campos,
+  const campos=[];cr.forEach(c=>{campos.push({k:"on_"+c.k,label:c.ico+" "+c.n,type:"select",opts:[["si","Se evalúa"],["no","No se evalúa"]]},{k:"p_"+c.k,label:"Puntos por "+c.n.toLowerCase(),type:"number"});});
+  campos.push({k:"nuevo",label:"Agregar otro criterio (opcional)",ph:"Ej: Trajo ofrenda, Llegó puntual"},{k:"nuevoP",label:"Puntos del nuevo criterio",type:"number"});
+  openForm({titulo:"Criterios de evaluación",ayuda:"Elige qué se marca cada domingo y cuántos puntos da. Vale para toda tu congregación.",datos:{...datos,nuevoP:5},campos,
     onSave:async v=>{const lista=cr.map(c=>({k:c.k,n:c.n,ico:c.ico,p:Math.max(0,Number(v["p_"+c.k])||0),on:v["on_"+c.k]!=="no"}));
       if(v.nuevo){const n=String(v.nuevo).slice(0,30);lista.push({k:"x_"+Date.now().toString(36),n,ico:"⭐",p:Math.max(0,Number(v.nuevoP)||0),on:true});}
       const ref=db.doc("config/general");await enqueue(ref.path,()=>ref.set({...S.config,criterios:lista}));}});}
@@ -1973,7 +1952,7 @@ async function vincularHijo(cod){cod=String(cod||"").toUpperCase().replace(/[^A-
 function resumenMes(n,ini,fin){const cr=criterios().filter(c=>c.on);const cl=S.clases.filter(c=>(c.fecha||"")>=ini&&(c.fecha||"")<=fin&&S.asistencia[c.id]);
   const r={clases:cl.length};cr.forEach(c=>r[c.k]=cl.filter(x=>(S.asistencia[x.id][c.k]||[]).includes(n.id)).length);return r;}
 function vMisHijos(){const hs=misHijos();cargarObsFamilia();
-  let out=`<section class="card mh-vincular"><h2>Mis hijos en la clase</h2><p class="muted small">Aquí ves la asistencia, las estrellas y los logros de tus hijos cada domingo. Pídele al maestro el código de tu hijo para vincularlo a tu familia.</p>
+  let out=`<section class="card mh-vincular"><h2>Mis hijos en la clase</h2><p class="muted small">Aquí ves la asistencia, los puntos y los logros de tus hijos cada domingo. Pídele al maestro el código de tu hijo para vincularlo a tu familia.</p>
     <form class="row" id="fVincular"><input class="inp-cod" id="codHijo" maxlength="8" placeholder="Código: ABC123" aria-label="Código del niño" autocomplete="off"><button class="btn sm" type="submit">Vincular</button></form></section>`;
   if(!hs.length)return out;
   const hoy=hoyISO();const ini=hoy.slice(0,8)+"01";const mes=new Date(hoy+"T12:00:00").toLocaleDateString("es-CL",{month:"long"});
@@ -1982,13 +1961,13 @@ function vMisHijos(){const hs=misHijos();cargarObsFamilia();
   return hs.map((n,i)=>{const pt=p[n.id]||{total:0};const rm=resumenMes(n,ini,hoy);const tot=clasesOrd().filter(c=>S.asistencia[c.id]).length;
     const sig=pr.find(x=>(Number(x.costo)||0)>pt.total);const obs=(OBSF||[]).filter(o=>o.nino_id===n.id).slice(0,5);
     return `<section class="mh" style="--pc:${["#1E7BFF","#FF3D8B","#7A4DFF","#FF7A1A","#16B3A3"][i%5]}"><div class="mh-top">${avatar(n,true)}<div class="grow"><h2>${esc(n.nombre)}</h2><p class="small">${tot?`Asistió <b>${pt.presente||0} de ${tot}</b> domingos`:"Aún no hay domingos registrados"}</p></div><span class="stars mh-stars">${I.starFill}${pt.total}</span></div>
-      ${sig?`<div class="mh-premio"><span class="small">Le faltan <b>${(Number(sig.costo)||0)-pt.total} estrellas</b> para: <b>${esc(sig.nombre)}</b></span><span class="bar"><i style="width:${Math.min(100,pt.total/(Number(sig.costo)||1)*100)}%"></i></span></div>`:""}
+      ${sig?`<div class="mh-premio"><span class="small">Le faltan <b>${(Number(sig.costo)||0)-pt.total} puntos</b> para: <b>${esc(sig.nombre)}</b></span><span class="bar"><i style="width:${Math.min(100,pt.total/(Number(sig.costo)||1)*100)}%"></i></span></div>`:""}
       <div class="mh-mes"><p class="eyebrow">Este mes (${esc(mes)})</p><div class="mh-chips">${rm.clases?cr.map(c=>`<span class="mh-chip"><span aria-hidden="true">${c.ico}</span> ${esc(c.n)} <b>${rm[c.k]||0}/${rm.clases}</b></span>`).join(""):`<span class="muted small">Todavía no hay domingos registrados este mes.</span>`}</div></div>
       ${clasesReg.length?`<div class="mh-dom"><p class="eyebrow">Últimos domingos</p>${clasesReg.map(c=>{const a=S.asistencia[c.id];const logros=cr.filter(x=>(a[x.k]||[]).includes(n.id));return `<div class="mh-fila"><span class="small"><b>${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</b> · ${esc(c.titulo)}</span><span class="mh-ico">${logros.length?logros.map(x=>`<span title="${esc(x.n)}">${x.ico}</span>`).join(""):`<span class="muted small">No asistió</span>`}</span></div>`;}).join("")}</div>`:""}
       <div class="mh-fotos"><span class="small">📸 ¿Autorizas que ${esc(n.nombre)} aparezca en las fotos de la clase? <span class="muted">Solo las ven las familias de la congregación.</span></span><div class="row"><button class="btn sm${n.fotos==="si"?"":" line"}" aria-pressed="${n.fotos==="si"}" data-act="permFoto" data-id="${esc(n.id)}" data-si="1">Sí, autorizo</button><button class="btn sm${n.fotos==="no"?"":" line"}" aria-pressed="${n.fotos==="no"}" data-act="permFoto" data-id="${esc(n.id)}" data-si="0">No autorizo</button></div></div>
       ${obs.length?`<div class="mh-obs"><p class="eyebrow">Mensajes del maestro</p>${obs.map(o=>`<p class="small">💬 <b>${esc(fLarga(o.fecha||""))}:</b> ${esc(o.texto)}</p>`).join("")}</div>`:""}</section>`;}).join("")+out.replace('<h2>Mis hijos en la clase</h2>','<h2>¿Tienes otro hijo en la clase?</h2>');}
 function tarjetaHijosInicio(){const hs=misHijos();if(!hs.length)return "";const p=puntos();
-  return `<section class="mh-ini"><p class="eyebrow">Mis hijos en la clase</p><div class="row">${hs.map(n=>`<button class="mh-mini" data-act="verMisHijos">${avatar(n)}<span><b>${esc(n.nombre)}</b><span class="stars small">${I.starFill}${(p[n.id]||{}).total||0}</span></span></button>`).join("")}</div></section>`;}
+  return `<section class="mh-ini"><p class="eyebrow">Mis hijos en la clase</p><div class="row">${hs.map(n=>{const pa=albPorAbrir(n.id);return `<button class="mh-mini" data-act="${pa?"irInsignias":"verMisHijos"}">${avatar(n)}<span><b>${esc(n.nombre)}</b><span class="stars small">${I.starFill}${(p[n.id]||{}).total||0} puntos${pa?` · 🎁 ${pa} ${pa>1?"sobres":"sobre"} por abrir`:""}</span></span></button>`;}).join("")}</div></section>`;}
 
 /* ---------- reprogramar una clase ---------- */
 function formReprogramar(c){openForm({titulo:"Reprogramar: "+(c.titulo||"clase"),ayuda:"Cambia la fecha o cuándo la ven las familias. El contenido de la clase no cambia.",
@@ -2181,7 +2160,7 @@ function albEscuchar(){const sb=albSB();if(!sb||ALB.canal)return;const cid=EPK.c
 /* puntos por actividades de la app: cada lectura/actividad suma al niño que la hizo */
 const albNorm=t=>String(t||"").normalize("NFD").replace(/[̀-ͯ]/g,"").trim().toLowerCase().split(/\s+/)[0]||"";
 async function ptsActividad(tipo,ref,nombres){const sb=albSB();if(!sb||ed())return;const hs=misHijos();if(!hs.length)return;
-  const ids=new Set();(nombres&&nombres.length?nombres:[BIB.actual]).forEach(nm=>{const h=hs.find(x=>albNorm(x.nombre)===albNorm(nm));if(h)ids.add(h.id);else if(hs.length===1)ids.add(hs[0].id);});
+  const ids=new Set();(nombres&&nombres.length?nombres:[BIB.actual]).forEach(nm=>{const L=perfil(nm);const ligado=L&&L.nino&&hs.find(x=>x.id===L.nino);if(L&&L.nino===null)return;const h=ligado||hs.find(x=>albNorm(x.nombre)===albNorm(nm));if(h)ids.add(h.id);else if(hs.length===1&&!(L&&/^(Papá|Mamá|Abuel|Tí)/.test(L.rol||"")))ids.add(hs[0].id);});
   let tot=0;const quien=[];
   for(const id of ids){const {data,error}=await sb.rpc("sumar_actividad",{p_comunidad:EPK.comunidad.id,p_nino:id,p_tipo:tipo,p_ref:String(ref)});if(!error&&data>0){tot+=data;quien.push(albNom(id));}}
   if(tot){setTimeout(()=>toast(`⭐ +${tot} puntos para ${quien.join(" y ")}: ¡júntalos para tus sobres!`),1600);cargarAlbum(true);}}
@@ -2200,7 +2179,7 @@ function albPrevio(){let out="";
   return null;}
 
 function vAlbum(){cargarAlbum();const pre=albPrevio();if(pre!=null)return pre;
-  if(!albNinos().length)return `<section class="card"><h3>👀 Vista previa del álbum</h3><p class="muted small">${ed()?"Aún no hay niños registrados en esta congregación. Cuando los agregues en Puntos, cada uno tendrá su propio álbum.":"Aún no hay un niño vinculado a tu cuenta. Pide al maestro el código para vincular a tu hijo o hija y su álbum aparecerá aquí."} Mientras tanto, puedes hojear el álbum completo.</p></section>`+vAlbLibro(null,true);
+  if(!albNinos().length)return `<section class="card"><h3>👀 Vista previa del álbum</h3><p class="muted small">${ed()?"Aún no hay niños registrados en esta congregación. Cuando los agregues en Premios → Puntos de la clase, cada uno tendrá su propio álbum.":"Aún no hay un niño vinculado a tu cuenta. Pide al maestro el código para vincular a tu hijo o hija y su álbum aparecerá aquí."} Mientras tanto, puedes hojear el álbum completo.</p></section>`+vAlbLibro(null,true);
   const ns=albNinos(),nid=albNinoSel(),e=albEst(nid),pa=albPorAbrir(nid),precio=e.precio||albPrecio(),falta=Math.max(0,precio-e.saldo);
   const recibidas=ALB.inter.filter(t=>t.estado==="pendiente"&&t.para_nino===nid).length;
   const reg=ALB.regalos.find(r=>r.nino_id===nid&&(Date.now()-new Date(r.creado))<14*864e5);
@@ -2325,7 +2304,7 @@ function pintarSobre(){const s=ALB.sobre;if(!s){$("#sheetRoot").innerHTML="";ret
 function albToast(error,ok){if(error){toast(error.message||"No se pudo");return false;}if(ok)toast(ok);return true;}
 async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
   switch(act){
-    case "albNino":ALB.nino=b.dataset.id;ALB.ofrezco=null;if(b.dataset.ver){ALB.vista="album";if(ui.tab!=="biblia"){ui.tab="biblia";ui.bib="album";}}render();break;
+    case "albNino":ALB.nino=b.dataset.id;ALB.ofrezco=null;if(b.dataset.ver){ALB.vista="album";if(!(ui.tab==="puntos"&&ui.pts==="album")){ui.tab="puntos";ui.pts="album";ui.nino=null;}}render();break;
     case "albVista":ALB.vista=b.dataset.k;ALB.ofrezco=null;render();if(ALB.vista==="mercado")setTimeout(()=>{const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;},30);break;
     case "albPag":{const np=b.dataset.p!=null?Number(b.dataset.p):ALB.pag+Number(b.dataset.d);if(np<0||np>=ALB_HOJAS||np===ALB.pag)break;ALB.dir=np>ALB.pag?1:-1;ALB.pag=np;sonidoPagina();render();
       const l=document.getElementById("albLibro");if(l&&l.getBoundingClientRect().top<60)l.scrollIntoView({behavior:"smooth",block:"start"});break;}
@@ -2350,7 +2329,7 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
         <div class="row">${L.biblico?`<button class="btn line sm" data-act="verBiblico" data-id="${esc(L.biblico)}">Ver en Personajes bíblicos</button>`:""}${c>1?`<button class="btn line sm" data-act="albOfrezco" data-n="${n}">Cambiarla</button>`:""}<button class="btn sm" data-act="albCerrarDet">Cerrar</button></div></div></div>`;
       $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});break;}
     case "albCerrarDet":$("#sheetRoot").innerHTML="";break;
-    case "albOfrezco":$("#sheetRoot").innerHTML="";if(ui.tab!=="biblia"){ui.tab="biblia";ui.bib="album";}ALB.vista="repetidas";ALB.ofrezco=Number(b.dataset.n);render();break;
+    case "albOfrezco":$("#sheetRoot").innerHTML="";if(!(ui.tab==="puntos"&&ui.pts==="album")){ui.tab="puntos";ui.pts="album";ui.nino=null;}ALB.vista="repetidas";ALB.ofrezco=Number(b.dataset.n);render();break;
     case "albPedir":{if(!sb)break;const k=b.dataset.k,n=Number(b.dataset.n);b.disabled=true;
       const {error}=await sb.rpc("ofrecer_intercambio",{p_comunidad:EPK.comunidad.id,p_de:nid,p_para:k,p_ofrece:ALB.ofrezco,p_pide:n});
       if(albToast(error,"¡Oferta enviada a "+albNom(k)+"! Te avisamos cuando responda")){ALB.ofrezco=null;ALB.vista="mercado";await cargarAlbum(true);}else b.disabled=false;break;}
@@ -2398,7 +2377,7 @@ function vJuego(c){
 function jvFicha(i){const sig=JV.hue.find(k=>!JV.llenos[k]);if(sig==null)return;
   if(normW(JV.pal[i])===normW(JV.pal[sig])){JV.llenos[sig]=true;if(i!==sig){const a=JV.fichas.indexOf(i),b=JV.fichas.indexOf(sig);JV.fichas[a]=sig;JV.fichas[b]=i;}JV.mal=null;
     if(JV.hue.every(k=>JV.llenos[k])){JV.hecho=true;render();const id=JV.clase;
-      if(!Object.keys(BIB.lectores).length){toast("¡Muy bien! Crea tu perfil en Mi familia para sumar puntos");return;}
+      if(!Object.keys(BIB.lectores).length){toast("¡Muy bien! Crea tu perfil en Biblia → Lectores para sumar puntos");return;}
       quienesLeyeron(ns=>{ns.forEach(n=>{const L=perfil(n);if(L)L.versos[id]=hoyISO();});bibSave();render();ptsActividad("versos",id,ns);});return;}}
   else{JV.err++;JV.mal=i;toast("¡Casi! Esa palabra va más adelante");}
   render();}
@@ -2478,7 +2457,8 @@ document.addEventListener("click",async e=>{
   if(act.startsWith("alb")){accionAlb(act,b);return;}
   switch(act){
     case "tab":if(b.tagName==="A")e.preventDefault();if(VF){VF=null;pintarVisor();}irA(b.dataset.tab);break;
-    case "ptsSeg":ui.pts=b.dataset.k;render();break;
+    case "ptsSeg":ui.pts=b.dataset.k;ui.nino=null;render();break;
+    case "verRanking":ui.tab="puntos";ui.pts="clase";ui.nino=null;render();window.scrollTo(0,0);break;
     case "foroSec":ui.foroSec=b.dataset.k;render();if(ui.foroSec==="mercado")setTimeout(()=>{const el=document.getElementById("albChatList");if(el)el.scrollTop=el.scrollHeight;},30);break;
     case "volver":ui.juego=false;ui.clase=null;ui.nino=null;ui.parabola=null;render();window.scrollTo(0,0);break;
     case "verClase":marcarVista(id);ui.tab="clases";ui.clase=id;render();window.scrollTo(0,0);break;
@@ -2491,7 +2471,7 @@ document.addEventListener("click",async e=>{
     case "museoSala":if(b.classList.contains("puerta")&&!b.classList.contains("abre")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){b.classList.add("abre");try{sonidoPagina();}catch(e){}setTimeout(()=>b.click(),520);break;}ui.tab="biblia";ui.bib="museo";ui.sala=b.dataset.k||null;ui.subsala=null;ui.parabola=null;render();window.scrollTo(0,0);break;
     case "museoSub":ui.subsala=b.dataset.k||null;ui.biblico=null;render();break;
     case "mas":ui.mas=b.dataset.k;ui.personaje=null;render();break;
-    case "verPersonaje":callar();ui.tab="mas";ui.mas="personajes";ui.personaje=id||null;render();window.scrollTo(0,0);break;
+    case "verPersonaje":callar();ui.tab="mas";ui.mas="info";ui.personaje=id||null;render();window.scrollTo(0,0);break;
     case "oirHistoria":oirHistoria(id);break;
     case "nuevoCompromiso":formCompromiso(null);break;
     case "editCompromiso":formCompromiso(find("compromisos"));break;
@@ -2515,7 +2495,7 @@ document.addEventListener("click",async e=>{
     case "lector":BIB.actual=b.dataset.n;bibSave();render();toast("Ahora usa la app: "+b.dataset.n);break;
     case "nuevoLector":formLector();break;
     case "editLector":formLector(b.dataset.n);break;
-    case "irFamilia":ui.tab="mas";ui.mas="familia";render();window.scrollTo(0,0);break;
+    case "irFamilia":ui.tab="biblia";ui.bib="familia";render();window.scrollTo(0,0);break;
     case "nombreFamilia":openForm({titulo:"Nombre de la familia",datos:{n:(BIB.familia&&BIB.familia.nombre)||""},campos:[{k:"n",label:"Nombre",req:true,ph:"Familia Tapia"}],onSave:async v=>{BIB.familia={nombre:v.n.slice(0,40)};bibSave();render();}});break;
     case "copiarFamilia":{const c=codigoFamilia();try{await navigator.clipboard.writeText(c);toast("Código copiado. Pégalo en el otro celular");}catch(err){openForm({titulo:"Código de la familia",ayuda:"Selecciona todo el texto, cópialo y pégalo en el otro celular.",datos:{c},campos:[{k:"c",label:"Código",type:"textarea"}],guardarTxt:"Cerrar",onSave:async()=>{}});}break;}
     case "pegarFamilia":openForm({titulo:"Pegar código de la familia",ayuda:"Pega el código que copiaste en el otro celular.",campos:[{k:"c",label:"Código",type:"textarea",req:true}],guardarTxt:"Unir familia",
@@ -2548,9 +2528,9 @@ document.addEventListener("click",async e=>{
     case "marcarCap":{const L=lector();if(!L)break;const k=selRef.libro+" "+selRef.cap;if(L.leidos[k])delete L.leidos[k];else{L.leidos[k]=new Date().toISOString();toast("Capítulo marcado");ptsActividad("leidos",k,[BIB.actual]);}bibSave();render();break;}
     case "nuevoFav":openForm({titulo:"Marcar versículo",ayuda:"Copia el versículo desde la Biblia y elige un color.",datos:{ref:refActual(),color:"sun"},
       campos:[{k:"ref",label:"Cita",req:true,ph:"Juan 3:16"},{k:"texto",label:"Versículo",type:"textarea",req:true},{k:"color",label:"Color",type:"select",opts:HL.map(h=>[h[0],h[1]])}],
-      onSave:async v=>{const L=lector();if(!L)throw "Primero elige quién está leyendo.";L.favs.unshift({...v,fecha:hoyISO()});bibSave();render();setTimeout(revisarInsignias,50);}});break;
+      onSave:async v=>{const L=lector();if(!L)throw "Primero elige quién está leyendo.";L.favs.unshift({...v,fecha:hoyISO()});bibSave();render();}});break;
     case "borrarFav":{const L=lector();if(!L)break;if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="¿Quitar?";break;}L.favs.splice(Number(b.dataset.i),1);bibSave();render();break;}
-    case "irInsignias":ui.tab="biblia";ui.bib="album";render();window.scrollTo(0,0);break;
+    case "irInsignias":callar();ui.tab="puntos";ui.pts="album";ui.nino=null;ALB.vista="album";try{history.replaceState(null,"","#puntos");}catch(e){}render();window.scrollTo(0,0);break;
     case "irBiblia":ui.tab="biblia";ui.bib="lectura";render();window.scrollTo(0,0);break;
     case "leerRef":{const r=parseRef(b.dataset.ref);if(r)abrirRef(r.li,r.cap,r.v);else window.open(bgUrl(b.dataset.ref,"NTV"),"_blank");break;}
     case "vs":{const v=b.dataset.v;BR.sel.has(v)?BR.sel.delete(v):BR.sel.add(v);render();break;}
@@ -2561,11 +2541,11 @@ document.addEventListener("click",async e=>{
     case "brMover":{const dd=Number(b.dataset.d);let li=BR.li,cap=BR.cap+dd;if(cap<1){li--;if(li<0)break;cap=LIBROS[li][1];}else if(cap>LIBROS[li][1]){li++;if(li>65)break;cap=1;}BR.li=li;BR.cap=cap;BR.sel.clear();window.scrollTo(0,0);cargarCap();break;}
     case "brLeido":{if(!lector()){toast("Crea tu perfil para guardar tu avance");formLector();break;}const k=LIBROS[BR.li][0]+" "+BR.cap;const L=lector();if(L.leidos[k]){delete L.leidos[k];bibSave();render();}else quienesLeyeron(ns=>acreditar("leidos",k,ns));break;}
     case "brMarca":{const L=lector();if(!L){toast("Crea tu perfil para marcar versículos");formLector();break;}const c=b.dataset.c;BR.sel.forEach(v=>{const key=CODES[BR.li]+"."+BR.cap+"."+v;if(c)L.marcas[key]=c;else delete L.marcas[key];});BR.sel.clear();bibSave();render();toast(c?"Versículo marcado":"Color quitado");break;}
-    case "brFav":{const L=lector();if(!L){toast("Crea tu perfil para guardar favoritos");formLector();break;}L.favs.unshift({ref:refSel(),texto:textoSel(),color:"sun",fecha:hoyISO(),ver:VERS[BR.ver]});BR.sel.clear();bibSave();render();toast("Guardado en Mis versículos");revisarInsignias();break;}
+    case "brFav":{const L=lector();if(!L){toast("Crea tu perfil para guardar favoritos");formLector();break;}L.favs.unshift({ref:refSel(),texto:textoSel(),color:"sun",fecha:hoyISO(),ver:VERS[BR.ver]});BR.sel.clear();bibSave();render();toast("Guardado en Mis versículos");break;}
     case "brCopiar":{const t=textoSel()+" ("+refSel()+", "+VERS[BR.ver]+")";try{await navigator.clipboard.writeText(t);toast("Copiado");}catch(err){toast("No se pudo copiar en este dispositivo");}break;}
     case "nuevoBiblico":if(!assets){toast("Solo maestros y administradores pueden agregar personajes");break;}formBiblico(null);break;
     case "editBiblico":formBiblico(find("biblicos"));break;
-    case "verBiblico":{callar();ui.tab="biblia";ui.bib="biblicos";ui.biblico=id||null;if(id){const L=lector();if(L&&!L.biblicos[id]){L.biblicos[id]=hoyISO();bibSave();setTimeout(revisarInsignias,300);}}render();window.scrollTo(0,0);break;}
+    case "verBiblico":{callar();ui.tab="biblia";ui.bib="biblicos";ui.biblico=id||null;if(id){const L=lector();if(L&&!L.biblicos[id]){L.biblicos[id]=hoyISO();bibSave();ptsActividad("biblicos",id,[BIB.actual]);}}render();window.scrollTo(0,0);break;}
     case "vista":ponerVista(b.dataset.k);break;
     case "claseSeg":ui.claseSeg=b.dataset.k;render();break;
     case "rec":ui.rec=b.dataset.k;render();break;
@@ -2582,7 +2562,7 @@ document.addEventListener("click",async e=>{
     case "editMaterial":{const col=b.dataset.col;formMaterial(col,S[col].find(x=>x.id===id));break;}
     case "marcar":marcar(b.dataset.clase,b.dataset.nino,b.dataset.k);break;
     case "canjear":{const p=S.premios.find(x=>x.id===id);const n=S.ninos.find(x=>x.id===b.dataset.nino);if(!p||!n)break;
-      openForm({titulo:"Canjear "+p.nombre,ayuda:`Se descontarán ${Number(p.costo)||0} estrellas a ${n.nombre}.`,campos:[{k:"fecha",label:"Fecha de entrega",type:"date"}],datos:{fecha:hoyISO()},guardarTxt:"Canjear premio",
+      openForm({titulo:"Canjear "+p.nombre,ayuda:`Se descontarán ${Number(p.costo)||0} puntos a ${n.nombre}.`,campos:[{k:"fecha",label:"Fecha de entrega",type:"date"}],datos:{fecha:hoyISO()},guardarTxt:"Canjear premio",
         onSave:async v=>{await guardar("bonos",null,{ninoId:n.id,pts:-(Number(p.costo)||0),motivo:"Canje: "+p.nombre,fecha:v.fecha||hoyISO()});}});break;}
     case "borrarBono":{if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="¿Quitar?";break;}try{await borrar("bonos",id);toast("Quitado");}catch(err){toast(errMsg(err));}break;}
     case "copiar":{const v=b.dataset.v;try{await navigator.clipboard.writeText(v);toast("Copiado");}catch(err){const s=b.previousElementSibling;if(s){const r=document.createRange();r.selectNodeContents(s);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}toast("Texto seleccionado, cópialo manualmente");}break;}
@@ -2592,7 +2572,7 @@ document.addEventListener("submit",e=>{if(e.target&&e.target.id==="fVincular"){e
 document.addEventListener("focusout",()=>{if(renderPend)setTimeout(()=>{if(renderPend)render();},50);});
 window.EPKapp={render,toast,openForm,BIB:()=>BIB};
 $("#menuBtn").onclick=()=>{if(window.EPK)EPK.abrirMenu();};
-$("#perfilBtn").onclick=()=>{ui.tab="mas";ui.mas="familia";render();window.scrollTo(0,0);};
+$("#perfilBtn").onclick=()=>{ui.tab="biblia";ui.bib="familia";render();window.scrollTo(0,0);};
 $("#rClose").onclick=cerrarLector;
 $("#rPrev").onclick=()=>{if(RD.doc&&RD.page>1){RD.page--;pintarPagina();}};
 $("#rNext").onclick=()=>{if(RD.doc&&RD.page<RD.total){RD.page++;pintarPagina();}};

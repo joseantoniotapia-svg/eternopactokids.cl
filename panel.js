@@ -16,7 +16,7 @@
   const ROLN = { admin: "Administrador", maestro: "Maestro", familia: "Familia" };
   const PTS = { presente: 10, versiculo: 15, biblia: 5, tarea: 10 };
   const REGIONES = ["Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"];
-  const COLN = { clases: "Clases", cuentos: "Cuentos", materiales: "Material niños", matprofes: "Material profes", muro: "Muro", biblicos: "Personajes bíblicos", links: "Enlaces", contactos: "Contactos", premios: "Premios", compromisos: "Cartas", parabolas: "Parábolas", ninos: "Niños", asistencia: "Asistencia", bonos: "Estrellas", libro: "Libro de clases", config: "Configuración" };
+  const COLN = { clases: "Clases", cuentos: "Cuentos", materiales: "Material niños", matprofes: "Material profes", muro: "Muro", biblicos: "Personajes bíblicos", links: "Enlaces", contactos: "Contactos", premios: "Premios", compromisos: "Cartas", parabolas: "Parábolas", ninos: "Niños", asistencia: "Asistencia", bonos: "Puntos extra", libro: "Libro de clases", config: "Configuración" };
   const MODERABLES = ["muro", "materiales", "matprofes", "cuentos", "biblicos", "links", "contactos", "clases", "premios", "compromisos", "parabolas"];
 
   const D = { comunidades: [], usuarios: [], docs: [], familias: [], miembros: [], planes: [], excepciones: [], foros: [], mensajes: [], solicitudes: [] };
@@ -215,7 +215,7 @@
       <td><select class="inp" data-rol="${esc(m.user_id)}" aria-label="Rol de ${esc(m.u.nombre || "")}">${["familia", "maestro", "admin"].map((r) => `<option value="${r}" ${r === m.rol ? "selected" : ""}>${ROLN[r]}</option>`).join("")}</select></td>
       <td class="small">${fmtFechaHora(m.u.ultimo_ingreso)}</td><td><button class="btn danger sm" data-quitar="${esc(m.user_id)}">Quitar</button></td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">Sin miembros.</p>`}</section>
     <section class="card"><h2>Niños (${ninos.length}) · ${regs} domingos con registro</h2>
-      ${ninos.length ? `<div class="tbl"><table><thead><tr><th>Niño/a</th><th>Apoderado</th><th class="num">Asistencias</th><th class="num">Versículos</th><th class="num">Biblia</th><th class="num">Tareas</th><th class="num">Material</th><th class="num">Conducta</th><th class="num">Particip.</th><th class="num">Estrellas</th><th class="num">Promedio</th><th>Última observación</th></tr></thead><tbody>
+      ${ninos.length ? `<div class="tbl"><table><thead><tr><th>Niño/a</th><th>Apoderado</th><th class="num">Asistencias</th><th class="num">Versículos</th><th class="num">Biblia</th><th class="num">Tareas</th><th class="num">Material</th><th class="num">Conducta</th><th class="num">Particip.</th><th class="num">Puntos</th><th class="num">Promedio</th><th>Última observación</th></tr></thead><tbody>
       ${ninos.map((n) => `<tr><td><b>${esc(n.nombre)}</b>${n.familia ? ' <span title="Vinculado a su familia">👪</span>' : ""}</td><td>${esc(n.apoderado)}</td><td class="num">${n.presente}${regs ? `<span class="muted small"> / ${regs}</span>` : ""}</td><td class="num">${n.versiculo}</td><td class="num">${n.biblia}</td><td class="num">${n.tarea}</td><td class="num">${n.material}</td><td class="num">${n.conducta}</td><td class="num">${n.participa}</td><td class="num"><b>${n.estrellas}</b></td><td class="num">${n.promedio != null ? `<span class="pill ${n.promedio < 4 ? "bad" : "ok"}">${n.promedio.toFixed(1).replace(".", ",")}</span>` : "–"}</td><td class="small">${esc(n.obs)}</td></tr>`).join("")}
       </tbody></table></div>` : `<p class="empty">Esta congregación aún no inscribe niños.</p>`}</section>
     <section class="card"><h2>Lectura en familia</h2>
@@ -303,7 +303,7 @@
   const ICONOS_MUSEO = [["semilla", "Semilla"], ["oveja", "Oveja"], ["moneda", "Moneda"], ["corazon", "Corazón"], ["camino", "Camino"], ["casa", "Casa"], ["arbol", "Árbol"], ["perla", "Perla"], ["lampara", "Lámpara"], ["talentos", "Talentos"]];
   const FICHA = {
     biblicos: { uno: "personaje", nuevo: "+ Nuevo personaje", vacio: "Aún no hay personajes bíblicos en la biblioteca central.", nombre: (x) => x.nombre || "(sin nombre)", sub: (x) => x.titulo || "",
-      ayuda: "Los personajes aparecen en Biblia → Personajes bíblicos de todas las congregaciones. Los versículos marcan al personaje cuando los niños leen esos pasajes.",
+      ayuda: "Los personajes aparecen en Biblia → Museo Bíblico → Personajes («Fichas con versículos») de todas las congregaciones. Los versículos marcan al personaje cuando los niños leen esos pasajes.",
       campos: [["nombre", "Nombre", "text", "David"], ["titulo", "Cómo lo conocemos", "text", "El pastor que llegó a ser rey"], ["orden", "Orden", "number", ""],
         ["descripcion", "Su historia para niños", "area", "Quién era, qué hizo y qué nos enseña."], ["citasTxt", "Versículos donde aparece (uno por línea)", "area", "1 Samuel 16:13\n1 Samuel 17:45-47\nSalmos 23"]] },
     parabolas: { uno: "cuadro", nuevo: "+ Nueva obra", vacio: "Aún no hay obras del Museo Bíblico en la biblioteca central. Mientras no haya, cada congregación ve las obras de base de cada sala.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
