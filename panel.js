@@ -349,6 +349,7 @@
 
   /* ---------- álbum bíblico: 100 láminas ---------- */
   const LAM_TOTAL = 100;
+  const LAM_SECC = [[1, 22, "Orígenes y Patriarcas"], [23, 28, "Éxodo y conquista"], [29, 38, "Época de los Jueces"], [39, 48, "Reino de Israel"], [49, 63, "Reino dividido y profetas"], [64, 73, "Exilio y regreso"], [74, 96, "Nacimiento y ministerio de Jesús"], [97, 100, "Iglesia primitiva"]];
   const lamId = (n) => "lamina-" + String(n).padStart(3, "0");
   const lamDoc = (n) => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "laminas" && Number(x.data.numero) === Number(n));
   const esVideo = (p) => /\.(mp4|webm)$/i.test(p || "");
@@ -358,14 +359,14 @@
     const pg = ui.subida;
     let out = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
     <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div><span class="pill ${hechas === LAM_TOTAL ? "ok" : ""}">${hechas} de ${LAM_TOTAL} láminas con imagen</span></div>
-    <p class="muted">Las 100 láminas del Álbum bíblico. Los sobres de los niños ya funcionan aunque falten imágenes: mientras tanto se ve una lámina de color con el número y el nombre. Cuando subas la imagen, aparece sola en todos los álbumes.</p>`;
+    <p class="muted">Las 100 láminas del Álbum bíblico, ya con nombre, cita y frase (si aún no aparecen, ejecuta <b>supabase/album_laminas.sql</b>). Los sobres de los niños ya funcionan aunque falten imágenes: mientras tanto se ve una lámina de color con el número y el nombre. Cuando subas la imagen, aparece sola en todos los álbumes.</p>`;
     const d = ui.ficha && lamDoc(ui.ficha);
     if (ui.ficha) return out + editorLamina(Number(ui.ficha), d);
     out += `<label class="drop" id="dropL" for="lFiles"><b>Arrastra aquí varias láminas a la vez</b><span class="muted small">Nombra cada archivo con su número y el personaje, por ejemplo <b>009-Moisés.webp</b> o <b>14 Débora.png</b>: se ubica sola en su casilla. Sirven PNG, JPG, WEBP, GIF animado, MP4 o WEBM de hasta ${MAXMB} MB.</span>
       <input type="file" id="lFiles" multiple accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir láminas para subir</span></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} láminas subidas`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
-    <div class="lam-grid">${Array.from({ length: LAM_TOTAL }, (_, i) => { const n = i + 1, x = lamDoc(n);
-      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m") || `<span class="lam-m vacia">${x && x.data.nombre ? "🖼" : "+"}</span>`}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`;
+    ${LAM_SECC.map(([a, z, t]) => `<h3 class="lam-sec">${esc(t)} <span class="muted small">(${a}–${z})</span></h3><div class="lam-grid">${Array.from({ length: z - a + 1 }, (_, i) => { const n = a + i, x = lamDoc(n);
+      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m") || `<span class="lam-m vacia">${x && x.data.nombre ? "🖼" : "+"}</span>`}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`).join("")}`;
     return out;
   }
   function editorLamina(n, d) {

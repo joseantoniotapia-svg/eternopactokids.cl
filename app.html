@@ -1986,7 +1986,8 @@ function accionDD(act,b){
 }
 
 /* ---------- álbum bíblico: 100 láminas, sobres de 4, intercambio y patio ---------- */
-const ALB_TOTAL=100,ALB_PAG=20;
+const ALB_TOTAL=100;
+const ALB_SECC=[[1,22,"Orígenes y Patriarcas"],[23,28,"Éxodo y conquista"],[29,38,"Época de los Jueces"],[39,48,"Reino de Israel"],[49,63,"Reino dividido y profetas"],[64,73,"Exilio y regreso"],[74,96,"Nacimiento y ministerio de Jesús"],[97,100,"Iglesia primitiva"]];
 const ALB={cargado:false,cargando:false,estado:{},tengo:{},inter:[],chat:[],nino:null,vista:"album",pag:0,ofrezco:null,sub:null,sobre:null};
 const FRASES_ALB=["¿Alguien tiene la N° ?","¡Te la cambio!","¡Me falta poco para llenar la página!","¡Gracias! 😊","¡Qué buena lámina! 🙌","Revisa tus ofertas 📬"];
 const albSB=()=>window.EPK&&EPK.sb&&EPK.comunidad?EPK.sb:null;
@@ -2037,13 +2038,13 @@ function vAlbum(){cargarAlbum();
   if(ALB.vista==="repetidas")return out+vAlbRepetidas(nid);
   if(ALB.vista==="patio")return out+vAlbPatio(nid);
   if(ALB.vista==="curso"&&ed())return out+vAlbCurso();
-  const pags=Math.ceil(ALB_TOTAL/ALB_PAG);ALB.pag=Math.max(0,Math.min(ALB.pag,pags-1));const ini=ALB.pag*ALB_PAG+1,fin=Math.min(ALB_TOTAL,ini+ALB_PAG-1);
+  const pags=ALB_SECC.length;ALB.pag=Math.max(0,Math.min(ALB.pag,pags-1));const [ini,fin,tit]=ALB_SECC[ALB.pag];
   let celdas="";for(let n=ini;n<=fin;n++){const c=albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
   const llenas=Array.from({length:fin-ini+1},(_,i)=>albCant(nid,ini+i)?1:0).reduce((a,b)=>a+b,0);
-  return out+`<section class="alb-pagina"><div class="sec-h"><h3>Página ${ALB.pag+1} · láminas ${ini} a ${fin}</h3><span class="pill${llenas===fin-ini+1?" sun":""}">${llenas}/${fin-ini+1}</span></div>
+  return out+`<section class="alb-pagina"><div class="sec-h"><div><p class="eyebrow">Página ${ALB.pag+1} de ${pags} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div><span class="pill${llenas===fin-ini+1?" sun":""}">${llenas===fin-ini+1?"¡Completa! ":""}${llenas}/${fin-ini+1}</span></div>
     <div class="alb-grid">${celdas}</div>
     <div class="row between"><button class="btn line sm" data-act="albPag" data-d="-1" ${ALB.pag?"":"disabled"}>‹ Anterior</button>
-    <span class="row">${Array.from({length:pags},(_,i)=>`<button class="dd-dot${i===ALB.pag?" hoy":""}" data-act="albPag" data-p="${i}" aria-label="Página ${i+1}">${i+1}</button>`).join("")}</span>
+    <span class="row">${ALB_SECC.map((x,i)=>{const tot=x[1]-x[0]+1,ok=Array.from({length:tot},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);return `<button class="dd-dot${i===ALB.pag?" hoy":""}${ok===tot?" ok":""}" data-act="albPag" data-p="${i}" aria-label="${esc(x[2])}: ${ok} de ${tot}" title="${esc(x[2])}">${ok===tot?"✓":i+1}</button>`;}).join("")}</span>
     <button class="btn line sm" data-act="albPag" data-d="1" ${ALB.pag<pags-1?"":"disabled"}>Siguiente ›</button></div></section>`;}
 
 function vAlbRepetidas(nid){const mias=Object.entries(ALB.tengo[nid]||{}).filter(([,c])=>c>1).map(([n,c])=>[Number(n),c]).sort((a,b)=>a[0]-b[0]);
@@ -2114,7 +2115,7 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
     case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
     case "albCerrarSobre":ALB.sobre=null;pintarSobre();ALB.vista="album";render();break;
     case "albVer":{const n=Number(b.dataset.n),L=albCat(n)||{};const c=albCant(nid,n);
-      $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet alb-det">${laminaHTML(n)}<h2>${esc(L.nombre||"Lámina "+n)}</h2>${L.cita?`<p class="eyebrow">${esc(L.cita)}</p>`:""}${L.frase?`<p>${esc(L.frase)}</p>`:""}
+      $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet alb-det">${laminaHTML(n)}<p class="eyebrow">N° ${n}${L.seccion?" · "+esc(L.seccion):""}</p><h2>${esc(L.nombre||"Lámina "+n)}</h2>${L.cita?`<p class="eyebrow">${esc(L.cita)}</p>`:""}${L.frase?`<p>${esc(L.frase)}</p>`:""}
         <p class="small muted">${c>1?`La tienes ${c} veces: ${c-1} para cambiar.`:"Pegada en tu álbum."}</p>
         <div class="row">${L.biblico?`<button class="btn line sm" data-act="verBiblico" data-id="${esc(L.biblico)}">Conocer su historia</button>`:""}${c>1?`<button class="btn line sm" data-act="albOfrezco" data-n="${n}">Cambiarla</button>`:""}<button class="btn sm" data-act="albCerrarDet">Cerrar</button></div></div></div>`;
       $("#sheetBg").addEventListener("click",e=>{if(e.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});break;}
