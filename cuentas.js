@@ -254,7 +254,7 @@
         msg("Listo. Si el correo tiene una cuenta, te llegará el enlace en unos minutos.", true);
       });
     } else {
-      marco(`<h1>Bienvenidos</h1><p class="ac-sub">La escuela dominical en casa: clases, cuentos, la Biblia y las insignias de cada niño.</p>
+      marco(`<h1>Bienvenidos</h1><p class="ac-sub">La escuela dominical en casa: clases, cuentos, la Biblia y el álbum bíblico de cada niño.</p>
       <form id="acForm" novalidate><label for="acEmail">Correo</label><input id="acEmail" type="email" autocomplete="email" required>
       <label for="acPass">Contraseña</label><input id="acPass" type="password" autocomplete="current-password" required>
       <p id="acMsg" class="ac-msg" hidden></p><button type="submit" class="ac-btn">Ingresar</button></form>
