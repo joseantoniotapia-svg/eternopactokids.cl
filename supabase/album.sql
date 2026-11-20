@@ -6,7 +6,7 @@
 --   · Todo suma PUNTOS: asistencia y criterios del domingo (con el valor que fije
 --     cada congregación), estrellas extra del maestro, desafíos diarios y
 --     actividades de la app (cuentos 5, historias 5, versículos 5, quiz 5,
---     material 3, museo 3, personajes 3, capítulos 2; máximo 40 al día).
+--     material 3, museo 3, personajes 3, línea de tiempo 3, capítulos 2; máximo 40 al día).
 --   · El niño cambia puntos por sobres cuando quiera (precio en config/general
 --     → precioSobre, 50 puntos por defecto).
 --   · El maestro también puede regalar sobres (con motivo).
@@ -244,7 +244,7 @@ declare v_pts int; v_hoy int;
 begin
   if not public.nino_mio(p_comunidad, p_nino) then return 0; end if;
   v_pts := case p_tipo when 'cuentos' then 5 when 'plan' then 5 when 'versos' then 5 when 'quiz' then 5
-                       when 'mats' then 3 when 'museo' then 3 when 'biblicos' then 3 when 'leidos' then 2 else 0 end;
+                       when 'mats' then 3 when 'museo' then 3 when 'biblicos' then 3 when 'linea' then 3 when 'leidos' then 2 else 0 end;
   if v_pts = 0 or p_ref is null or char_length(p_ref) > 120 then return 0; end if;
   select coalesce(sum(pts), 0) into v_hoy from public.album_actividad where comunidad_id = p_comunidad and nino_id = p_nino and fecha = current_date;
   if v_hoy >= 40 then return 0; end if;

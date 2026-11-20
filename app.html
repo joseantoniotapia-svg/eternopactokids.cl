@@ -346,6 +346,72 @@ button.item:hover{border-color:var(--accent)}
 .guia-mini{border-radius:16px;background:var(--surface);border:2px solid var(--pc);padding:4px 10px;align-self:flex-start;max-width:100%}.guia-mini summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none;font-size:.88rem}.guia-mini summary::-webkit-details-marker{display:none}.guia-mini img{width:30px;height:30px;object-fit:cover;object-position:top;border-radius:50%;background:var(--pc)}.guia-mini p{margin:6px 0 4px;font-size:.92rem}.guia-mini[open] .gm-mas{display:none}
 .ini-album{flex-direction:row!important;gap:14px;align-items:center}.ini-album img{width:84px;aspect-ratio:2/3;object-fit:cover;border-radius:10px;border:2.5px solid #2A1E5C;flex:none}.ini-album h2{margin:0}
 .meta-clase{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:18px;background:linear-gradient(135deg,#FFF4D6,#FFE2A8);color:#1E1548;border:2.5px solid #2A1E5C;box-shadow:0 4px 0 #2A1E5C}.meta-clase h3{margin:2px 0;font-size:1.1rem}.mc-ico{font-size:2.2rem}
+/* línea de tiempo */
+.lt{display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:#070a1f;color:#EDEBFF;border:3px solid #2A1E5C;box-shadow:0 6px 0 #2A1E5C}
+.lt-top{position:relative;text-align:center;padding:4px 12px 10px;background:radial-gradient(ellipse at 50% 0%,#3B2A86 0%,#14104A 55%,#070a1f 100%)}
+.lt-manos{display:block;width:min(560px,100%);height:auto;margin:0 auto -18px}
+.lt-nube{animation:ltLatir 4s ease-in-out infinite;transform-origin:320px 70px}
+.lt-rayos{animation:ltGirar 30s linear infinite;transform-origin:320px 70px}
+.lt-mano{animation:ltFlotar 5s ease-in-out infinite}.lt-mano.der{animation-delay:-2.5s}
+.lt-cinta{stroke-dasharray:420;stroke-dashoffset:420;animation:ltDesenrollar 2.2s .3s ease-out forwards}
+@keyframes ltLatir{0%,100%{opacity:.85;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes ltGirar{to{transform:rotate(360deg)}}
+@keyframes ltFlotar{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes ltDesenrollar{to{stroke-dashoffset:0}}
+.lt-sup{margin:0;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#FFD98A;font-weight:700}
+.lt-top h2{margin:2px 0;font-family:var(--display);font-size:clamp(1.6rem,6vw,2.4rem);background:linear-gradient(180deg,#FFF6CF,#FFC93C 60%,#FF9F1C);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px rgba(255,201,60,.35))}
+.lt-sub{margin:0;font-size:.85rem;color:#CFC8FF}
+.lt-ventana{position:relative;height:560px;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(123,77,255,.25),transparent 45%),radial-gradient(ellipse at 80% 70%,rgba(22,179,163,.18),transparent 45%),linear-gradient(180deg,#0b0f2e,#070a1f)}
+.lt-cielo{position:absolute;inset:0;pointer-events:none}
+.lt-est{position:absolute;inset:0;background-repeat:repeat}
+.lt-est.e1{animation:ltTitilar 3.5s ease-in-out infinite}.lt-est.e2{animation:ltTitilar 5s ease-in-out infinite -2s}
+@keyframes ltTitilar{0%,100%{opacity:1}50%{opacity:.45}}
+.lt-neb{position:absolute;border-radius:50%;filter:blur(30px);opacity:.45;will-change:transform}
+.lt-neb.n1{width:420px;height:260px;left:30%;top:6%;background:#7B4DFF}.lt-neb.n2{width:380px;height:240px;left:70%;top:60%;background:#FF3D8B;opacity:.3}.lt-neb.n3{width:300px;height:200px;left:110%;top:20%;background:#16B3A3;opacity:.3}
+.lt-pista{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;cursor:grab;scrollbar-width:thin;scrollbar-color:#FFC93C transparent;outline:none}
+.lt-pista:active{cursor:grabbing}
+.lt-carril{position:relative;height:100%}
+.lt-linea{position:absolute;left:0;right:0;top:50%;height:8px;margin-top:-4px;border-radius:8px;background:linear-gradient(90deg,#FFB703,#FFF1B8 20%,#FFB703 40%,#FFF1B8 60%,#FFB703 80%,#FFF1B8);background-size:600px 100%;box-shadow:0 0 18px 4px rgba(255,201,60,.55),0 0 2px #fff;animation:ltRio 8s linear infinite}
+@keyframes ltRio{to{background-position:600px 0}}
+.lt-puerta{position:absolute;top:50%;transform:translateY(-50%);width:150px;padding:12px 10px;border-radius:18px;text-align:center;background:linear-gradient(160deg,var(--era),rgba(7,10,31,.85));border:2px solid rgba(255,255,255,.6);box-shadow:0 0 24px var(--era);display:flex;flex-direction:column;gap:2px;z-index:2}
+.lt-puerta b{font-family:var(--display);font-size:1.05rem;line-height:1.15;color:#fff}.lt-puerta span{font-size:.72rem;color:#fff;opacity:.9}.lt-pn{text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+.lt-hito{position:absolute;top:0;bottom:0;width:80px;--t:.5}
+.lt-punto{position:absolute;left:17px;top:50%;width:46px;height:46px;margin-top:-23px;display:grid;place-items:center;font-size:1.35rem;border-radius:50%;background:#0b0f2e;border:3px solid var(--era);box-shadow:0 0 calc(6px + var(--t)*18px) var(--era);z-index:2;transform:scale(calc(.85 + var(--t)*.35))}
+.lt-hito::before{content:"";position:absolute;left:39px;width:2px;background:linear-gradient(var(--era),transparent);opacity:calc(.3 + var(--t)*.7)}
+.lt-hito.arriba::before{bottom:calc(50% + 22px);height:34px;background:linear-gradient(transparent,var(--era))}.lt-hito.abajo::before{top:calc(50% + 22px);height:34px}
+.lt-card{position:absolute;left:-60px;width:200px;display:flex;flex-direction:column;gap:5px;text-align:left;padding:10px 12px 12px;border-radius:16px;font:inherit;color:#1E1548;cursor:pointer;
+  background:linear-gradient(180deg,#FFFDF6,#FFF1D0);border:3px solid var(--era);box-shadow:0 6px 0 rgba(0,0,0,.35),0 0 calc(var(--t)*28px) var(--era);
+  transform:scale(calc(.8 + var(--t)*.3));opacity:calc(.55 + var(--t)*.45);transition:box-shadow .2s}
+.lt-hito.arriba .lt-card{bottom:calc(50% + 56px);transform-origin:50% 100%}.lt-hito.abajo .lt-card{top:calc(50% + 56px);transform-origin:50% 0}
+.lt-card b{font-family:var(--display);font-size:1.02rem;line-height:1.15}
+.lt-fecha{align-self:flex-start;font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--era);color:#fff}
+.lt-cita{font-size:.72rem;color:#5A4E7A}
+.lt-caras{display:flex;align-items:center}.lt-caras img{width:34px;height:34px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:2px solid #fff;margin-right:-8px;box-shadow:0 1px 3px rgba(0,0,0,.3)}.lt-caras img.gris,.lt-cara.gris img{filter:grayscale(1);opacity:.55}
+.lt-caras i{font-style:normal;font-size:.75rem;font-weight:800;margin-left:12px}
+.lt-visto{position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:#16B3A3;color:#fff;display:grid;place-items:center;font-weight:800;border:2px solid #fff}
+.lt-pin{position:absolute;left:-30px;width:140px;text-align:center;top:calc(50% + 26px);font-size:.7rem;font-weight:800;color:#FFD23F;z-index:3}
+.lt-hito.abajo .lt-pin{top:auto;bottom:calc(50% + 26px)}
+.lt-mini{position:relative;display:flex;height:30px;margin:10px 12px 0;border-radius:999px;overflow:hidden;border:2px solid rgba(255,255,255,.35)}
+.lt-mini-e{border:0;padding:0 2px;background:var(--era);color:#fff;font:inherit;font-size:.58rem;font-weight:800;cursor:pointer;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;min-width:0}
+.lt-mini-e span{display:block;overflow:hidden;text-overflow:ellipsis}.lt-mini-e:hover{filter:brightness(1.15)}
+.lt-mini-yo{position:absolute;top:-2px;bottom:-2px;width:6px;margin-left:-3px;background:#fff;border-radius:4px;box-shadow:0 0 8px #fff;pointer-events:none}
+.lt-ctrl{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 0}
+.lt-flecha{width:48px;height:48px;border-radius:50%;border:2.5px solid #FFC93C;background:rgba(255,201,60,.15);color:#FFD98A;font-size:1.7rem;font-weight:800;line-height:1;cursor:pointer}
+.lt-flecha:hover{background:rgba(255,201,60,.3)}.lt-donde{text-align:center;font-size:.9rem;color:#EDEBFF}
+.lt-prog{text-align:center;font-size:.8rem;color:#CFC8FF;margin:8px 12px 0}
+.lt-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;padding:12px 16px;background:#050716;border-top:1px solid rgba(255,255,255,.12)}
+.lt-pie>img{height:54px}.lt-pie p{flex:1;min-width:180px;margin:0;font-size:.68rem;line-height:1.45;color:#B9B3E0;text-align:center}
+.lt-jat{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.62rem;color:#B9B3E0}.lt-jat img{height:30px}
+.lt-ficha{border-top:10px solid var(--era);gap:10px}.lt-f-era{margin:0;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--era)}
+.lt-f-emoji{font-size:2.6rem;line-height:1}.lt-ficha h2{margin:0}
+.lt-f-cita{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:14px;background:#FFF4D6;color:#1E1548}
+.lt-f-pers{display:flex;flex-wrap:wrap;gap:10px}.lt-f-p{display:flex;flex-direction:column;align-items:center;gap:2px;width:72px;text-align:center}
+.lt-cara{border:0;padding:0;background:none;cursor:pointer}.lt-cara img{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:3px solid var(--era,#FFC93C)}
+.lt-f-legal{margin:0;font-size:.68rem;color:var(--muted);text-align:center}
+.lt-ficha-p{align-items:center;gap:10px}.lt-fp-img{width:min(360px,100%);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.25)}.lt-fp-img.gris{filter:grayscale(1);opacity:.6}
+.ini-linea{position:relative;overflow:hidden;border-radius:22px;padding:18px;color:#EDEBFF;background:radial-gradient(ellipse at 80% 20%,rgba(255,201,60,.35),transparent 50%),radial-gradient(ellipse at 10% 90%,rgba(123,77,255,.5),transparent 55%),#0b0f2e;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
+.ini-linea h2{margin:2px 0;color:#FFD98A}.ini-linea p{margin:0 0 8px}.ini-linea .eyebrow{color:#FFD98A}
+@media (prefers-reduced-motion:reduce){.lt-nube,.lt-rayos,.lt-mano,.lt-linea,.lt-est{animation:none}.lt-cinta{animation:none;stroke-dashoffset:0}}
 .alb-cartas{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.alb-cartas>*{width:min(30%,140px)}
 @media (prefers-reduced-motion:reduce){.pasa-sig .alb-hoja,.pasa-ant .alb-hoja{animation:none}}
 .alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
@@ -767,7 +833,7 @@ const COLS=["ninos","clases","asistencia","bonos","premios","links","contactos",
 const COLS_EQUIPO=["matprofes","libro","maestras","desafios"];
 const S={ninos:[],clases:[],asistencia:{},bonos:[],premios:[],links:[],contactos:[],parabolas:[],muro:[],compromisos:[],cuentos:[],materiales:[],matprofes:[],maestras:[],libro:{},desafios:[],biblicos:[],fotos:[],laminas:[],config:{}};
 const loaded={};
-const ui={pts:"hijos",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"leer",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
+const ui={pts:"hijos",tab:"inicio",clase:null,nino:null,parabola:null,personaje:null,mas:"muro",familia:false,rec:"cuentos",bib:"linea",biblico:null,claseSeg:"lecciones",libroClase:null,buscar:"",progreso:null,uso:null};
 let assets=null,downloads=null;const pendingLibro={};
 let db=null,canEdit=false,dbFailed=false;
 const pendingAsis={};
@@ -1178,6 +1244,7 @@ function vInicio(){cargarAlbum();
       :`<p class="muted">Agrega a los niños en Premios → Puntos de la clase para empezar a contar puntos.</p>`;
     out+=`</section>`;}
   else if(S.ninos.length)out+=metaClase();
+  out+=`<section class="ini-linea"><div class="il-txt"><p class="eyebrow">Nuevo · ${LT.length} momentos</p><h2>⏳ La gran historia de Dios</h2><p>Viaja por la línea de tiempo desde la Creación hasta el año 100 d.C. con los personajes de tu álbum.</p><button class="btn sm" data-act="ltAbrirSeccion">Viajar en el tiempo</button></div></section>`;
   out+=`<section class="card ini-album" style="--pc:var(--p-simon)"><img src="img/album/portada.webp" alt="" loading="lazy"><div><h2>⭐ Álbum bíblico</h2><p class="muted small">Junta puntos, cámbialos por sobres de 5 láminas y completa los 100 personajes. Las repetidas se cambian en el mercado del foro.</p><button class="btn sm" data-act="irInsignias">${ed()?"Ver los álbumes":"Abrir mi álbum"}</button></div></section>`;
   return out;
 }
@@ -1735,8 +1802,9 @@ function textoSel(){const d=BCACHE[BR.ver+"/"+CODES[BR.li]];const vs=(d&&d[Strin
 function vBiblia(){
   if(ui.bib==="biblicos"){ui.bib="museo";ui.sala="personajes";ui.subsala="fichas";}
   if(ui.bib==="album"||ui.bib==="insignias"){ui.tab="puntos";ui.pts="album";ui.bib="leer";return vPuntos();}
-  const seg=[["leer","📖 Leer la Biblia"],["lectura","✅ Mi lectura"],["familia","👪 Lectores"],["museo","🏛️ Museo Bíblico"]];
+  const seg=[["linea","⏳ Línea de tiempo"],["leer","📖 Leer la Biblia"],["lectura","✅ Mi lectura"],["familia","👪 Lectores"],["museo","🏛️ Museo Bíblico"]];
   let out=`<div class="seg" role="group" aria-label="Biblia">${seg.map(x=>`<button aria-pressed="${ui.bib===x[0]}" data-act="bib" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
+  if(ui.bib==="linea")return out+vLinea();
   if(ui.bib==="museo")return out+vMuseo();
   if(ui.bib==="biblicos")return guia("santiago","La sabiduría de Dios es para todos. Conoce a los héroes de la Biblia y descubre en qué versículos aparecen.")+out+vBiblicos();
   if(ui.bib==="familia")return guia("maria","Cada integrante de la familia tiene su perfil de lectura. Cuando leen juntos, la lectura se suma a todos, y los niños ganan puntos para sus sobres.")+out+vFamilia();
@@ -2121,6 +2189,236 @@ function accionDD(act,b){
   if(act==="salirDD"){ui.desafio=false;DS=null;render();window.scrollTo(0,0);return;}
 }
 
+/* ---------- Línea de tiempo: datos ---------- */
+/* Cada época: [nombre, color, desde, hasta] y sus hitos: [fecha, emoji, título, cita, texto, personajes (N° del álbum)] */
+const LT_ERAS=[
+ ["Los comienzos","#2FB36B","En el principio","",[
+  ["En el principio","🌌","Dios crea el universo","Génesis 1:1-31","En seis días Dios creó la luz, el cielo, el mar, las plantas, el sol, la luna, las estrellas, los animales y al ser humano. ¡Y todo era bueno en gran manera!",[]],
+  ["","🌳","El jardín del Edén","Génesis 2:7-25","Dios formó a Adán del polvo, le dio vida con su aliento y lo puso en un jardín hermoso. Luego creó a Eva para que fueran compañeros.",[1,2]],
+  ["","🍎","La desobediencia y la promesa","Génesis 3:1-15","Adán y Eva desobedecieron a Dios y el pecado entró al mundo. Pero Dios prometió que un descendiente de Eva vencería a la serpiente.",[1,2]],
+  ["","🐑","Caín y Abel","Génesis 4:1-16","Abel le ofreció a Dios lo mejor de su rebaño. Caín se dejó llevar por la envidia y el enojo contra su hermano.",[3,4]],
+  ["","🙏","Set: la gente invoca a Dios","Génesis 4:25-26","Dios dio a Adán y Eva un nuevo hijo, Set. En su tiempo las personas comenzaron a orar e invocar el nombre del Señor.",[5]],
+  ["","✨","Enoc camina con Dios","Génesis 5:21-24","Enoc vivió tan cerca de Dios que un día Dios se lo llevó con Él sin que muriera.",[6]],
+  ["","🛶","Noé construye el arca","Génesis 6:9-22","El mundo se había llenado de maldad, pero Noé amaba a Dios. Dios le pidió construir un arca enorme para salvar a su familia y a los animales.",[7,8]],
+  ["","🌊","El diluvio","Génesis 7:11-24","Llovió cuarenta días y cuarenta noches. El agua cubrió la tierra, pero el arca flotaba segura con todos adentro.",[7]],
+  ["","🌈","El arcoíris del pacto","Génesis 9:8-17","Al salir del arca, Dios puso el arcoíris en las nubes como señal de su promesa: nunca más un diluvio destruiría la tierra.",[7,8]],
+  ["","🗼","La torre de Babel","Génesis 11:1-9","Las personas quisieron construir una torre hasta el cielo para hacerse famosas. Dios confundió sus idiomas y se esparcieron por la tierra.",[]]]],
+ ["Los patriarcas","#FF8A1A","aprox. 2100 a.C.","1800 a.C.",[
+  ["Época incierta","😇","Job confía en Dios","Job 1:1-22","Job lo perdió casi todo, pero no se alejó de Dios. Al final Dios le devolvió el doble de lo que tenía.",[9]],
+  ["aprox. 2090 a.C.","🧭","Dios llama a Abraham","Génesis 12:1-5","Dios le pidió a Abraham dejar su tierra e ir a un lugar que le mostraría. Abraham obedeció con fe, junto a Sara y su sobrino Lot.",[10,11,12]],
+  ["aprox. 2080 a.C.","⭐","La promesa de las estrellas","Génesis 15:1-6","Dios le mostró el cielo de noche y le dijo: «Así será tu descendencia». Abraham creyó a Dios.",[10]],
+  ["aprox. 2080 a.C.","👁️","Agar y el Dios que ve","Génesis 16:7-13","Agar huyó triste al desierto. Allí un ángel la consoló, y ella llamó a Dios «el Dios que me ve».",[13,14]],
+  ["aprox. 2067 a.C.","🔥","Lot sale de Sodoma","Génesis 19:15-29","Dos ángeles sacaron de la mano a Lot y a su familia antes de que Sodoma y Gomorra fueran destruidas.",[12]],
+  ["aprox. 2066 a.C.","👶","Nace Isaac","Génesis 21:1-7","Dios cumplió su promesa: Sara tuvo un hijo cuando ya era anciana. Lo llamaron Isaac, que significa «risa».",[11,15]],
+  ["aprox. 2050 a.C.","🐏","Dios provee en el monte Moriah","Génesis 22:1-14","Abraham obedeció a Dios en el monte, y Dios proveyó un carnero en lugar de Isaac.",[10,15]],
+  ["aprox. 2026 a.C.","🐪","Rebeca junto al pozo","Génesis 24:15-27","Rebeca le dio agua al siervo de Abraham y a sus camellos. Así Dios mostró que sería la esposa de Isaac.",[16,15]],
+  ["aprox. 2000 a.C.","🍲","Esaú vende su primogenitura","Génesis 25:27-34","Esaú tenía tanta hambre que cambió su herencia a su hermano Jacob por un plato de lentejas.",[17,18]],
+  ["aprox. 1930 a.C.","🪜","La escalera de Jacob","Génesis 28:10-22","Jacob soñó con una escalera que llegaba al cielo. Dios le prometió: «Yo estoy contigo y te guardaré».",[18]],
+  ["aprox. 1930 a.C.","💍","Jacob, Lea y Raquel","Génesis 29:16-30","Jacob trabajó catorce años para casarse con Raquel. De Lea, Raquel y su familia nacieron las doce tribus.",[18,19,20]],
+  ["aprox. 1906 a.C.","🤼","Jacob se llama Israel","Génesis 32:22-30","Una noche Jacob luchó hasta el amanecer y pidió ser bendecido. Dios le cambió el nombre: Israel.",[18]],
+  ["aprox. 1898 a.C.","🧥","José y su túnica de colores","Génesis 37:1-28","José era el hijo favorito de Jacob. Sus hermanos, celosos, lo vendieron como esclavo a Egipto.",[21,22]],
+  ["aprox. 1885 a.C.","👑","José gobierna Egipto","Génesis 41:37-45","Dios le dio sabiduría para explicar los sueños del faraón, y José llegó a ser el segundo hombre más importante de Egipto.",[21]],
+  ["aprox. 1876 a.C.","🤝","Judá se ofrece por Benjamín","Génesis 44:18-34","Judá, que antes vendió a José, ahora se ofreció como esclavo para salvar a su hermano menor.",[22]],
+  ["aprox. 1876 a.C.","😭","José perdona a sus hermanos","Génesis 45:1-15; 50:20","José lloró y abrazó a sus hermanos: «Ustedes pensaron mal, pero Dios lo cambió en bien».",[21,22,18]]]],
+ ["Éxodo y conquista","#2E7CF6","aprox. 1526 a.C.","1400 a.C.",[
+  ["aprox. 1800–1526 a.C.","⛓️","Israel, esclavo en Egipto","Éxodo 1:8-14","El pueblo creció mucho. Un nuevo faraón tuvo miedo y los hizo esclavos con trabajos muy duros.",[]],
+  ["aprox. 1526 a.C.","🧺","Moisés en el río","Éxodo 2:1-10","Su mamá lo escondió en una canasta en el Nilo. Su hermana Miriam lo cuidó, y la hija del faraón lo adoptó.",[23,25]],
+  ["aprox. 1446 a.C.","🔥","La zarza ardiente","Éxodo 3:1-12","Dios le habló a Moisés desde una zarza que ardía sin quemarse y lo envió a liberar a su pueblo.",[23]],
+  ["aprox. 1446 a.C.","🐸","Las diez plagas","Éxodo 7:14-25","El faraón no quería dejar ir al pueblo. Dios envió diez plagas sobre Egipto para mostrar su poder.",[23,24]],
+  ["aprox. 1446 a.C.","🐑","La primera Pascua","Éxodo 12:1-14","La sangre de un cordero en las puertas protegió a las familias de Israel. Fue la última noche en Egipto.",[23,24]],
+  ["aprox. 1446 a.C.","🌊","El mar Rojo se abre","Éxodo 14:21-31","Moisés extendió su vara y Dios abrió el mar. ¡El pueblo cruzó caminando sobre tierra seca!",[23,24,25]],
+  ["aprox. 1446 a.C.","🥁","El canto de Miriam","Éxodo 15:20-21","Miriam tomó su pandero y las mujeres cantaron y danzaron para alabar a Dios por la victoria.",[25]],
+  ["aprox. 1446 a.C.","🍞","El maná del cielo","Éxodo 16:11-18","En el desierto, Dios enviaba cada mañana un pan dulce del cielo para todo el pueblo.",[23]],
+  ["aprox. 1446 a.C.","📜","Los Diez Mandamientos","Éxodo 20:1-17","En el monte Sinaí, Dios le dio a Moisés su ley escrita en tablas de piedra.",[23]],
+  ["aprox. 1446 a.C.","🐂","El becerro de oro","Éxodo 32:1-20","Mientras Moisés estaba en el monte, el pueblo hizo un ídolo. Moisés oró por ellos y Dios los perdonó.",[23,24]],
+  ["aprox. 1445 a.C.","⛺","El tabernáculo","Éxodo 40:33-38","El pueblo construyó una tienda especial para adorar a Dios. Su gloria la llenó como una nube.",[24,23]],
+  ["aprox. 1444 a.C.","🍇","Los doce espías","Números 13:25-33; 14:6-9","Diez espías tuvieron miedo de los gigantes. Josué y Caleb dijeron: «¡Con Dios podemos entrar!».",[26,27]],
+  ["aprox. 1446–1406 a.C.","🏜️","Cuarenta años en el desierto","Deuteronomio 8:2-4","Durante cuarenta años Dios guió al pueblo con una nube de día y una columna de fuego de noche.",[23,26]],
+  ["aprox. 1406 a.C.","🔴","Rahab y el cordón rojo","Josué 2:1-21","Rahab escondió a los espías porque creyó en el Dios verdadero. Un cordón rojo en su ventana salvó a su familia.",[28]],
+  ["aprox. 1406 a.C.","🌊","Cruzan el río Jordán","Josué 3:14-17","Cuando los sacerdotes metieron los pies en el río, el agua se detuvo y el pueblo entró a la tierra prometida.",[26]],
+  ["aprox. 1406 a.C.","🎺","Caen los muros de Jericó","Josué 6:1-20","El pueblo marchó siete días, tocó las trompetas y gritó. ¡Los muros se derrumbaron!",[26,28]],
+  ["aprox. 1400 a.C.","⛰️","Caleb pide su montaña","Josué 14:6-14","A los 85 años, Caleb seguía fuerte y confiado: «Dame este monte que Dios me prometió».",[27]]]],
+ ["Jueces y transición al reino","#8B5CF6","aprox. 1380 a.C.","1050 a.C.",[
+  ["aprox. 1380 a.C.","⚖️","El tiempo de los jueces","Jueces 2:16-19","Cuando el pueblo se alejaba de Dios, sufría. Cuando clamaba, Dios enviaba jueces para salvarlos.",[]],
+  ["aprox. 1209 a.C.","🌴","Débora y Barac","Jueces 4:4-16","Débora, jueza y profetisa, animó a Barac a confiar en Dios, y Dios les dio la victoria.",[29]],
+  ["aprox. 1162 a.C.","🏺","Gedeón y los 300","Jueces 7:16-22","Con solo 300 hombres, cántaros, antorchas y trompetas, Dios venció a un ejército enorme.",[30]],
+  ["aprox. 1140 a.C.","🌾","Rut y Noemí","Rut 1:16-22","Rut no abandonó a su suegra: «Tu pueblo será mi pueblo, y tu Dios mi Dios».",[34,35]],
+  ["aprox. 1140 a.C.","🌾","Rut y Booz","Rut 2:1-12","Booz cuidó a Rut en sus campos con bondad. Se casaron, y fueron bisabuelos del rey David.",[34,36,35]],
+  ["aprox. 1105 a.C.","🙏","Ana ora por un hijo","1 Samuel 1:9-20","Ana oró con todo su corazón en el templo, y Dios le dio un hijo: Samuel.",[37]],
+  ["aprox. 1100 a.C.","🛡️","Jefté defiende a Israel","Jueces 11:29-33","Rechazado por su familia, Jefté fue llamado a liderar, y Dios le dio la victoria.",[31]],
+  ["aprox. 1090 a.C.","👂","Dios llama a Samuel","1 Samuel 3:1-10","De noche, el niño Samuel escuchó la voz de Dios y respondió: «Habla, que tu siervo escucha».",[38]],
+  ["aprox. 1075 a.C.","💪","Sansón y Dalila","Jueces 16:4-30","Dalila engañó a Sansón y perdió su fuerza. Al final él clamó a Dios una vez más.",[32,33]]]],
+ ["Reyes de Israel","#E5383B","aprox. 1050 a.C.","931 a.C.",[
+  ["aprox. 1050 a.C.","👑","Saúl, el primer rey","1 Samuel 10:1, 17-24","El pueblo pidió un rey, y Samuel ungió a Saúl, un joven alto y fuerte.",[39,38]],
+  ["aprox. 1025 a.C.","🫒","Samuel unge a David","1 Samuel 16:1-13","Dios eligió al menor de los hermanos, un pastorcito: «Dios mira el corazón».",[41,38]],
+  ["aprox. 1024 a.C.","🪨","David y Goliat","1 Samuel 17:41-50","Con una honda, una piedra y mucha fe, David venció al gigante que se burlaba de Dios.",[41,42,39]],
+  ["aprox. 1020 a.C.","🤝","Jonatán y David, amigos","1 Samuel 18:1-4","Jonatán, hijo del rey, quiso a David como a sí mismo y le regaló su manto y su espada.",[40,41]],
+  ["aprox. 1018 a.C.","🪟","Mical ayuda a David","1 Samuel 19:11-17","Cuando Saúl quiso dañar a David, Mical lo ayudó a escapar por una ventana.",[43,41]],
+  ["aprox. 1012 a.C.","🧺","Abigail calma a David","1 Samuel 25:23-35","Con comida y palabras sabias, Abigail evitó que David tomara venganza.",[44,41]],
+  ["aprox. 1010 a.C.","🎶","David, rey de Israel","2 Samuel 5:1-5","David llegó a ser rey de todo Israel. Escribió muchos salmos para alabar a Dios.",[41]],
+  ["aprox. 1003 a.C.","📦","El arca llega a Jerusalén","2 Samuel 6:12-15","David bailó de alegría cuando el arca del pacto llegó a Jerusalén, la ciudad de David.",[41,43]],
+  ["aprox. 995 a.C.","🐑","Natán y la ovejita","2 Samuel 12:1-13","El profeta Natán contó una historia que ayudó a David a reconocer su pecado y pedir perdón.",[45,41]],
+  ["aprox. 980 a.C.","🏹","Absalón se rebela","2 Samuel 15:1-14","Absalón, hijo de David, quiso quitarle el trono a su papá. David lo siguió amando.",[46,41]],
+  ["aprox. 970 a.C.","💡","Salomón pide sabiduría","1 Reyes 3:5-14","Dios le ofreció lo que quisiera, y Salomón pidió sabiduría para gobernar bien.",[47]],
+  ["aprox. 960 a.C.","🏛️","El templo de Jerusalén","1 Reyes 8:10-13","Salomón construyó un templo hermoso para Dios, y su gloria lo llenó como una nube.",[47]],
+  ["aprox. 950 a.C.","💎","La reina de Sabá","1 Reyes 10:1-10","La reina viajó desde muy lejos y alabó al Dios de Israel por la sabiduría que dio a Salomón.",[48,47]]]],
+ ["Reyes y profetas","#E0A100","931 a.C.","586 a.C.",[
+  ["931 a.C.","💔","El reino se divide","1 Reyes 12:1-20","Roboam no escuchó los buenos consejos. Diez tribus siguieron a Jeroboam y el reino quedó partido en dos: Israel y Judá.",[49,50]],
+  ["aprox. 860 a.C.","🔥","Elías en el monte Carmelo","1 Reyes 18:20-39","Elías oró y Dios respondió con fuego del cielo. El pueblo gritó: «¡El Señor es Dios!».",[51,52,53]],
+  ["aprox. 855 a.C.","🍇","La viña de Nabot","1 Reyes 21:1-19","El rey Acab y la reina Jezabel le quitaron injustamente la viña a Nabot. Elías los confrontó.",[52,53,51]],
+  ["aprox. 848 a.C.","🌪️","Elías sube al cielo","2 Reyes 2:9-15","Un carro de fuego se llevó a Elías, y Eliseo recibió su manto y una doble porción de su espíritu.",[51,54]],
+  ["aprox. 845 a.C.","💧","Naamán es sanado","2 Reyes 5:1-14","Gracias a una niña que habló de Dios, el general Naamán se lavó siete veces en el Jordán y quedó sano.",[55,54]],
+  ["aprox. 770 a.C.","🐋","Jonás y Nínive","Jonás 1:1-17; 3:1-10","Jonás huyó de Dios, pasó tres días en un gran pez y luego predicó en Nínive. ¡Toda la ciudad se arrepintió!",[56]],
+  ["aprox. 760 a.C.","⚖️","Amós pide justicia","Amós 5:14-24","El pastor Amós anunció que Dios quiere que la justicia corra como un río.",[57]],
+  ["aprox. 750 a.C.","💞","Oseas y el amor fiel","Oseas 11:1-4; 14:1-4","Oseas enseñó que Dios ama a su pueblo como un papá que enseña a caminar a su hijo.",[58]],
+  ["aprox. 740 a.C.","🙋","Isaías: «Aquí estoy»","Isaías 6:1-8","Isaías vio la gloria de Dios y se ofreció para servirle. Anunció la venida del Mesías.",[59]],
+  ["aprox. 730 a.C.","⭐","Miqueas anuncia Belén","Miqueas 5:2; 6:8","Miqueas profetizó que el gobernante prometido nacería en el pequeño pueblo de Belén.",[60]],
+  ["722 a.C.","🏚️","Cae el reino de Israel","2 Reyes 17:5-18","El reino del norte se alejó de Dios y fue conquistado por Asiria.",[]],
+  ["701 a.C.","🛡️","Ezequías ora y Dios salva Jerusalén","2 Reyes 19:14-19, 35","Ezequías puso ante Dios la carta del enemigo y oró. Dios protegió la ciudad.",[61,59]],
+  ["627 a.C.","🗣️","Dios llama al joven Jeremías","Jeremías 1:4-10","«No digas: soy un niño». Dios le dio palabras a Jeremías para hablar a su pueblo.",[63]],
+  ["622 a.C.","📖","Josías encuentra el libro de la ley","2 Reyes 22:8-13; 23:1-3","El rey Josías escuchó la Palabra de Dios, se arrepintió y llevó al pueblo de vuelta a Dios.",[62]],
+  ["605 a.C.","🏯","Daniel llevado a Babilonia","Daniel 1:1-8","Daniel y sus amigos fueron llevados lejos de casa, pero decidieron seguir fieles a Dios.",[64,65,66,67,69]],
+  ["586 a.C.","🔥","Jerusalén y el templo destruidos","2 Reyes 25:8-12","Babilonia conquistó Jerusalén y destruyó el templo. Jeremías lo había advertido.",[63,69]]]],
+ ["Exilio y regreso","#1AA3A3","586 a.C.","430 a.C.",[
+  ["aprox. 585 a.C.","🦴","Ezequiel y los huesos secos","Ezequiel 37:1-14","Dios le mostró un valle de huesos secos que volvía a la vida: ¡Dios puede restaurar a su pueblo!",[68]],
+  ["aprox. 580 a.C.","🔥","El horno de fuego","Daniel 3:16-27","Sadrac, Mesac y Abed-nego no se inclinaron ante la estatua. En el horno apareció un cuarto hombre con ellos.",[65,66,67,69]],
+  ["aprox. 570 a.C.","👑","Nabucodonosor alaba a Dios","Daniel 4:34-37","El orgulloso rey de Babilonia aprendió que el Dios del cielo es quien gobierna.",[69,64]],
+  ["539 a.C.","🦁","Daniel en el foso de los leones","Daniel 6:10-23","Daniel siguió orando aunque estaba prohibido. Dios cerró la boca de los leones.",[64]],
+  ["538 a.C.","🧳","El regreso a Jerusalén","Esdras 1:1-4","El rey Ciro de Persia permitió que los judíos volvieran a su tierra para reconstruir el templo.",[]],
+  ["516 a.C.","🏛️","El templo es reconstruido","Esdras 6:14-16","Con alegría el pueblo terminó y dedicó el nuevo templo de Dios.",[]],
+  ["aprox. 479 a.C.","👸","Ester, la reina valiente","Ester 4:13-16","Ester arriesgó su vida para hablar con el rey y salvar a su pueblo. «Para esta hora has llegado».",[70,71]],
+  ["458 a.C.","📜","Esdras enseña la ley","Esdras 7:6-10","Esdras estudió la Palabra de Dios, la vivió y la enseñó al pueblo.",[72]],
+  ["445 a.C.","🧱","Nehemías reconstruye los muros","Nehemías 2:17-18; 6:15-16","Con oración y trabajo en equipo, los muros de Jerusalén se terminaron en solo 52 días.",[73]],
+  ["aprox. 430–5 a.C.","🤫","400 años de espera","Malaquías 4:5-6","Después de Malaquías, el último profeta del Antiguo Testamento, el pueblo esperó la llegada del Mesías.",[]]]],
+ ["La llegada de Jesús","#F59E0B","aprox. 7 a.C.","27 d.C.",[
+  ["aprox. 7 a.C.","👼","El ángel visita a Zacarías","Lucas 1:11-20","Un ángel le anunció a Zacarías que su esposa Elisabet tendría un hijo: Juan.",[74,75]],
+  ["aprox. 6 a.C.","🕊️","El anuncio a María","Lucas 1:26-38","El ángel Gabriel le dijo a María que sería la madre de Jesús. Ella respondió con fe: «Aquí está la sierva del Señor».",[76]],
+  ["aprox. 6 a.C.","🤰","María visita a Elisabet","Lucas 1:39-45","Cuando María llegó, el bebé Juan saltó de alegría en el vientre de Elisabet.",[75,76]],
+  ["aprox. 6 a.C.","✍️","Nace Juan el Bautista","Lucas 1:57-66","Zacarías escribió «Su nombre es Juan» y volvió a hablar para alabar a Dios.",[78,74,75]],
+  ["aprox. 5 a.C.","⭐","Nace Jesús en Belén","Lucas 2:1-20","Jesús nació en un pesebre. Los ángeles cantaron y los pastores vinieron a adorarlo.",[79,76,77]],
+  ["aprox. 4 a.C.","🐫","Los sabios y la huida a Egipto","Mateo 2:1-15","Unos sabios siguieron una estrella para adorar a Jesús. José protegió a su familia llevándolos a Egipto.",[77,76,79]],
+  ["aprox. 8 d.C.","🏛️","Jesús a los 12 años en el templo","Lucas 2:41-52","Jesús conversaba con los maestros en el templo: «¿No sabían que debo estar en la casa de mi Padre?».",[79,76,77]],
+  ["aprox. 27 d.C.","💧","Juan bautiza a Jesús","Mateo 3:13-17","Al salir del agua, el Espíritu bajó como paloma y se oyó la voz del Padre: «Este es mi Hijo amado».",[78,79]]]],
+ ["Jesús y sus discípulos","#E0457B","aprox. 27 d.C.","30 d.C.",[
+  ["aprox. 27 d.C.","🎣","«Síganme»: los primeros discípulos","Mateo 4:18-22","Jesús llamó a unos pescadores: «Vengan, y los haré pescadores de hombres».",[80,81,82,83]],
+  ["aprox. 27 d.C.","🍷","El agua en vino","Juan 2:1-11","En una boda en Caná, Jesús hizo su primer milagro.",[79,76]],
+  ["aprox. 28 d.C.","💰","Jesús llama a Mateo","Mateo 9:9-13","Mateo dejó su mesa de cobrador de impuestos para seguir a Jesús.",[86]],
+  ["aprox. 28 d.C.","1️⃣2️⃣","Jesús elige a los doce","Lucas 6:12-16","Después de orar toda la noche, Jesús eligió a doce apóstoles.",[80,81,82,83,84,85,86,87,88,89,90,91]],
+  ["aprox. 28 d.C.","⛰️","El sermón del monte","Mateo 5:1-12","Jesús enseñó a la multitud cómo viven los hijos de Dios: «Bienaventurados…».",[79]],
+  ["aprox. 28 d.C.","⛈️","Jesús calma la tormenta","Marcos 4:35-41","«¡Calla, enmudece!», dijo Jesús, y el viento y el mar le obedecieron.",[79,80]],
+  ["aprox. 29 d.C.","🐟","Cinco panes y dos peces","Juan 6:5-13","Con el almuerzo de un niño, Jesús alimentó a más de cinco mil personas.",[79,81,84]],
+  ["aprox. 29 d.C.","🌊","Jesús camina sobre el agua","Mateo 14:22-33","Pedro caminó sobre el agua mientras miraba a Jesús.",[79,80]],
+  ["aprox. 29 d.C.","🏠","En casa de Marta y María","Lucas 10:38-42","Marta servía y María escuchaba a Jesús: escuchar su Palabra es lo más importante.",[93,94]],
+  ["aprox. 30 d.C.","🪦","Lázaro vuelve a vivir","Juan 11:38-44","«¡Lázaro, ven fuera!». Jesús devolvió la vida a su amigo después de cuatro días.",[95,93,94]],
+  ["aprox. 30 d.C.","🌳","Zaqueo baja del árbol","Lucas 19:1-10","Zaqueo se subió a un árbol para ver a Jesús, y Jesús fue a su casa. ¡Su vida cambió!",[96]],
+  ["aprox. 30 d.C.","🌿","Jesús entra a Jerusalén","Mateo 21:1-11","Montado en un burrito, Jesús entró a Jerusalén mientras la gente gritaba «¡Hosanna!».",[79]],
+  ["aprox. 30 d.C.","🍞","La última cena","Lucas 22:14-20","Jesús compartió el pan y la copa con sus discípulos: «Hagan esto en memoria de mí».",[79,80,83,91]],
+  ["aprox. 30 d.C.","✝️","Jesús muere en la cruz","Juan 19:16-30","Jesús dio su vida por nosotros. Su madre María y Juan estaban junto a la cruz.",[79,76,83,92]],
+  ["aprox. 30 d.C.","🌅","¡Jesús resucitó!","Mateo 28:1-10","Al tercer día la tumba estaba vacía. María Magdalena fue la primera en verlo vivo.",[79,92]],
+  ["aprox. 30 d.C.","🤚","Tomás ve a Jesús","Juan 20:24-29","Tomás dudaba, pero al ver a Jesús dijo: «¡Señor mío y Dios mío!».",[87,79]],
+  ["aprox. 30 d.C.","☁️","Jesús sube al cielo","Hechos 1:6-11","Jesús prometió enviar el Espíritu Santo y subió al cielo. ¡Volverá otra vez!",[79]]]],
+ ["La Iglesia comienza","#F25C05","aprox. 30 d.C.","100 d.C.",[
+  ["aprox. 30 d.C.","🔥","Pentecostés","Hechos 2:1-41","El Espíritu Santo vino sobre los discípulos. Pedro predicó y tres mil personas creyeron en Jesús.",[80]],
+  ["aprox. 34 d.C.","✨","Esteban, lleno de fe","Hechos 7:55-60","Esteban vio el cielo abierto y perdonó a quienes lo atacaban, como hizo Jesús.",[97]],
+  ["aprox. 35 d.C.","💡","Saulo en el camino a Damasco","Hechos 9:1-19","Una luz del cielo y la voz de Jesús cambiaron para siempre la vida de Saulo.",[98]],
+  ["aprox. 38 d.C.","🤝","Bernabé confía en Saulo","Hechos 9:26-28","Todos tenían miedo de Saulo, pero Bernabé lo presentó a los apóstoles.",[99,98]],
+  ["aprox. 40 d.C.","🌍","El evangelio es para todos","Hechos 10:34-48","Pedro entendió que Dios no hace diferencia entre las personas, y Cornelio creyó.",[80]],
+  ["aprox. 47 d.C.","⛵","El primer viaje misionero","Hechos 13:1-4","La iglesia envió a Bernabé y a Pablo a anunciar a Jesús en otras ciudades.",[98,99]],
+  ["aprox. 49 d.C.","🏛️","La reunión de Jerusalén","Hechos 15:1-21","Los apóstoles decidieron juntos que somos salvos por gracia, por medio de la fe en Jesús.",[80,98,99]],
+  ["aprox. 50 d.C.","👦","Timoteo se une a Pablo","Hechos 16:1-5","Timoteo, que conocía las Escrituras desde niño, comenzó a viajar con Pablo.",[100,98]],
+  ["aprox. 50–67 d.C.","✉️","Pablo escribe a las iglesias","Romanos 1:1-7","Pablo escribió cartas para animar y enseñar a los creyentes. ¡Hoy están en la Biblia!",[98,100]],
+  ["aprox. 60 d.C.","🏟️","Pablo en Roma","Hechos 28:16-31","Aun preso en Roma, Pablo siguió anunciando a Jesús con valentía.",[98]],
+  ["70 d.C.","🏚️","El templo es destruido","Lucas 21:5-6","Tal como Jesús lo había anunciado, el templo de Jerusalén fue destruido por los romanos.",[]],
+  ["aprox. 95 d.C.","📖","Juan escribe el Apocalipsis","Apocalipsis 1:9-11","Desde la isla de Patmos, Juan escribió lo que Jesús le mostró: ¡Jesús vence y vuelve otra vez!",[83]],
+  ["aprox. 100 d.C.","🕊️","Juan, el último apóstol","1 Juan 4:7-11","Ya anciano, Juan seguía enseñando lo más importante: «Amémonos unos a otros».",[83]]]]];
+const LT=[];LT_ERAS.forEach((e,ei)=>e[4].forEach((h,i)=>LT.push({id:"lt-"+(LT.length+1),era:ei,fecha:h[0],emoji:h[1],titulo:h[2],cita:h[3],texto:h[4],pers:h[5]})));
+/* ---------- Línea de tiempo: vista interactiva ---------- */
+const LT_PASO=236,LT_PUERTA=270;
+const LTS={x:null,vistos:{}};try{LTS.vistos=JSON.parse(localStorage.getItem("epk_lt_vistos")||"{}")||{};}catch(e){}
+const ltPos=(()=>{const pos=[];let x=140,prev=-1;LT.forEach((h,i)=>{if(h.era!==prev){x+=LT_PUERTA;prev=h.era;}pos.push(x);x+=LT_PASO;});return {pos,ancho:x+160};})();
+const ltEraIni=ei=>LT.findIndex(h=>h.era===ei);
+function ltTengo(n){if(ed())return true;const hs=misHijos();if(!hs.length||!ALB.cargado)return true;const nid=albNinoSel();return albCant(nid,n)>0;}
+function ltEstrellas(){const r=a=>{const x=Math.sin(a*12.9898)*43758.5453;return x-Math.floor(x);};
+  return [[260,26,1,0],[340,18,1.6,300],[460,10,2.4,700]].map(([t,n,sz,seed])=>({t,img:Array.from({length:n},(_,i)=>`radial-gradient(${sz}px ${sz}px at ${Math.round(r(seed+i)*t)}px ${Math.round(r(seed+i+.5)*t)}px, rgba(255,255,255,${(.5+r(seed+i+.7)*.5).toFixed(2)}), transparent)`).join(",")}));}
+const LT_CIELO=ltEstrellas();
+function ltClaseIdx(){const c=claseActual();if(!c||!c.cita)return -1;const p=parseRef(String(c.cita).split(/[;,]/)[0]);if(!p)return -1;let best=-1,bd=99;
+  LT.forEach((h,i)=>{const q=parseRef(h.cita.split(";")[0]);if(q&&q.li===p.li){const d=Math.abs(q.cap-p.cap);if(d<bd){bd=d;best=i;}}});return bd<=4?best:-1;}
+const LT_MANOS=`<svg class="lt-manos" viewBox="0 0 640 210" aria-hidden="true">
+  <defs><radialGradient id="ltNube" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#FFFBEA"/><stop offset=".45" stop-color="#FFE7A3" stop-opacity=".85"/><stop offset="1" stop-color="#FFD23F" stop-opacity="0"/></radialGradient>
+  <linearGradient id="ltMano" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#FFF1C2"/><stop offset="1" stop-color="#FFD98A"/></linearGradient>
+  <linearGradient id="ltCinta" x1="0" x2="1"><stop offset="0" stop-color="#FFB703"/><stop offset=".5" stop-color="#FFF1B8"/><stop offset="1" stop-color="#FFB703"/></linearGradient>
+  <filter id="ltBrillo" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+  <ellipse class="lt-nube" cx="320" cy="62" rx="230" ry="62" fill="url(#ltNube)"/>
+  <g class="lt-rayos" stroke="#FFF3C4" stroke-width="2" opacity=".5">${Array.from({length:15},(_,i)=>{const a=(-170+i*(160/14))*Math.PI/180;return `<line x1="320" y1="62" x2="${(320+Math.cos(a)*320).toFixed(0)}" y2="${(62+Math.sin(a)*320).toFixed(0)}"/>`;}).join("")}</g>
+  <path class="lt-cinta" d="M158 150 C 250 205, 390 205, 482 150" fill="none" stroke="url(#ltCinta)" stroke-width="10" stroke-linecap="round" filter="url(#ltBrillo)"/>
+  <g class="lt-mano izq" filter="url(#ltBrillo)" fill="url(#ltMano)"><g transform="translate(118 30) rotate(-24 45 70)"><g class="lt-mano-f"><rect x="15" y="12" width="14" height="62" rx="7"/><rect x="31" y="0" width="14" height="72" rx="7"/><rect x="47" y="6" width="14" height="68" rx="7"/><rect x="62" y="22" width="12" height="54" rx="6"/><rect x="-6" y="52" width="14" height="46" rx="7" transform="rotate(-38 1 75)"/><path d="M13 62 H76 V104 C76 124 62 136 45 136 C27 136 13 124 13 104 Z"/></g></g></g>
+  <g class="lt-mano der" filter="url(#ltBrillo)" fill="url(#ltMano)"><g transform="translate(640 0) scale(-1 1) translate(118 30) rotate(-24 45 70)"><g class="lt-mano-f"><rect x="15" y="12" width="14" height="62" rx="7"/><rect x="31" y="0" width="14" height="72" rx="7"/><rect x="47" y="6" width="14" height="68" rx="7"/><rect x="62" y="22" width="12" height="54" rx="6"/><rect x="-6" y="52" width="14" height="46" rx="7" transform="rotate(-38 1 75)"/><path d="M13 62 H76 V104 C76 124 62 136 45 136 C27 136 13 124 13 104 Z"/></g></g></g>
+  <circle cx="320" cy="62" r="5" fill="#fff" opacity=".9"/>
+</svg>`;
+function ltCara(n,c){const L=albCat(n)||{};const t=ltTengo(n);return `<button class="lt-cara${t?"":" gris"}" data-act="ltFicha" data-n="${n}" aria-label="Ficha de ${esc(L.nombre||"N° "+n)}" title="${esc(L.nombre||"")}"><img src="img/album/${String(n).padStart(3,"0")}.webp" alt="" loading="lazy"></button>`;}
+function vLinea(){cargarAlbum();const ci=ltClaseIdx();const vistos=Object.keys(LTS.vistos).length;
+  let carril=`<div class="lt-linea" aria-hidden="true"></div>`;
+  LT_ERAS.forEach((e,ei)=>{const i0=ltEraIni(ei),x=ltPos.pos[i0]-LT_PUERTA+30;
+    carril+=`<div class="lt-puerta" style="left:${x}px;--era:${e[1]}"><span class="lt-pn">Época ${ei+1}</span><b>${esc(e[0])}</b><span>${esc(e[2])}${e[3]?" – "+esc(e[3]):""}</span></div>`;});
+  LT.forEach((h,i)=>{const e=LT_ERAS[h.era],arriba=i%2===0,visto=LTS.vistos[h.id];
+    carril+=`<div class="lt-hito${arriba?" arriba":" abajo"}" style="left:${ltPos.pos[i]}px;--era:${e[1]}" data-i="${i}">
+      <span class="lt-punto">${h.emoji}</span>${i===ci?`<span class="lt-pin">📍 La clase de este domingo</span>`:""}
+      <button class="lt-card" data-act="ltHito" data-i="${i}"><span class="lt-fecha">${esc(h.fecha||"Sin fecha")}</span><b>${esc(h.titulo)}</b><span class="lt-cita">📖 ${esc(h.cita)}</span>
+      ${h.pers.length?`<span class="lt-caras">${h.pers.slice(0,4).map(n=>`<img class="${ltTengo(n)?"":"gris"}" src="img/album/${String(n).padStart(3,"0")}.webp" alt="" loading="lazy">`).join("")}${h.pers.length>4?`<i>+${h.pers.length-4}</i>`:""}</span>`:""}
+      ${visto?`<span class="lt-visto" title="Ya lo visitaste">✓</span>`:""}</button></div>`;});
+  const mini=LT_ERAS.map((e,ei)=>`<button class="lt-mini-e" style="--era:${e[1]};flex:${e[4].length}" data-act="ltIr" data-i="${ltEraIni(ei)}" title="${esc(e[0])}"><span>${esc(e[0])}</span></button>`).join("");
+  setTimeout(ltMontar,0);
+  return `<section class="lt" id="lt">
+    <div class="lt-top">${LT_MANOS}<p class="lt-sup">Eterno Pacto KIDS presenta</p><h2>La gran historia de Dios</h2><p class="lt-sub">Desde la Creación hasta el año 100 d.C. · ${LT.length} momentos · «Todo está en sus manos»</p></div>
+    <div class="lt-ventana"><div class="lt-cielo" aria-hidden="true">${LT_CIELO.map((c,k)=>`<i class="lt-est e${k}" style="background-image:${c.img};background-size:${c.t}px ${c.t}px"></i>`).join("")}<i class="lt-neb n1"></i><i class="lt-neb n2"></i><i class="lt-neb n3"></i></div>
+    <div class="lt-pista" id="ltPista" tabindex="0" aria-label="Línea de tiempo: arrastra o usa las flechas para viajar"><div class="lt-carril" style="width:${ltPos.ancho}px">${carril}</div></div></div>
+    <div class="lt-mini" role="group" aria-label="Viajar a una época">${mini}<i class="lt-mini-yo" id="ltYo"></i></div>
+    <div class="lt-ctrl"><button class="lt-flecha" data-act="ltPaso" data-d="-1" aria-label="Momento anterior">‹</button><span id="ltDonde" class="lt-donde">Arrastra para viajar en el tiempo</span><button class="lt-flecha" data-act="ltPaso" data-d="1" aria-label="Momento siguiente">›</button></div>
+    <p class="lt-prog">⭐ Has visitado <b>${vistos}</b> de ${LT.length} momentos · cada momento nuevo suma puntos para tus sobres</p>
+    <footer class="lt-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. Fechas aproximadas · línea esquemática, no a escala.<br>JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></span></footer></section>`;}
+function ltCentro(p){return p.scrollLeft+p.clientWidth/2;}
+function ltMontar(){const p=document.getElementById("ltPista");if(!p||p._lt)return;p._lt=1;
+  const ini=LTS.x!=null?LTS.x:Math.max(0,ltPos.pos[0]-p.clientWidth/2+100);p.scrollLeft=ini;
+  const est=[...document.querySelectorAll("#lt .lt-est,#lt .lt-neb")],hitos=[...p.querySelectorAll(".lt-hito")],yo=document.getElementById("ltYo"),donde=document.getElementById("ltDonde");
+  let raf=0;const pintar=()=>{raf=0;const c=ltCentro(p),w=p.clientWidth;LTS.x=p.scrollLeft;
+    est.forEach(s=>{const f=s.classList.contains("e0")?.15:s.classList.contains("e1")?.3:s.classList.contains("e2")?.55:.06;if(s.classList.contains("lt-est"))s.style.backgroundPositionX=(-p.scrollLeft*f).toFixed(1)+"px";else s.style.transform=`translateX(${(-p.scrollLeft*f).toFixed(1)}px)`;});
+    let mejor=0,bd=1e9;hitos.forEach(h=>{const i=+h.dataset.i,x=ltPos.pos[i]+40,d=Math.abs(x-c);if(d<bd){bd=d;mejor=i;}const t=Math.max(0,1-d/(w*.6));h.style.setProperty("--t",t.toFixed(3));});
+    if(yo)yo.style.left=(p.scrollLeft/(ltPos.ancho-w)*100).toFixed(2)+"%";
+    LTS.cerca=mejor;const h=LT[mejor];if(donde&&h)donde.innerHTML=`<b style="color:${LT_ERAS[h.era][1]}">${esc(LT_ERAS[h.era][0])}</b> · ${esc(h.fecha||"Sin fecha")}`;};
+  p.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(pintar);},{passive:true});
+  p.addEventListener("wheel",e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){p.scrollLeft+=e.deltaY;e.preventDefault();}},{passive:false});
+  let dr=null;p.addEventListener("pointerdown",e=>{if(e.pointerType!=="mouse")return;dr={x:e.clientX,s:p.scrollLeft,m:false};});
+  window.addEventListener("pointermove",e=>{if(!dr)return;const dx=e.clientX-dr.x;if(Math.abs(dx)>5)dr.m=true;p.scrollLeft=dr.s-dx;});
+  window.addEventListener("pointerup",()=>{if(dr&&dr.m){p._arrastro=Date.now();}dr=null;});
+  p.addEventListener("click",e=>{if(p._arrastro&&Date.now()-p._arrastro<250){e.stopPropagation();e.preventDefault();}},true);
+  p.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();ltPaso(e.key==="ArrowRight"?1:-1);}});
+  pintar();}
+function ltIr(i,suave){const p=document.getElementById("ltPista");if(!p)return;i=Math.max(0,Math.min(LT.length-1,i));p.scrollTo({left:ltPos.pos[i]+40-p.clientWidth/2,behavior:suave===false?"auto":"smooth"});}
+function ltPaso(d){ltIr((LTS.cerca||0)+d);}
+function ltAbrir(i){const h=LT[i];if(!h)return;const e=LT_ERAS[h.era];
+  if(!LTS.vistos[h.id]){LTS.vistos[h.id]=hoyISO();try{localStorage.setItem("epk_lt_vistos",JSON.stringify(LTS.vistos));}catch(x){}ptsActividad("linea",h.id,[BIB.actual]);}
+  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet lt-ficha" style="--era:${e[1]}" role="dialog" aria-modal="true" aria-label="${esc(h.titulo)}">
+    <p class="lt-f-era">${esc(e[0])} · ${esc(h.fecha||"Sin fecha")}</p><div class="lt-f-emoji">${h.emoji}</div><h2>${esc(h.titulo)}</h2><p>${esc(h.texto)}</p>
+    <div class="lt-f-cita"><span>📖 <b>${esc(h.cita)}</b><span class="small muted"> · ${esc(h.cita.replace(/\s*\d.*$/,""))}</span></span><button class="btn sm" data-act="leerRef" data-ref="${esc(h.cita.split(";")[0])}">Leerlo en la Biblia</button></div>
+    ${h.pers.length?`<p class="eyebrow">Personajes de este momento</p><div class="lt-f-pers">${h.pers.map(n=>{const L=albCat(n)||{};return `<span class="lt-f-p">${ltCara(n)}<span class="small">${esc(L.nombre||"")}</span></span>`;}).join("")}</div>`:""}
+    <div class="row between"><button class="btn line sm" data-act="ltHito" data-i="${i-1}" ${i?"":"disabled"}>‹ Anterior</button><button class="btn sm" data-act="ltCerrar">Cerrar</button><button class="btn line sm" data-act="ltHito" data-i="${i+1}" ${i<LT.length-1?"":"disabled"}>Siguiente ›</button></div>
+    <p class="lt-f-legal">© Eterno Pacto KIDS · Derechos reservados</p></div></div>`;
+  $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});}
+function ltFicha(n){const L=albCat(n)||{};const t=ltTengo(n);
+  $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet lt-ficha-p" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(L.nombre||"")}">
+    <img class="lt-fp-img${t?"":" gris"}" src="img/fichas/${String(n).padStart(3,"0")}.webp" alt="Ficha de ${esc(L.nombre||"")}">
+    ${t?"":`<p class="small">🔒 Aún no tienes esta lámina en tu álbum. ¡Junta puntos y abre sobres para conseguirla!</p>`}
+    <div class="row between"><button class="btn line sm" data-act="irInsignias">⭐ Ir a mi álbum</button><button class="btn sm" data-act="ltCerrar">Cerrar</button></div>
+    <p class="lt-f-legal">© Eterno Pacto KIDS · Derechos reservados</p></div></div>`;
+  $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});}
+function accionLT(act,b){switch(act){
+  case "ltHito":{const i=Number(b.dataset.i);if(i>=0&&i<LT.length){ltAbrir(i);if(!b.closest(".sheet"))ltIr(i);else{ltIr(i,false);}}break;}
+  case "ltFicha":ltFicha(Number(b.dataset.n));break;
+  case "ltIr":ltIr(Number(b.dataset.i));break;
+  case "ltPaso":ltPaso(Number(b.dataset.d));break;
+  case "ltCerrar":$("#sheetRoot").innerHTML="";const p=document.getElementById("ltPista");if(p){/* refrescar ✓ */const i=LTS.cerca;render();}break;
+  case "ltAbrirSeccion":callar();ui.tab="biblia";ui.bib="linea";render();window.scrollTo(0,0);break;}}
+
 /* ---------- álbum bíblico: puntos → sobres de 5 láminas, libro con páginas que se dan vuelta, mercado de láminas ---------- */
 const ALB_TOTAL=100,ALB_POR_SOBRE=5;
 const ALB_SECC=[[1,7,"Los comienzos","#2FB36B"],[8,22,"Los patriarcas","#FF8A1A"],[23,27,"Éxodo y conquista","#2E7CF6"],[28,38,"Jueces y transición al reino","#8B5CF6"],[39,47,"Reyes de Israel","#E5383B"],[48,63,"Reyes y profetas","#E0A100"],[64,73,"Exilio y regreso","#1AA3A3"],[74,79,"La llegada de Jesús","#F59E0B"],[80,96,"Jesús y sus discípulos","#E0457B"],[97,100,"La Iglesia comienza","#F25C05"]];
@@ -2455,6 +2753,7 @@ document.addEventListener("click",async e=>{
   const find=(col)=>S[col].find(x=>x.id===id);
   if(act.startsWith("fx_")){if(window.EPKX)EPKX.accion(act,b);return;}
   if(act.startsWith("alb")){accionAlb(act,b);return;}
+  if(act.startsWith("lt")){accionLT(act,b);return;}
   switch(act){
     case "tab":if(b.tagName==="A")e.preventDefault();if(VF){VF=null;pintarVisor();}irA(b.dataset.tab);break;
     case "ptsSeg":ui.pts=b.dataset.k;ui.nino=null;render();break;
