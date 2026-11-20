@@ -397,6 +397,7 @@ button.item:hover{border-color:var(--accent)}
 .frame{background:var(--frame);padding:7px;border-radius:4px;border:0;box-shadow:0 2px 0 rgba(0,0,0,.18);text-align:center;display:block;width:100%}
 .frame .mat{background:var(--mat);padding:14px 10px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%}
 .frame .art{width:72px;height:72px;border-radius:50%;display:grid;place-items:center}
+.frame .art.pintura{width:100%;height:auto;aspect-ratio:4/3;border-radius:2px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(0,0,0,.12)}.frame .art.pintura img{width:100%;height:100%;object-fit:cover;display:block}
 .frame .art svg{width:44px;height:44px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .frame b{font-family:var(--display);font-weight:600;font-size:1rem;line-height:1.2;color:var(--ink)}
 .frame span{font-size:.78rem;color:var(--muted)}
@@ -1228,7 +1229,7 @@ function vNino(n){
   return out;
 }
 
-function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat"><span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span><b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
+function frame(p){const col=colorFor(p.id||p.titulo);return `<button class="frame" data-act="verParabola" data-id="${esc(p.id)}"><span class="mat">${p.img?`<span class="art pintura"><img src="${esc(blobUrl(p.img))}" alt="" loading="lazy"></span>`:`<span class="art" style="background:${col}"><svg viewBox="0 0 24 24">${ART[p.icono]||ART.semilla}</svg></span>`}<b>${p._bloqueado&&!(window.EPK&&EPK.super)?"🔒 ":""}${esc(p.titulo)}</b><span>${esc(p.cita||"")}</span></span></button>`;}
 function vMuseo(){
   if(ui.parabola){const p=S.parabolas.find(x=>x.id===ui.parabola);if(p)return vParabola(p);ui.parabola=null;}
   const ps=[...S.parabolas].sort((a,b)=>(a.orden||0)-(b.orden||0));

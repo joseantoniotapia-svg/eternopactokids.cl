@@ -307,7 +307,7 @@
         ["descripcion", "Su historia para niños", "area", "Quién era, qué hizo y qué nos enseña."], ["citasTxt", "Versículos donde aparece (uno por línea)", "area", "1 Samuel 16:13\n1 Samuel 17:45-47\nSalmos 23"]] },
     parabolas: { uno: "cuadro", nuevo: "+ Nuevo cuadro", vacio: "Aún no hay cuadros del museo en la biblioteca central. Mientras no haya, cada congregación ve los 10 cuadros de base.", nombre: (x) => x.titulo || "(sin título)", sub: (x) => x.cita || "",
       ayuda: "Los cuadros aparecen en Biblia → Museo de todas las congregaciones, junto a los suyos. Un cuadro con el mismo título que uno de los 10 de base lo reemplaza.",
-      campos: [["titulo", "Parábola", "text", "La oveja perdida"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo", "icono", ""],
+      campos: [["titulo", "Parábola", "text", "La oveja perdida"], ["cita", "Pasaje", "text", "Lucas 15:3-7"], ["orden", "Orden en el museo", "number", ""], ["icono", "Dibujo (si no hay imagen)", "icono", ""],
         ["resumen", "La historia", "area", ""], ["ensenanza", "¿Qué nos enseña?", "area", ""], ["pregunta", "Pregunta para conversar en familia", "area", ""]] }
   };
   function vFichas(seg) {
@@ -320,7 +320,7 @@
     if (d) return head + editorFicha(col, d);
     return head + (items.length ? `<div class="tbl"><table><thead><tr><th class="num">Orden</th><th></th><th>${col === "biblicos" ? "Personaje" : "Cuadro"}</th><th>Plan</th><th class="num">${col === "biblicos" ? "Versículos" : ""}</th><th></th></tr></thead><tbody>
       ${items.map((m) => `<tr><td class="num">${esc(m.data.orden ?? "")}</td>
-        <td>${col === "biblicos" ? ((m.data.fotos || [])[0] ? `<img class="thumb" src="${esc(blobUrl(m.data.fotos[0]))}" alt="" loading="lazy">` : '<span class="thumb vacio">👤</span>') : `<span class="thumb vacio">${esc((ICONOS_MUSEO.find(([k]) => k === m.data.icono) || ["", "🖼"])[1])}</span>`}</td>
+        <td>${col === "biblicos" ? ((m.data.fotos || [])[0] ? `<img class="thumb" src="${esc(blobUrl(m.data.fotos[0]))}" alt="" loading="lazy">` : '<span class="thumb vacio">👤</span>') : (m.data.img ? `<img class="thumb" src="${esc(blobUrl(m.data.img))}" alt="" loading="lazy">` : `<span class="thumb vacio">${esc((ICONOS_MUSEO.find(([k]) => k === m.data.icono) || ["", "🖼"])[1])}</span>`)}</td>
         <td><b>${esc(F.nombre(m.data))}</b><div class="small muted">${esc(F.sub(m.data))}</div></td>
         <td>${planSelect(`data-fplan="${esc(m.id)}" aria-label="Plan"`, m.data.plan)}</td>
         <td class="num">${col === "biblicos" ? (m.data.citas || []).length : ""}</td>
@@ -334,7 +334,9 @@
       : `<input class="inp" id="f_${k}" type="${t}" value="${esc(x[k] ?? "")}" placeholder="${esc(ph)}">`}</div>`;
     const fotos = col === "biblicos" ? `<div class="mae-portada">${[0, 1].map((i) => (x.fotos || [])[i] ? `<img src="${esc(blobUrl(x.fotos[i]))}" alt="Foto ${i + 1}"><button class="btn ghost sm" type="button" data-act="quitarFotoFicha" data-i="${i}">Quitar foto ${i + 1}</button>` : "").join("")}
         ${(x.fotos || []).length ? "" : `<div class="empty">Sin foto</div>`}
-        ${(x.fotos || []).length < 2 ? `<label class="btn line sm" for="fFoto">Agregar foto (PNG con fondo transparente)</label><input type="file" id="fFoto" accept="image/png,image/jpeg,image/webp" hidden>` : ""}</div>` : `<div class="mae-portada"><div class="empty">El dibujo del cuadro se elige en "Dibujo".</div></div>`;
+        ${(x.fotos || []).length < 2 ? `<label class="btn line sm" for="fFoto">Agregar foto (PNG con fondo transparente)</label><input type="file" id="fFoto" accept="image/png,image/jpeg,image/webp" hidden>` : ""}</div>` : `<div class="mae-portada">${x.img ? `<img src="${esc(blobUrl(x.img))}" alt="Imagen del cuadro"><button class="btn ghost sm" type="button" data-act="quitarImgCuadro">Quitar imagen</button>` : `<div class="empty">Sin imagen: se muestra el dibujo elegido en "Dibujo".</div>`}
+        <label class="btn line sm" for="fCuadro">${x.img ? "Cambiar imagen" : "Subir imagen del cuadro"}</label><input type="file" id="fCuadro" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+        <p class="small muted">Se ve enmarcada en el museo. Mejor horizontal (4:3).</p></div>`;
     return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Volver a la lista</button><button class="btn danger sm" data-act="borrarFicha" data-id="${esc(d.id)}">Eliminar ${F.uno}</button></div>
       <div class="mae-grid">${fotos}<form class="form" id="fFicha">${F.campos.map(campo).join("")}
         <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar ${F.uno}</button></div></form></div></section>`;
@@ -668,6 +670,10 @@
         await borrarDoc(CENTRAL, ui.bib, b.dataset.id); if (fotos.length) await sb.storage.from(BUCKET).remove(fotos);
         ui.ficha = null; toast("Eliminado"); render(); return;
       }
+      if (act0(b) === "quitarImgCuadro") {
+        const d = fichaActual(); if (!d) return; const viejo = d.data.img; const data = { ...d.data }; delete data.img;
+        await guardarFicha(d, data); if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Imagen quitada"); render(); return;
+      }
       if (act0(b) === "quitarFotoFicha") {
         const d = fichaActual(); if (!d) return; const fotos = (d.data.fotos || []).slice(); const [f] = fotos.splice(Number(b.dataset.i), 1);
         await guardarFicha(d, { ...d.data, fotos }); if (f) await sb.storage.from(BUCKET).remove([f]); toast("Foto quitada"); render(); return;
@@ -760,6 +766,12 @@
         const f = t.files[0]; t.value = ""; if (!f) return; const n = ui.ficha; const viejo = lamDoc(n) && lamDoc(n).data.img;
         toast("Subiendo lámina…"); const { path } = await subirArchivoCentral(f); await guardarLamina(n, { img: path });
         if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Lámina " + n + " lista"); render(); return;
+      }
+      if (t.id === "fCuadro") {
+        const f = t.files[0]; t.value = ""; if (!f) return; const d = fichaActual(); if (!d) return;
+        if (!/^image\//.test(f.type)) { toast("Elige una imagen (PNG, JPG o WEBP)"); return; }
+        toast("Subiendo imagen…"); const viejo = d.data.img; const { path } = await subirArchivoCentral(f);
+        await guardarFicha(d, { ...d.data, img: path }); if (viejo) await sb.storage.from(BUCKET).remove([viejo]); toast("Imagen del cuadro lista"); render(); return;
       }
       if (t.id === "fFoto") {
         const f = t.files[0]; t.value = ""; if (!f) return; const d = fichaActual(); if (!d) return;
