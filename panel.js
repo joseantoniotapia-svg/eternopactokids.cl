@@ -349,37 +349,44 @@
 
   /* ---------- álbum bíblico: 100 láminas ---------- */
   const LAM_TOTAL = 100;
-  const LAM_SECC = [[1, 22, "Orígenes y Patriarcas"], [23, 28, "Éxodo y conquista"], [29, 38, "Época de los Jueces"], [39, 48, "Reino de Israel"], [49, 63, "Reino dividido y profetas"], [64, 73, "Exilio y regreso"], [74, 96, "Nacimiento y ministerio de Jesús"], [97, 100, "Iglesia primitiva"]];
+  const LAM_SECC = [[1, 7, "Los comienzos"], [8, 22, "Los patriarcas"], [23, 27, "Éxodo y conquista"], [28, 38, "Jueces y transición al reino"], [39, 47, "Reyes de Israel"], [48, 63, "Reyes y profetas"], [64, 73, "Exilio y regreso"], [74, 79, "La llegada de Jesús"], [80, 96, "Jesús y sus discípulos"], [97, 100, "La Iglesia comienza"]];
+  const lamBase = (n) => "img/album/" + String(n).padStart(3, "0") + ".webp";
   const lamId = (n) => "lamina-" + String(n).padStart(3, "0");
   const lamDoc = (n) => D.docs.find((x) => x.comunidad_id === CENTRAL && x.col === "laminas" && Number(x.data.numero) === Number(n));
   const esVideo = (p) => /\.(mp4|webm)$/i.test(p || "");
-  const lamMedia = (d, cls) => d && d.data.img ? (esVideo(d.data.img) ? `<video class="${cls}" src="${esc(blobUrl(d.data.img))}" autoplay muted loop playsinline></video>` : `<img class="${cls}" src="${esc(blobUrl(d.data.img))}" alt="" loading="lazy">`) : "";
+  const lamMedia = (d, cls, n) => d && d.data.img ? (esVideo(d.data.img) ? `<video class="${cls}" src="${esc(blobUrl(d.data.img))}" autoplay muted loop playsinline></video>` : `<img class="${cls}" src="${esc(blobUrl(d.data.img))}" alt="" loading="lazy">`) : (n ? `<img class="${cls}" src="${lamBase(n)}" alt="" loading="lazy">` : "");
   function vLaminas(seg) {
-    const hechas = Array.from({ length: LAM_TOTAL }, (_, i) => lamDoc(i + 1)).filter((d) => d && d.data.img).length;
+    const hechas = Array.from({ length: LAM_TOTAL }, (_, i) => lamDoc(i + 1)).filter((d) => d && d.data.img).length; // reemplazadas desde el panel
     const pg = ui.subida;
     let out = `<div class="head"><div><p class="eyebrow">Para todas las congregaciones</p><h1>Biblioteca central</h1></div></div>
-    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div><span class="pill ${hechas === LAM_TOTAL ? "ok" : ""}">${hechas} de ${LAM_TOTAL} láminas con imagen</span></div>
-    <p class="muted">Las 100 láminas del Álbum bíblico, ya con nombre, cita y frase (si aún no aparecen, ejecuta <b>supabase/album_laminas.sql</b>). Los sobres de los niños ya funcionan aunque falten imágenes: mientras tanto se ve una lámina de color con el número y el nombre. Cuando subas la imagen, aparece sola en todos los álbumes.</p>`;
+    <div class="row between"><div class="seg" role="group" aria-label="Tipo de material">${seg.map(([k, n]) => `<button aria-pressed="${ui.bib === k}" data-bib="${k}">${n}</button>`).join("")}</div><span class="pill">${hechas} de ${LAM_TOTAL} reemplazadas</span></div>
+    <p class="muted">Las 100 láminas del Álbum bíblico, ya con nombre, cita y frase (si aún no aparecen, ejecuta <b>supabase/album_laminas.sql</b>). Las 100 ya tienen su imagen base; si subes otra (o una animación) para una lámina, la reemplaza en todos los álbumes.</p>`;
     const d = ui.ficha && lamDoc(ui.ficha);
     if (ui.ficha) return out + editorLamina(Number(ui.ficha), d);
     out += `<label class="drop" id="dropL" for="lFiles"><b>Arrastra aquí varias láminas a la vez</b><span class="muted small">Nombra cada archivo con su número y el personaje, por ejemplo <b>009-Moisés.webp</b> o <b>14 Débora.png</b>: se ubica sola en su casilla. Sirven PNG, JPG, WEBP, GIF animado, MP4 o WEBM de hasta ${MAXMB} MB.</span>
       <input type="file" id="lFiles" multiple accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden><span class="btn" style="align-self:center;margin-top:6px">📎 Elegir láminas para subir</span></label>
     ${pg ? `<section class="card"><b>${pg.hecho < pg.total ? `Subiendo ${pg.hecho} de ${pg.total}…` : `Listo: ${pg.total - pg.errores.length} de ${pg.total} láminas subidas`}</b><div class="prog"><i style="width:${(pg.hecho / pg.total) * 100}%"></i></div>${pg.errores.length ? `<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>` : ""}</section>` : ""}
     ${LAM_SECC.map(([a, z, t]) => `<h3 class="lam-sec">${esc(t)} <span class="muted small">(${a}–${z})</span></h3><div class="lam-grid">${Array.from({ length: z - a + 1 }, (_, i) => { const n = a + i, x = lamDoc(n);
-      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m") || `<span class="lam-m vacia">${x && x.data.nombre ? "🖼" : "+"}</span>`}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`).join("")}`;
+      return `<button class="lam-cel${x && x.data.img ? " ok" : ""}" data-act="editLamina" data-n="${n}" aria-label="Lámina ${n}${x && x.data.nombre ? ": " + esc(x.data.nombre) : ""}"><span class="lam-n">${n}</span>${lamMedia(x, "lam-m", n)}<span class="lam-t">${esc((x && x.data.nombre) || "Sin nombre")}</span></button>`; }).join("")}</div>`).join("")}`;
     return out;
   }
   function editorLamina(n, d) {
     const x = (d && d.data) || {};
     const bib = docsDe(CENTRAL, "biblicos").sort((a, b) => String(a.data.nombre || "").localeCompare(String(b.data.nombre || ""), "es"));
     return `<section class="card mae"><div class="row between"><button class="btn ghost sm" data-act="cerrarFicha">‹ Todas las láminas</button><span class="row"><button class="btn ghost sm" data-act="editLamina" data-n="${n - 1}" ${n > 1 ? "" : "disabled"}>‹ N° ${n - 1}</button><button class="btn ghost sm" data-act="editLamina" data-n="${n + 1}" ${n < LAM_TOTAL ? "" : "disabled"}>N° ${n + 1} ›</button></span></div>
-      <div class="mae-grid"><div class="mae-portada">${lamMedia(d, "") || `<div class="empty">Lámina ${n} sin imagen</div>`}
+      <div class="mae-grid"><div class="mae-portada">${lamMedia(d, "", n)}${x.img ? "" : `<p class="small muted">Imagen base del álbum. Puedes reemplazarla por otra o por una animación.</p>`}
         <label class="btn line sm" for="lFoto">${x.img ? "Cambiar imagen o animación" : "Subir imagen o animación"}</label><input type="file" id="lFoto" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden>
         ${x.img ? `<button class="btn ghost sm" type="button" data-act="quitarImgLamina">Quitar imagen</button>` : ""}</div>
       <form class="form" id="fLamina"><div class="field"><label>Número</label><input class="inp" value="${n}" disabled></div>
         <div class="field"><label for="l_nombre">Personaje</label><input class="inp" id="l_nombre" value="${esc(x.nombre || "")}" placeholder="Moisés"></div>
         <div class="field"><label for="l_cita">Dónde aparece</label><input class="inp" id="l_cita" value="${esc(x.cita || "")}" placeholder="Éxodo 3"></div>
         <div class="field"><label for="l_biblico">Su ficha en Personajes bíblicos (opcional)</label><select class="inp" id="l_biblico"><option value="">— Ninguna —</option>${bib.map((b) => `<option value="c_${esc(b.id)}" ${x.biblico === "c_" + b.id ? "selected" : ""}>${esc(b.data.nombre || b.id)}</option>`).join("")}</select></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_quien">¿Quién fue?</label><textarea class="inp" id="l_quien" rows="3">${esc(x.quien || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_leer">📖 Para leer</label><textarea class="inp" id="l_leer" rows="1">${esc(x.leer || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_recordamos">⭐ Lo recordamos por</label><textarea class="inp" id="l_recordamos" rows="1">${esc(x.recordamos || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_valor">❤️ Valor</label><textarea class="inp" id="l_valor" rows="1">${esc(x.valor || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_sabias">💡 ¿Sabías que...?</label><textarea class="inp" id="l_sabias" rows="2">${esc(x.sabias || "")}</textarea></div>
+        <div class="field" style="grid-column:1/-1"><label for="l_aprendo">✨ Lo que aprendo</label><textarea class="inp" id="l_aprendo" rows="2">${esc(x.aprendo || "")}</textarea></div>
         <div class="field" style="grid-column:1/-1"><label for="l_frase">Frase de la lámina (se lee al tocarla)</label><textarea class="inp" id="l_frase" rows="3" maxlength="220" placeholder="Guió al pueblo de Dios fuera de Egipto.">${esc(x.frase || "")}</textarea></div>
         <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Guardar lámina</button></div></form></div></section>`;
   }
@@ -845,7 +852,7 @@
         await guardarMaestra(d, data); toast("Clase guardada"); render(); return;
       }
       if (f.id === "fLamina") {
-        await guardarLamina(ui.ficha, { nombre: $("#l_nombre").value.trim(), cita: $("#l_cita").value.trim(), biblico: $("#l_biblico").value || null, frase: $("#l_frase").value.trim() });
+        await guardarLamina(ui.ficha, { nombre: $("#l_nombre").value.trim(), cita: $("#l_cita").value.trim(), biblico: $("#l_biblico").value || null, frase: $("#l_frase").value.trim(), quien: $("#l_quien").value.trim(), leer: $("#l_leer").value.trim(), recordamos: $("#l_recordamos").value.trim(), valor: $("#l_valor").value.trim(), sabias: $("#l_sabias").value.trim(), aprendo: $("#l_aprendo").value.trim() });
         toast("Lámina " + ui.ficha + " guardada"); if (ui.ficha < LAM_TOTAL) ui.ficha++; render(); window.scrollTo(0, 0); return;
       }
       if (f.id === "fFicha") {

@@ -281,6 +281,15 @@ button.item:hover{border-color:var(--accent)}
 @keyframes albVuelta{from{transform:rotateY(90deg) scale(.9)}to{transform:none}}
 .alb-det{align-items:center;text-align:center}.alb-det>.lam{width:min(230px,62vw)}
 .dd-sobres{margin-top:4px}
+.alb-head{display:grid!important;grid-template-columns:auto 1fr;align-items:center}.alb-head>div{min-width:0!important}.alb-head .alb-sobre-btn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:12px;padding:10px;border-radius:16px;background:var(--sunk)}.alb-head .alb-sobre-btn.on{background:#FFF4D6;color:#1E1548}
+.alb-portada{width:92px;aspect-ratio:2/3;object-fit:cover;border-radius:10px;border:2.5px solid #2A1E5C;box-shadow:0 4px 0 #2A1E5C}
+.alb-pagina{border-top:10px solid var(--era,#2A1E5C)}.alb-pagina h3{color:var(--era)}.alb-pagina .dd-dot{border-color:var(--era)}.alb-pagina .dd-dot.ok{background:var(--era)}
+.lam-ph{background:var(--lc)}
+.ficha{text-align:left;align-items:stretch;border-top:10px solid var(--era)}.ficha h2{font-size:1.25rem}.ficha h3{margin:4px 0 0;font-size:1rem;color:var(--era)}
+.fi-era{margin:0;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--era)}
+.fi-img{width:100%;max-height:300px;object-fit:cover;border-radius:14px;border:3px solid #2A1E5C}
+.fi-datos{display:flex;flex-direction:column;gap:6px}.fi-fila{display:flex;gap:8px;margin:0}
+.fi-aprendo{padding:10px 12px;border-radius:14px;background:#FFF4D6;color:#1E1548;border-left:6px solid var(--era)}.fi-aprendo p{margin:4px 0 0}
 @media (prefers-reduced-motion:reduce){.alb-sobre-btn.on .sobre,.carta.dorso:not(:disabled),.carta.vuelta{animation:none}}
 .dm-aviso{--pin:#FF7A1A}.dm-firma{font-size:.8rem;font-weight:700;opacity:.8}
 .dm-nuevo{--nc:rgba(255,255,255,.55);border-style:dashed;align-items:center;justify-content:center;text-align:center;cursor:pointer;min-height:110px;font:inherit}.dm-nuevo>span:first-child{font-size:1.8rem}
@@ -1987,7 +1996,9 @@ function accionDD(act,b){
 
 /* ---------- álbum bíblico: 100 láminas, sobres de 4, intercambio y patio ---------- */
 const ALB_TOTAL=100;
-const ALB_SECC=[[1,22,"Orígenes y Patriarcas"],[23,28,"Éxodo y conquista"],[29,38,"Época de los Jueces"],[39,48,"Reino de Israel"],[49,63,"Reino dividido y profetas"],[64,73,"Exilio y regreso"],[74,96,"Nacimiento y ministerio de Jesús"],[97,100,"Iglesia primitiva"]];
+const ALB_SECC=[[1,7,"Los comienzos","#2FB36B"],[8,22,"Los patriarcas","#FF8A1A"],[23,27,"Éxodo y conquista","#2E7CF6"],[28,38,"Jueces y transición al reino","#8B5CF6"],[39,47,"Reyes de Israel","#E5383B"],[48,63,"Reyes y profetas","#E0A100"],[64,73,"Exilio y regreso","#1AA3A3"],[74,79,"La llegada de Jesús","#F59E0B"],[80,96,"Jesús y sus discípulos","#E0457B"],[97,100,"La Iglesia comienza","#F25C05"]];
+const albEra=n=>ALB_SECC.find(x=>n>=x[0]&&n<=x[1])||ALB_SECC[0];
+const albImg=n=>{const L=albCat(n);return L&&L.img?blobUrl(L.img):"img/album/"+String(n).padStart(3,"0")+".webp";};
 const ALB={cargado:false,cargando:false,estado:{},tengo:{},inter:[],chat:[],nino:null,vista:"album",pag:0,ofrezco:null,sub:null,sobre:null};
 const FRASES_ALB=["¿Alguien tiene la N° ?","¡Te la cambio!","¡Me falta poco para llenar la página!","¡Gracias! 😊","¡Qué buena lámina! 🙌","Revisa tus ofertas 📬"];
 const albSB=()=>window.EPK&&EPK.sb&&EPK.comunidad?EPK.sb:null;
@@ -2015,10 +2026,10 @@ function albEscuchar(){const sb=albSB();if(!sb||ALB.canal)return;const cid=EPK.c
     .on("postgres_changes",{event:"*",schema:"public",table:"album_intercambios",filter:"comunidad_id=eq."+cid},recargar).subscribe();}
 
 function laminaHTML(num,o){o=o||{};const L=albCat(num),cant=o.cant||0;const nombre=L&&L.nombre?L.nombre:"Lámina "+num;
-  const src=L&&L.img?blobUrl(L.img):"";const vid=/\.(mp4|webm)$/i.test(L&&L.img||"");
+  const src=albImg(num);const vid=/\.(mp4|webm)$/i.test(L&&L.img||"");
   const media=!o.vacia&&src?(vid?`<video src="${esc(src)}" autoplay muted loop playsinline aria-label="${esc(nombre)}"></video>`:`<img src="${esc(src)}" alt="${esc(nombre)}" loading="lazy">`)
     :`<span class="lam-ph">${o.vacia?"?":`<span>${esc(inicial(nombre))}</span>`}</span>`;
-  return `<span class="lam${o.vacia?" vacia":""}${o.cls?" "+o.cls:""}" style="--lc:${colorFor("lam"+num)}"><span class="lam-num">${num}</span>${media}<b class="lam-nom">${esc(nombre)}</b>${cant>1?`<span class="lam-rep">x${cant}</span>`:""}</span>`;}
+  return `<span class="lam${o.vacia?" vacia":""}${o.cls?" "+o.cls:""}" style="--lc:${albEra(num)[3]}"><span class="lam-num">${num}</span>${media}<b class="lam-nom">${esc(nombre)}</b>${cant>1?`<span class="lam-rep">x${cant}</span>`:""}</span>`;}
 
 function vAlbum(){cargarAlbum();
   let out="";
@@ -2030,7 +2041,7 @@ function vAlbum(){cargarAlbum();
   const nid=albNinoSel(),e=ALB.estado[nid]||{ganados:0,abiertos:0,pegadas:0,repetidas:0},pa=albPorAbrir(nid);
   const recibidas=ALB.inter.filter(t=>t.estado==="pendiente"&&t.para_nino===nid).length;
   out+=`<section class="card alb-top">${ns.length>1?`<div class="row" role="group" aria-label="¿De quién es el álbum?">${ns.map(n=>`<button class="chip" aria-pressed="${n.id===nid}" data-act="albNino" data-id="${esc(n.id)}">${esc(albNom(n.id))}</button>`).join("")}</div>`:""}
-    <div class="alb-head"><div><p class="eyebrow">Álbum bíblico de ${esc(albNom(nid))}</p><h2>${e.pegadas} de ${ALB_TOTAL} láminas</h2><div class="prog"><i style="width:${e.pegadas/ALB_TOTAL*100}%"></i></div>
+    <div class="alb-head"><img class="alb-portada" src="img/album/portada.webp" alt="Portada del Álbum de Personajes Bíblicos"><div><p class="eyebrow">Álbum bíblico de ${esc(albNom(nid))}</p><h2>${e.pegadas} de ${ALB_TOTAL} láminas</h2><div class="prog"><i style="width:${e.pegadas/ALB_TOTAL*100}%"></i></div>
       <p class="small muted">${e.repetidas} ${e.repetidas===1?"repetida":"repetidas"} para cambiar · ${e.abiertos} ${e.abiertos===1?"sobre abierto":"sobres abiertos"}</p></div>
       <button class="alb-sobre-btn${pa?" on":""}" ${pa?`data-act="albAbrir"`:"disabled"} aria-label="${pa?"Abrir sobre":"Sin sobres por abrir"}"><span class="sobre mini"><span class="sobre-sello">EPK</span></span><b>${pa?`Abrir sobre (${pa})`:"Sin sobres"}</b>${pa?"":`<span class="small">Haz desafíos para ganar más</span>`}</button></div></section>`;
   const vistas=[["album","📖 Mi álbum"],["repetidas","🔁 Repetidas"],["patio",`💬 Patio${recibidas?` (${recibidas})`:""}`]].concat(ed()?[["curso","🧑‍🏫 Curso"]]:[]);
@@ -2041,10 +2052,10 @@ function vAlbum(){cargarAlbum();
   const pags=ALB_SECC.length;ALB.pag=Math.max(0,Math.min(ALB.pag,pags-1));const [ini,fin,tit]=ALB_SECC[ALB.pag];
   let celdas="";for(let n=ini;n<=fin;n++){const c=albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
   const llenas=Array.from({length:fin-ini+1},(_,i)=>albCant(nid,ini+i)?1:0).reduce((a,b)=>a+b,0);
-  return out+`<section class="alb-pagina"><div class="sec-h"><div><p class="eyebrow">Página ${ALB.pag+1} de ${pags} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div><span class="pill${llenas===fin-ini+1?" sun":""}">${llenas===fin-ini+1?"¡Completa! ":""}${llenas}/${fin-ini+1}</span></div>
+  return out+`<section class="alb-pagina" style="--era:${ALB_SECC[ALB.pag][3]}"><div class="sec-h"><div><p class="eyebrow">Página ${ALB.pag+1} de ${pags} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div><span class="pill${llenas===fin-ini+1?" sun":""}">${llenas===fin-ini+1?"¡Completa! ":""}${llenas}/${fin-ini+1}</span></div>
     <div class="alb-grid">${celdas}</div>
     <div class="row between"><button class="btn line sm" data-act="albPag" data-d="-1" ${ALB.pag?"":"disabled"}>‹ Anterior</button>
-    <span class="row">${ALB_SECC.map((x,i)=>{const tot=x[1]-x[0]+1,ok=Array.from({length:tot},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);return `<button class="dd-dot${i===ALB.pag?" hoy":""}${ok===tot?" ok":""}" data-act="albPag" data-p="${i}" aria-label="${esc(x[2])}: ${ok} de ${tot}" title="${esc(x[2])}">${ok===tot?"✓":i+1}</button>`;}).join("")}</span>
+    <span class="row">${ALB_SECC.map((x,i)=>{const tot=x[1]-x[0]+1,ok=Array.from({length:tot},(_,k)=>albCant(nid,x[0]+k)?1:0).reduce((a,b)=>a+b,0);return `<button class="dd-dot${i===ALB.pag?" hoy":""}${ok===tot?" ok":""}" data-act="albPag" data-p="${i}" aria-label="${esc(x[2])}: ${ok} de ${tot}" title="${esc(x[2])}" style="--era:${x[3]}">${ok===tot?"✓":i+1}</button>`;}).join("")}</span>
     <button class="btn line sm" data-act="albPag" data-d="1" ${ALB.pag<pags-1?"":"disabled"}>Siguiente ›</button></div></section>`;}
 
 function vAlbRepetidas(nid){const mias=Object.entries(ALB.tengo[nid]||{}).filter(([,c])=>c>1).map(([n,c])=>[Number(n),c]).sort((a,b)=>a[0]-b[0]);
@@ -2114,11 +2125,17 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
     case "albRasgar":if(ALB.sobre){ALB.sobre.roto=true;pintarSobre();}break;
     case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
     case "albCerrarSobre":ALB.sobre=null;pintarSobre();ALB.vista="album";render();break;
-    case "albVer":{const n=Number(b.dataset.n),L=albCat(n)||{};const c=albCant(nid,n);
-      $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet alb-det">${laminaHTML(n)}<p class="eyebrow">N° ${n}${L.seccion?" · "+esc(L.seccion):""}</p><h2>${esc(L.nombre||"Lámina "+n)}</h2>${L.cita?`<p class="eyebrow">${esc(L.cita)}</p>`:""}${L.frase?`<p>${esc(L.frase)}</p>`:""}
-        <p class="small muted">${c>1?`La tienes ${c} veces: ${c-1} para cambiar.`:"Pegada en tu álbum."}</p>
-        <div class="row">${L.biblico?`<button class="btn line sm" data-act="verBiblico" data-id="${esc(L.biblico)}">Conocer su historia</button>`:""}${c>1?`<button class="btn line sm" data-act="albOfrezco" data-n="${n}">Cambiarla</button>`:""}<button class="btn sm" data-act="albCerrarDet">Cerrar</button></div></div></div>`;
-      $("#sheetBg").addEventListener("click",e=>{if(e.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});break;}
+    case "albVer":{const n=Number(b.dataset.n),L=albCat(n)||{};const c=albCant(nid,n),e=albEra(n),nom=L.nombre||"Lámina "+n;
+      const fila=(ic,t,v)=>v?`<p class="fi-fila"><span aria-hidden="true">${ic}</span><span><b>${t}</b> ${esc(v)}</span></p>`:"";
+      $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet alb-det ficha" style="--era:${e[3]}" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(nom)}">
+        <p class="fi-era">${esc(e[2])}</p><h2>N.º ${String(n).padStart(3,"0")} · ${esc(nom.toUpperCase())}</h2>
+        <img class="fi-img" src="${esc(albImg(n))}" alt="${esc(nom)}">
+        ${L.quien?`<h3>¿Quién fue?</h3><p>${esc(L.quien)}</p>`:(L.frase?`<p>${esc(L.frase)}</p>`:"")}
+        <div class="fi-datos">${fila("📖","Para leer:",L.leer||L.cita)}${fila("⭐","Lo recordamos por:",L.recordamos)}${fila("❤️","Valor:",L.valor)}${fila("💡","¿Sabías que…?",L.sabias)}</div>
+        ${L.aprendo?`<div class="fi-aprendo"><b>Lo que aprendo de ${esc(nom)}</b><p>${esc(L.aprendo)}</p></div>`:""}
+        <p class="small muted">${c>1?`La tienes ${c} veces: ${c-1} para cambiar.`:c?"Pegada en tu álbum.":""}</p>
+        <div class="row">${L.biblico?`<button class="btn line sm" data-act="verBiblico" data-id="${esc(L.biblico)}">Ver en Personajes bíblicos</button>`:""}${c>1?`<button class="btn line sm" data-act="albOfrezco" data-n="${n}">Cambiarla</button>`:""}<button class="btn sm" data-act="albCerrarDet">Cerrar</button></div></div></div>`;
+      $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});break;}
     case "albCerrarDet":$("#sheetRoot").innerHTML="";break;
     case "albOfrezco":$("#sheetRoot").innerHTML="";ALB.vista="repetidas";ALB.ofrezco=Number(b.dataset.n);render();break;
     case "albPedir":{if(!sb)break;const k=b.dataset.k,n=Number(b.dataset.n);b.disabled=true;
