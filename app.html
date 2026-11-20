@@ -926,12 +926,21 @@ function notaClase(c,eti,cls){if(!c)return "";const img=c.portadaMini||c.portada
   return `<article class="dm-nota dm-clase ${cls}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">${hoy?"¡Hoy!":esc(eti)} · ${esc(fCorta(c.fecha).dia)} ${esc(fCorta(c.fecha).mes)}</p>
     <div class="dm-cl">${img?`<img src="${esc(srcDe(img))}" alt="" loading="lazy" width="78" height="117">`:`<span class="dm-sinimg" aria-hidden="true">📖</span>`}<div><h3>${esc(c.titulo)}</h3>${c.cita?`<p class="dm-cita">${esc(c.cita)}</p>`:""}<p class="small">${esc(corto(c.subtitulo||c.resumen,110))}</p></div></div>
     ${pillOculta(c)}<button class="btn sm" data-act="verClase" data-id="${esc(c.id)}">${cls==="pasada"?"Repasar la clase":"Ver la clase"}</button></article>`;}
+/* Equipo: si aún no hay clase para el próximo domingo, el mural lo avisa y propone la siguiente de la Biblioteca */
+function siguienteMaestra(){const ult=Math.max(0,...S.clases.filter(c=>c.base).map(c=>Number(c.numero)||0));
+  const libres=[...S.maestras].filter(m=>!(m._bloqueado&&!(window.EPK&&EPK.super))&&!programadas(m).length).sort((a,b)=>(a.numero||0)-(b.numero||0));
+  return libres.find(m=>(Number(m.numero)||0)>ult)||libres[0]||null;}
+function notaFaltaClase(){if(!ed())return "";const dom=proximoDomingo();const m=siguienteMaestra();
+  return `<article class="dm-nota dm-clase proxima"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Este domingo · ${esc(fCorta(dom).dia)} ${esc(fCorta(dom).mes)}</p>
+    <div class="dm-cl">${m&&(m.portadaMini||m.portada)?`<img src="${esc(srcDe(m.portadaMini||m.portada))}" alt="" loading="lazy" width="78" height="117">`:`<span class="dm-sinimg" aria-hidden="true">📖</span>`}<div><h3>Aún no hay clase</h3><p class="small">${m?`Sugerida: <b>Clase N°${esc(m.numero??"")} · ${esc(m.titulo||"")}</b>${m.cita?" · "+esc(m.cita):""}`:"Agrega la lección para que las familias la vean aquí."}</p></div></div>
+    <p class="muted small">Solo el equipo ve esta nota.</p>
+    <div class="row">${m?`<button class="btn sm" data-act="adoptar" data-id="${esc(m.id)}">Programar para el domingo</button><button class="btn line sm" data-act="irBiblioClases">Elegir otra</button>`:`<button class="btn sm" data-act="nuevaClase">Agregar clase</button><button class="btn line sm" data-act="irBiblioClases">Biblioteca</button>`}</div></article>`;}
 function vDiarioMural(){const {pasada,proxima}=clasesMural();const h=hoyISO();
   const vcl=proxima&&proxima.versiculo?proxima:(pasada&&pasada.versiculo?pasada:null);
   const avisos=S.muro.filter(p=>p.destacado!=="no"&&(!p.hasta||p.hasta>=h)).sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1).slice(0,4);
   if(!pasada&&!proxima&&!vcl&&!avisos.length&&!ed()&&!notaFotos(pasada))return "";
   const COL={amarillo:"#FFE45C",rosado:"#FFC2D9",celeste:"#BFE6FF",verde:"#C9F2D8",lila:"#E2D6FF"};
-  let notas=notaClase(proxima,proxima&&proxima.fecha===h?"Hoy":"Este domingo","proxima")+notaClase(pasada,"El domingo pasado","pasada")+notaFotos(pasada);
+  let notas=(proxima?notaClase(proxima,proxima.fecha===h?"Hoy":"Este domingo","proxima"):notaFaltaClase())+notaClase(pasada,"El domingo pasado","pasada")+notaFotos(pasada);
   if(vcl)notas+=`<article class="dm-nota dm-verso"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Versículo para memorizar</p><blockquote>“${esc(vcl.versiculo)}”</blockquote>${vcl.versiculoCita?`<cite>${esc(vcl.versiculoCita)}</cite>`:""}<button class="btn sm jv-btn" data-act="jugarVerso" data-id="${esc(vcl.id)}">🎮 Practicar</button></article>`;
   if(proxima&&proxima.tarea)notas+=`<article class="dm-nota dm-tarea"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">Tarea para la casa</p><p class="small">${esc(corto(proxima.tarea,160))}</p></article>`;
   notas+=avisos.map((p,i)=>`<article class="dm-nota dm-aviso" style="--nc:${COL[p.color]||COL[["rosado","celeste","verde","lila"][i%4]]}"><span class="dm-chinche" aria-hidden="true"></span><p class="dm-eti">📢 Aviso</p><p>${esc(corto(p.texto,220))}</p><p class="dm-firma">${esc(p.autor||"")}${p.hasta?` · hasta el ${esc(fCorta(p.hasta).dia)} ${esc(fCorta(p.hasta).mes)}`:""}</p>${ed()?`<button class="copy" data-act="editPost" data-id="${esc(p.id)}">Editar</button>`:""}</article>`).join("");
