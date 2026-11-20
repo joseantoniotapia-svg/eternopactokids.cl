@@ -409,6 +409,24 @@ button.item:hover{border-color:var(--accent)}
 .lt-cara{border:0;padding:0;background:none;cursor:pointer}.lt-cara img{width:60px;height:60px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:3px solid var(--era,#FFC93C)}
 .lt-f-legal{margin:0;font-size:.68rem;color:var(--muted);text-align:center}
 .lt-ficha-p{align-items:center;gap:10px}.lt-fp-img{width:min(360px,100%);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.25)}.lt-fp-img.gris{filter:grayscale(1);opacity:.6}
+.lt-marcas{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 4px 0}.lt-m-epk{height:44px}.lt-m-jat{height:22px;opacity:.9}
+.lt-son{border:1.5px solid rgba(255,217,138,.7);background:rgba(255,201,60,.12);color:#FFD98A;border-radius:999px;padding:5px 12px;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}
+.lt-der{margin:4px 0 0;font-size:.68rem;color:#9C95CC}
+.lt-manos{margin:-6px auto -4px}.lt-manos-par{animation:ltFlotar 6s ease-in-out infinite}.lt-chispa{animation:ltLatir 2.4s ease-in-out infinite;transform-origin:320px 132px}
+.lt-ventana{height:660px}
+.lt-hito.arriba .lt-card{bottom:calc(50% + var(--off))}.lt-hito.abajo .lt-card{top:calc(50% + var(--off))}
+.lt-hito.arriba::before{height:calc(var(--off) - 22px)}.lt-hito.abajo::before{height:calc(var(--off) - 22px)}
+.lt-card{left:calc(-60px + var(--dx));background:var(--fondo);transform:rotate(var(--rot)) scale(calc(.8 + var(--t)*.3))}
+.lt-card.s{width:170px;padding:8px 10px 10px}.lt-card.s b{font-size:.92rem}.lt-card.s .lt-cita{display:none}
+.lt-card.g{width:250px;left:calc(-85px + var(--dx));border-width:4px}.lt-card.g b{font-size:1.25rem}
+.lt-emo-g{font-size:2.2rem;line-height:1}
+.lt-card.pop{animation:ltPop .5s cubic-bezier(.3,1.4,.5,1)}
+@keyframes ltPop{0%{transform:rotate(var(--rot)) scale(1)}40%{transform:rotate(0) scale(1.3) rotateY(180deg)}100%{transform:rotate(0) scale(1.12) rotateY(360deg)}}
+.lt-cometa{position:absolute;width:160px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);transform:rotate(var(--ang));pointer-events:none;z-index:1;opacity:0;animation:ltCometa 1.6s ease-out forwards}
+.lt-cometa::after{content:"";position:absolute;right:-3px;top:-3px;width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 10px 3px #FFF3C4}
+.lt-cometa.grande{width:280px;height:4px;background:linear-gradient(90deg,rgba(124,214,255,0),rgba(124,214,255,.6),#fff);animation-duration:2.4s}.lt-cometa.grande::after{width:14px;height:14px;top:-5px;box-shadow:0 0 18px 6px #9BE7FF}
+@keyframes ltCometa{0%{opacity:0;translate:0 0}10%{opacity:1}100%{opacity:0;translate:420px 260px}}
+@media (prefers-reduced-motion:reduce){.lt-manos-par,.lt-chispa,.lt-card.pop{animation:none}}
 .ini-linea{position:relative;overflow:hidden;border-radius:22px;padding:18px;color:#EDEBFF;background:radial-gradient(ellipse at 80% 20%,rgba(255,201,60,.35),transparent 50%),radial-gradient(ellipse at 10% 90%,rgba(123,77,255,.5),transparent 55%),#0b0f2e;border:3px solid #2A1E5C;box-shadow:0 5px 0 #2A1E5C}
 .ini-linea h2{margin:2px 0;color:#FFD98A}.ini-linea p{margin:0 0 8px}.ini-linea .eyebrow{color:#FFD98A}
 @media (prefers-reduced-motion:reduce){.lt-nube,.lt-rayos,.lt-mano,.lt-linea,.lt-est{animation:none}.lt-cinta{animation:none;stroke-dashoffset:0}}
@@ -2343,39 +2361,78 @@ function ltEstrellas(){const r=a=>{const x=Math.sin(a*12.9898)*43758.5453;return
 const LT_CIELO=ltEstrellas();
 function ltClaseIdx(){const c=claseActual();if(!c||!c.cita)return -1;const p=parseRef(String(c.cita).split(/[;,]/)[0]);if(!p)return -1;let best=-1,bd=99;
   LT.forEach((h,i)=>{const q=parseRef(h.cita.split(";")[0]);if(q&&q.li===p.li){const d=Math.abs(q.cap-p.cap);if(d<bd){bd=d;best=i;}}});return bd<=4?best:-1;}
-const LT_MANOS=`<svg class="lt-manos" viewBox="0 0 640 210" aria-hidden="true">
-  <defs><radialGradient id="ltNube" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#FFFBEA"/><stop offset=".45" stop-color="#FFE7A3" stop-opacity=".85"/><stop offset="1" stop-color="#FFD23F" stop-opacity="0"/></radialGradient>
-  <linearGradient id="ltMano" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".7" stop-color="#FFF1C2"/><stop offset="1" stop-color="#FFD98A"/></linearGradient>
-  <linearGradient id="ltCinta" x1="0" x2="1"><stop offset="0" stop-color="#FFB703"/><stop offset=".5" stop-color="#FFF1B8"/><stop offset="1" stop-color="#FFB703"/></linearGradient>
-  <filter id="ltBrillo" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
-  <ellipse class="lt-nube" cx="320" cy="62" rx="230" ry="62" fill="url(#ltNube)"/>
-  <g class="lt-rayos" stroke="#FFF3C4" stroke-width="2" opacity=".5">${Array.from({length:15},(_,i)=>{const a=(-170+i*(160/14))*Math.PI/180;return `<line x1="320" y1="62" x2="${(320+Math.cos(a)*320).toFixed(0)}" y2="${(62+Math.sin(a)*320).toFixed(0)}"/>`;}).join("")}</g>
-  <path class="lt-cinta" d="M158 150 C 250 205, 390 205, 482 150" fill="none" stroke="url(#ltCinta)" stroke-width="10" stroke-linecap="round" filter="url(#ltBrillo)"/>
-  <g class="lt-mano izq" filter="url(#ltBrillo)" fill="url(#ltMano)"><g transform="translate(118 30) rotate(-24 45 70)"><g class="lt-mano-f"><rect x="15" y="12" width="14" height="62" rx="7"/><rect x="31" y="0" width="14" height="72" rx="7"/><rect x="47" y="6" width="14" height="68" rx="7"/><rect x="62" y="22" width="12" height="54" rx="6"/><rect x="-6" y="52" width="14" height="46" rx="7" transform="rotate(-38 1 75)"/><path d="M13 62 H76 V104 C76 124 62 136 45 136 C27 136 13 124 13 104 Z"/></g></g></g>
-  <g class="lt-mano der" filter="url(#ltBrillo)" fill="url(#ltMano)"><g transform="translate(640 0) scale(-1 1) translate(118 30) rotate(-24 45 70)"><g class="lt-mano-f"><rect x="15" y="12" width="14" height="62" rx="7"/><rect x="31" y="0" width="14" height="72" rx="7"/><rect x="47" y="6" width="14" height="68" rx="7"/><rect x="62" y="22" width="12" height="54" rx="6"/><rect x="-6" y="52" width="14" height="46" rx="7" transform="rotate(-38 1 75)"/><path d="M13 62 H76 V104 C76 124 62 136 45 136 C27 136 13 124 13 104 Z"/></g></g></g>
-  <circle cx="320" cy="62" r="5" fill="#fff" opacity=".9"/>
+const LT_MANOS=`<svg class="lt-manos" viewBox="0 0 640 230" aria-hidden="true">
+  <defs><radialGradient id="ltNube" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".5" stop-color="#FFF3CF" stop-opacity=".8"/><stop offset="1" stop-color="#FFD23F" stop-opacity="0"/></radialGradient>
+  <linearGradient id="ltBrazo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6C9A6"/><stop offset=".55" stop-color="#F6C9A6" stop-opacity=".5"/><stop offset="1" stop-color="#F6C9A6" stop-opacity="0"/></linearGradient><linearGradient id="ltPiel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9D6"/><stop offset=".6" stop-color="#F6C9A6"/><stop offset="1" stop-color="#E9AE86"/></linearGradient>
+  <filter id="ltBrillo" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 .4  0 1 0 0 .35  0 0 1 0 .1  0 0 0 .9 0" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="ltNubeF"><feGaussianBlur stdDeviation="10"/></filter></defs>
+  <g class="lt-rayos" stroke="#FFF3C4" stroke-width="2" opacity=".45">${Array.from({length:17},(_,i)=>{const a=(-175+i*(170/16))*Math.PI/180;return `<line x1="320" y1="120" x2="${(320+Math.cos(a)*360).toFixed(0)}" y2="${(120+Math.sin(a)*360).toFixed(0)}"/>`;}).join("")}</g>
+  <ellipse class="lt-nube" cx="320" cy="118" rx="240" ry="78" fill="url(#ltNube)"/>
+  <g filter="url(#ltNubeF)" fill="#FFFFFF" opacity=".75"><ellipse cx="190" cy="150" rx="90" ry="34"/><ellipse cx="320" cy="168" rx="130" ry="38"/><ellipse cx="455" cy="150" rx="95" ry="32"/><ellipse cx="260" cy="110" rx="70" ry="26"/><ellipse cx="390" cy="108" rx="72" ry="26"/></g>
+  <g class="lt-manos-par" filter="url(#ltBrillo)" fill="url(#ltPiel)" stroke="#D99A74" stroke-opacity=".45" stroke-width="1.2">
+    <g class="lt-mano izq"><path class="m-muneca" d="M156 160 Q 130 196 120 230 L 236 230 Q 238 200 246 176 Z" fill="url(#ltBrazo)" stroke="none"/>
+    <path class="m-palma" d="M146 124 Q 146 98 182 94 L 296 98 Q 318 102 318 122 L 312 152 Q 298 176 246 178 Q 172 178 156 162 Q 144 147 146 124 Z"/>
+    <ellipse cx="226" cy="132" rx="54" ry="22" fill="#FFFFFF" opacity=".35"/>
+    <rect class="m-pulgar" x="92" y="96" width="84" height="25" rx="12.5" transform="rotate(-9 134 108)"/>
+    <rect class="m-dedo" x="226" y="116" width="94" height="18" rx="9"/><rect class="m-dedo" x="230" y="134" width="90" height="18" rx="9"/><rect class="m-dedo" x="235" y="152" width="82" height="17" rx="8.5"/><rect class="m-dedo" x="242" y="168" width="66" height="15" rx="7.5"/>
+    <g fill="#FFF4EC" opacity=".8"><ellipse cx="308" cy="125" rx="7" ry="5"/><ellipse cx="308" cy="143" rx="7" ry="5"/><ellipse cx="305" cy="160" rx="6.5" ry="4.5"/><ellipse cx="298" cy="175" rx="6" ry="4"/><ellipse cx="102" cy="104" rx="7" ry="6"/></g></g>
+    <g class="lt-mano der" transform="translate(640 0) scale(-1 1)"><path class="m-muneca" d="M156 160 Q 130 196 120 230 L 236 230 Q 238 200 246 176 Z" fill="url(#ltBrazo)" stroke="none"/>
+    <path class="m-palma" d="M146 124 Q 146 98 182 94 L 296 98 Q 318 102 318 122 L 312 152 Q 298 176 246 178 Q 172 178 156 162 Q 144 147 146 124 Z"/>
+    <ellipse cx="226" cy="132" rx="54" ry="22" fill="#FFFFFF" opacity=".35"/>
+    <rect class="m-pulgar" x="92" y="96" width="84" height="25" rx="12.5" transform="rotate(-9 134 108)"/>
+    <rect class="m-dedo" x="226" y="116" width="94" height="18" rx="9"/><rect class="m-dedo" x="230" y="134" width="90" height="18" rx="9"/><rect class="m-dedo" x="235" y="152" width="82" height="17" rx="8.5"/><rect class="m-dedo" x="242" y="168" width="66" height="15" rx="7.5"/>
+    <g fill="#FFF4EC" opacity=".8"><ellipse cx="308" cy="125" rx="7" ry="5"/><ellipse cx="308" cy="143" rx="7" ry="5"/><ellipse cx="305" cy="160" rx="6.5" ry="4.5"/><ellipse cx="298" cy="175" rx="6" ry="4"/><ellipse cx="102" cy="104" rx="7" ry="6"/></g></g></g>
+  <circle class="lt-chispa" cx="320" cy="132" r="6" fill="#fff"/>
 </svg>`;
 function ltCara(n,c){const L=albCat(n)||{};const t=ltTengo(n);return `<button class="lt-cara${t?"":" gris"}" data-act="ltFicha" data-n="${n}" aria-label="Ficha de ${esc(L.nombre||"N° "+n)}" title="${esc(L.nombre||"")}"><img src="img/album/${String(n).padStart(3,"0")}.webp" alt="" loading="lazy"></button>`;}
 function vLinea(){cargarAlbum();const ci=ltClaseIdx();const vistos=Object.keys(LTS.vistos).length;
   let carril=`<div class="lt-linea" aria-hidden="true"></div>`;
   LT_ERAS.forEach((e,ei)=>{const i0=ltEraIni(ei),x=ltPos.pos[i0]-LT_PUERTA+30;
     carril+=`<div class="lt-puerta" style="left:${x}px;--era:${e[1]}"><span class="lt-pn">Época ${ei+1}</span><b>${esc(e[0])}</b><span>${esc(e[2])}${e[3]?" – "+esc(e[3]):""}</span></div>`;});
-  LT.forEach((h,i)=>{const e=LT_ERAS[h.era],arriba=i%2===0,visto=LTS.vistos[h.id];
-    carril+=`<div class="lt-hito${arriba?" arriba":" abajo"}" style="left:${ltPos.pos[i]}px;--era:${e[1]}" data-i="${i}">
+  LT.forEach((h,i)=>{const e=LT_ERAS[h.era],arriba=i%2===0,visto=LTS.vistos[h.id];const lay=ltLayout(i);
+    carril+=`<div class="lt-hito${arriba?" arriba":" abajo"}" style="left:${ltPos.pos[i]}px;--era:${e[1]};--off:${lay.off}px;--dx:${lay.dx}px;--rot:${lay.rot}deg;--fondo:${lay.fondo}" data-i="${i}">
       <span class="lt-punto">${h.emoji}</span>${i===ci?`<span class="lt-pin">📍 La clase de este domingo</span>`:""}
-      <button class="lt-card" data-act="ltHito" data-i="${i}"><span class="lt-fecha">${esc(h.fecha||"Sin fecha")}</span><b>${esc(h.titulo)}</b><span class="lt-cita">📖 ${esc(h.cita)}</span>
+      <button class="lt-card ${lay.tam}" data-act="ltHito" data-i="${i}"><span class="lt-fecha">${esc(h.fecha||"Sin fecha")}</span>${lay.tam==="g"?`<span class="lt-emo-g">${h.emoji}</span>`:""}<b>${esc(h.titulo)}</b><span class="lt-cita">📖 ${esc(h.cita)}</span>
       ${h.pers.length?`<span class="lt-caras">${h.pers.slice(0,4).map(n=>`<img class="${ltTengo(n)?"":"gris"}" src="img/album/${String(n).padStart(3,"0")}.webp" alt="" loading="lazy">`).join("")}${h.pers.length>4?`<i>+${h.pers.length-4}</i>`:""}</span>`:""}
-      ${visto?`<span class="lt-visto" title="Ya lo visitaste">✓</span>`:""}</button></div>`;});
-  const mini=LT_ERAS.map((e,ei)=>`<button class="lt-mini-e" style="--era:${e[1]};flex:${e[4].length}" data-act="ltIr" data-i="${ltEraIni(ei)}" title="${esc(e[0])}"><span>${esc(e[0])}</span></button>`).join("");
+      ${visto?`<span class="lt-visto" title="Ya lo visitaste">✓</span>`:""}</button></div>`;});  const mini=LT_ERAS.map((e,ei)=>`<button class="lt-mini-e" style="--era:${e[1]};flex:${e[4].length}" data-act="ltIr" data-i="${ltEraIni(ei)}" title="${esc(e[0])}"><span>${esc(e[0])}</span></button>`).join("");
   setTimeout(ltMontar,0);
   return `<section class="lt" id="lt">
-    <div class="lt-top">${LT_MANOS}<p class="lt-sup">Eterno Pacto KIDS presenta</p><h2>La gran historia de Dios</h2><p class="lt-sub">Desde la Creación hasta el año 100 d.C. · ${LT.length} momentos · «Todo está en sus manos»</p></div>
+    <div class="lt-top"><div class="lt-marcas"><img class="lt-m-epk" src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><button class="lt-son" data-act="ltSonido" aria-pressed="${LTA.on}">${LTA.on?"🔊 Música":"🔇 Sin música"}</button><img class="lt-m-jat" src="img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></div>${LT_MANOS}<p class="lt-sup">Eterno Pacto KIDS presenta</p><h2>La gran historia de Dios</h2><p class="lt-sub">Desde la Creación hasta el año 100 d.C. · ${LT.length} momentos · «Todo está en sus manos»</p><p class="lt-der">© Eterno Pacto KIDS · Todos los derechos reservados · JAT®</p></div>
     <div class="lt-ventana"><div class="lt-cielo" aria-hidden="true">${LT_CIELO.map((c,k)=>`<i class="lt-est e${k}" style="background-image:${c.img};background-size:${c.t}px ${c.t}px"></i>`).join("")}<i class="lt-neb n1"></i><i class="lt-neb n2"></i><i class="lt-neb n3"></i></div>
     <div class="lt-pista" id="ltPista" tabindex="0" aria-label="Línea de tiempo: arrastra o usa las flechas para viajar"><div class="lt-carril" style="width:${ltPos.ancho}px">${carril}</div></div></div>
     <div class="lt-mini" role="group" aria-label="Viajar a una época">${mini}<i class="lt-mini-yo" id="ltYo"></i></div>
     <div class="lt-ctrl"><button class="lt-flecha" data-act="ltPaso" data-d="-1" aria-label="Momento anterior">‹</button><span id="ltDonde" class="lt-donde">Arrastra para viajar en el tiempo</span><button class="lt-flecha" data-act="ltPaso" data-d="1" aria-label="Momento siguiente">›</button></div>
     <p class="lt-prog">⭐ Has visitado <b>${vistos}</b> de ${LT.length} momentos · cada momento nuevo suma puntos para tus sobres</p>
     <footer class="lt-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. Fechas aproximadas · línea esquemática, no a escala.<br>JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></span></footer></section>`;}
+const LT_GRANDES=new Set(["Dios crea el universo","El diluvio","Dios llama a Abraham","El mar Rojo se abre","Los Diez Mandamientos","Caen los muros de Jericó","David y Goliat","El templo de Jerusalén","Daniel en el foso de los leones","Nace Jesús en Belén","Jesús muere en la cruz","¡Jesús resucitó!","Pentecostés","Saulo en el camino a Damasco"]);
+const LT_FONDOS=["linear-gradient(160deg,#FFFDF6,#FFF1D0)","linear-gradient(160deg,#F2FFF8,#CFF5E3)","linear-gradient(160deg,#F7F2FF,#E2D6FF)","linear-gradient(160deg,#FFF6F0,#FFD9C4)","linear-gradient(160deg,#F0F8FF,#CFE6FF)","linear-gradient(160deg,#FFF2F7,#FFD0E2)","linear-gradient(160deg,#FFFBEA,#FFE9A8)"];
+function ltLayout(i){const r=k=>{const x=Math.sin((i+1)*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);};
+  const tam=LT_GRANDES.has(LT[i].titulo)?"g":(r(1)<.35?"s":"m");const alto={s:118,m:150,g:210}[tam];
+  const off=Math.round(46+r(2)*Math.max(10,330-46-alto-20));const dx=Math.round((r(3)-.5)*46);const rot=((r(4)-.5)*10).toFixed(1);
+  return {tam,off,dx,rot,fondo:LT_FONDOS[Math.floor(r(5)*LT_FONDOS.length)]};}
+/* sonido: música espacial y efectos, hechos con Web Audio */
+const LTA={on:true,ac:null,master:null,musica:null};try{LTA.on=localStorage.getItem("epk_lt_sonido")!=="0";}catch(e){}
+function ltAC(){if(LTA.ac)return LTA.ac;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;const ac=new AC();LTA.ac=ac;
+  const m=ac.createGain();m.gain.value=0;m.connect(ac.destination);LTA.master=m;
+  const d=ac.createDelay(2);d.delayTime.value=.42;const fb=ac.createGain();fb.gain.value=.45;const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=2400;d.connect(lp);lp.connect(fb);fb.connect(d);lp.connect(m);LTA.eco=d;return ac;}
+const LT_ACORDES=[[146.83,220,293.66,349.23],[116.54,174.61,233.08,293.66],[174.61,261.63,349.23,440],[130.81,196,261.63,329.63]];
+function ltMusica(){if(!LTA.on||LTA.musica)return;const ac=ltAC();if(!ac)return;if(ac.state==="suspended")ac.resume();
+  const t0=ac.currentTime;LTA.master.gain.cancelScheduledValues(t0);LTA.master.gain.setTargetAtTime(.16,t0,1.2);
+  let k=0;const voz=(f,t,dur,tipo,vol,dest)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=tipo;o.frequency.value=f;o.detune.value=(Math.random()-.5)*12;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+dur*.35);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(dest);o.start(t);o.stop(t+dur+.1);};
+  const filtro=ac.createBiquadFilter();filtro.type="lowpass";filtro.frequency.value=900;filtro.Q.value=.6;filtro.connect(LTA.master);filtro.connect(LTA.eco);
+  const lfo=ac.createOscillator(),lg=ac.createGain();lfo.frequency.value=.07;lg.gain.value=500;lfo.connect(lg);lg.connect(filtro.frequency);lfo.start();
+  const paso=()=>{if(!document.getElementById("lt")){ltSilencio();return;}const t=ac.currentTime+.05,ch=LT_ACORDES[k%4];k++;
+    ch.forEach(f=>{voz(f,t,9,"sawtooth",.035,filtro);voz(f*2,t,9,"triangle",.02,filtro);});voz(ch[0]/2,t,9,"sine",.09,LTA.master);
+    for(let n=0;n<5;n++){const f=[523.25,587.33,659.25,783.99,880,1046.5][Math.floor(Math.random()*6)];const tt=t+1+Math.random()*6.5;voz(f,tt,2.2,"sine",.025,LTA.eco);}};
+  paso();LTA.musica=setInterval(paso,8000);}
+function ltSilencio(){if(LTA.musica){clearInterval(LTA.musica);LTA.musica=null;}if(LTA.ac&&LTA.master){const t=LTA.ac.currentTime;LTA.master.gain.cancelScheduledValues(t);LTA.master.gain.setTargetAtTime(0,t,.6);}}
+function ltEfecto(tipo){if(!LTA.on)return;const ac=ltAC();if(!ac)return;if(ac.state==="suspended")ac.resume();const t=ac.currentTime;const out=ac.createGain();out.connect(ac.destination);out.connect(LTA.eco);
+  if(tipo==="campana"){[880,1318.5,1760].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,t+i*.08);g.gain.exponentialRampToValueAtTime(.12,t+i*.08+.02);g.gain.exponentialRampToValueAtTime(.0001,t+i*.08+1.4);o.connect(g);g.connect(out);o.start(t+i*.08);o.stop(t+i*.08+1.5);});}
+  else{const dur=tipo==="cometa"?1.2:.7,n=Math.floor(ac.sampleRate*dur),b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.sin(Math.PI*i/n);
+    const s=ac.createBufferSource();s.buffer=b;const f=ac.createBiquadFilter();f.type="bandpass";f.Q.value=tipo==="cometa"?8:2;
+    f.frequency.setValueAtTime(tipo==="cometa"?3200:400,t);f.frequency.exponentialRampToValueAtTime(tipo==="cometa"?700:2400,t+dur);const g=ac.createGain();g.gain.value=tipo==="cometa"?.06:.18;s.connect(f);f.connect(g);g.connect(out);s.start(t);}}
+function ltCometa(v){const c=document.createElement("i");const grande=Math.random()<.3;c.className="lt-cometa"+(grande?" grande":"");
+  c.style.left=(-10+Math.random()*70)+"%";c.style.top=(Math.random()*35)+"%";c.style.setProperty("--ang",(18+Math.random()*24).toFixed(0)+"deg");v.appendChild(c);if(grande)ltEfecto("cometa");setTimeout(()=>c.remove(),2600);}
 function ltCentro(p){return p.scrollLeft+p.clientWidth/2;}
 function ltMontar(){const p=document.getElementById("ltPista");if(!p||p._lt)return;p._lt=1;
   const ini=LTS.x!=null?LTS.x:Math.max(0,ltPos.pos[0]-p.clientWidth/2+100);p.scrollLeft=ini;
@@ -2392,8 +2449,10 @@ function ltMontar(){const p=document.getElementById("ltPista");if(!p||p._lt)retu
   window.addEventListener("pointerup",()=>{if(dr&&dr.m){p._arrastro=Date.now();}dr=null;});
   p.addEventListener("click",e=>{if(p._arrastro&&Date.now()-p._arrastro<250){e.stopPropagation();e.preventDefault();}},true);
   p.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();ltPaso(e.key==="ArrowRight"?1:-1);}});
-  pintar();}
-function ltIr(i,suave){const p=document.getElementById("ltPista");if(!p)return;i=Math.max(0,Math.min(LT.length-1,i));p.scrollTo({left:ltPos.pos[i]+40-p.clientWidth/2,behavior:suave===false?"auto":"smooth"});}
+  pintar();
+  const v=p.parentElement;const lluvia=()=>{if(!document.body.contains(v))return;if(!matchMedia("(prefers-reduced-motion: reduce)").matches)ltCometa(v);setTimeout(lluvia,3500+Math.random()*6000);};setTimeout(lluvia,1500);
+  const lt=document.getElementById("lt");const arrancar=()=>{ltMusica();};lt.addEventListener("pointerdown",arrancar,{once:true});lt.addEventListener("keydown",arrancar,{once:true});if(LTA.ac&&LTA.ac.state==="running")ltMusica();}
+function ltIr(i,suave){const p=document.getElementById("ltPista");if(!p)return;i=Math.max(0,Math.min(LT.length-1,i));if(suave!==false&&Math.abs(i-(LTS.cerca||0))>1)ltEfecto("viaje");p.scrollTo({left:ltPos.pos[i]+40-p.clientWidth/2,behavior:suave===false?"auto":"smooth"});}
 function ltPaso(d){ltIr((LTS.cerca||0)+d);}
 function ltAbrir(i){const h=LT[i];if(!h)return;const e=LT_ERAS[h.era];
   if(!LTS.vistos[h.id]){LTS.vistos[h.id]=hoyISO();try{localStorage.setItem("epk_lt_vistos",JSON.stringify(LTS.vistos));}catch(x){}ptsActividad("linea",h.id,[BIB.actual]);}
@@ -2412,10 +2471,13 @@ function ltFicha(n){const L=albCat(n)||{};const t=ltTengo(n);
     <p class="lt-f-legal">© Eterno Pacto KIDS · Derechos reservados</p></div></div>`;
   $("#sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")$("#sheetRoot").innerHTML="";});}
 function accionLT(act,b){switch(act){
-  case "ltHito":{const i=Number(b.dataset.i);if(i>=0&&i<LT.length){ltAbrir(i);if(!b.closest(".sheet"))ltIr(i);else{ltIr(i,false);}}break;}
+  case "ltHito":{const i=Number(b.dataset.i);if(!(i>=0&&i<LT.length))break;ltMusica();ltEfecto("campana");
+    if(b.closest(".sheet")){ltAbrir(i);ltIr(i,false);break;}
+    b.classList.remove("pop");void b.offsetWidth;b.classList.add("pop");ltIr(i);setTimeout(()=>ltAbrir(i),480);break;}
+  case "ltSonido":LTA.on=!LTA.on;try{localStorage.setItem("epk_lt_sonido",LTA.on?"1":"0");}catch(e){}if(LTA.on){ltMusica();}else ltSilencio();b.setAttribute("aria-pressed",LTA.on);b.textContent=LTA.on?"🔊 Música":"🔇 Sin música";break;
   case "ltFicha":ltFicha(Number(b.dataset.n));break;
-  case "ltIr":ltIr(Number(b.dataset.i));break;
-  case "ltPaso":ltPaso(Number(b.dataset.d));break;
+  case "ltIr":ltMusica();ltIr(Number(b.dataset.i));break;
+  case "ltPaso":ltMusica();ltEfecto("viaje");ltPaso(Number(b.dataset.d));break;
   case "ltCerrar":$("#sheetRoot").innerHTML="";const p=document.getElementById("ltPista");if(p){/* refrescar ✓ */const i=LTS.cerca;render();}break;
   case "ltAbrirSeccion":callar();ui.tab="biblia";ui.bib="linea";render();window.scrollTo(0,0);break;}}
 
