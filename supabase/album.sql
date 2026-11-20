@@ -2,19 +2,23 @@
 -- Álbum Bíblico: 100 láminas, sobres de 4, intercambio y chat del patio
 -- Ejecutar una vez en Supabase → SQL Editor (después de desafios.sql).
 --
--- Reglas (cambiables en album_reglas):
---   · 1 sobre cada 3 desafíos diarios hechos
---   · 1 sobre por clase con asistencia + versículo + Biblia
---   · sobres de regalo que entrega el maestro
---   · cada sobre trae 4 láminas, con al menos 1 nueva mientras falten
---   · solo se intercambian láminas repetidas (nadie pierde una pegada)
--- El catálogo (nombre, imagen o animación de cada lámina) vive en la
--- biblioteca central: docs col 'laminas', id 'lamina-001' … 'lamina-100'.
+-- Reglas:
+--   · Todo suma PUNTOS: asistencia y criterios del domingo (con el valor que fije
+--     cada congregación), estrellas extra del maestro, desafíos diarios y
+--     actividades de la app (cuentos 5, historias 5, versículos 5, quiz 5,
+--     material 3, museo 3, personajes 3, capítulos 2; máximo 40 al día).
+--   · El niño cambia puntos por sobres cuando quiera (precio en config/general
+--     → precioSobre, 50 puntos por defecto).
+--   · El maestro también puede regalar sobres (con motivo).
+--   · Cada sobre trae 5 láminas, con al menos 1 nueva mientras falten.
+--   · Solo se intercambian láminas repetidas (mercado de láminas del foro).
+-- El catálogo (nombre, imagen y ficha de cada lámina) vive en la biblioteca
+-- central: docs col 'laminas', id 'lamina-001' … 'lamina-100'.
 -- ============================================================
 
 create or replace function public.album_reglas()
 returns table (total int, por_sobre int, desafios_por_sobre int)
-language sql immutable as $$ select 100, 4, 3 $$;
+language sql immutable as $$ select 100, 5, 3 $$;
 
 create table if not exists public.album_laminas (
   comunidad_id uuid not null references public.comunidades(id) on delete cascade,
@@ -30,6 +34,26 @@ create table if not exists public.album_sobres (
   abiertos int not null default 0,
   extra int not null default 0,
   primary key (comunidad_id, nino_id)
+);
+alter table public.album_sobres add column if not exists comprados int not null default 0;
+alter table public.album_sobres add column if not exists puntos_gastados int not null default 0;
+create table if not exists public.album_actividad (
+  comunidad_id uuid not null references public.comunidades(id) on delete cascade,
+  nino_id text not null,
+  tipo text not null,
+  ref text not null,
+  pts int not null,
+  fecha date not null default current_date,
+  primary key (comunidad_id, nino_id, tipo, ref)
+);
+create table if not exists public.album_regalos (
+  id uuid primary key default gen_random_uuid(),
+  comunidad_id uuid not null references public.comunidades(id) on delete cascade,
+  nino_id text not null,
+  cantidad int not null,
+  motivo text,
+  por uuid,
+  creado timestamptz not null default now()
 );
 create table if not exists public.album_intercambios (
   id uuid primary key default gen_random_uuid(),
@@ -60,6 +84,12 @@ alter table public.album_laminas enable row level security;
 alter table public.album_sobres enable row level security;
 alter table public.album_intercambios enable row level security;
 alter table public.album_chat enable row level security;
+alter table public.album_actividad enable row level security;
+alter table public.album_regalos enable row level security;
+drop policy if exists "actividad ver" on public.album_actividad;
+create policy "actividad ver" on public.album_actividad for select using (public.mi_rol(comunidad_id) is not null);
+drop policy if exists "regalos ver" on public.album_regalos;
+create policy "regalos ver" on public.album_regalos for select using (public.mi_rol(comunidad_id) is not null);
 
 -- Lectura: los miembros de la congregación ven los álbumes (para saber quién tiene repetidas),
 -- los intercambios y el chat publicado. Nadie escribe directo: solo con las funciones de abajo.
@@ -89,46 +119,89 @@ returns text language sql stable security definer set search_path = public as $$
   where comunidad_id = p_comunidad and col = 'ninos' and id = p_nino
 $$;
 
--- Sobres ganados en total por un niño
-create or replace function public.album_ganados(p_comunidad uuid, p_nino text)
+drop function if exists public.album_ganados(uuid, text);
+drop function if exists public.album_estado(uuid);
+drop function if exists public.regalar_sobre(uuid, text, int);
+
+-- Puntos ganados en total por un niño (lo mismo que muestra la app)
+create or replace function public.album_pts(p_comunidad uuid, p_nino text)
+returns int language plpgsql stable security definer set search_path = public as $$
+declare
+  v_def jsonb := '{"presente":10,"versiculo":15,"biblia":5,"tarea":10,"material":5,"conducta":5,"participa":5}';
+  v_cfg jsonb; v_w jsonb := '{}'; k text; w int; e jsonb; v_tot numeric := 0;
+begin
+  select data->'criterios' into v_cfg from public.docs where comunidad_id = p_comunidad and col = 'config' and id = 'general';
+  for k, w in select key, value::int from jsonb_each_text(v_def) loop v_w := v_w || jsonb_build_object(k, w); end loop;
+  if jsonb_typeof(v_cfg) = 'array' then
+    for e in select * from jsonb_array_elements(v_cfg) loop
+      if e ? 'k' then
+        v_w := v_w || jsonb_build_object(e->>'k', case when (e->>'on') = 'false' then 0
+                                                       else coalesce(nullif(e->>'p','')::numeric, (v_def->>(e->>'k'))::numeric, 0) end);
+      end if;
+    end loop;
+  end if;
+  for k, w in select key, coalesce(nullif(value,'')::numeric,0)::int from jsonb_each_text(v_w) loop
+    if w <> 0 then
+      v_tot := v_tot + w * (select count(*) from public.docs a where a.comunidad_id = p_comunidad and a.col = 'asistencia'
+                              and jsonb_typeof(a.data->k) = 'array' and (a.data->k) ? p_nino);
+    end if;
+  end loop;
+  v_tot := v_tot + coalesce((select sum(case when (b.data->>'pts') ~ '^-?\d+(\.\d+)?$' then (b.data->>'pts')::numeric else 0 end)
+                             from public.docs b where b.comunidad_id = p_comunidad and b.col = 'bonos' and b.data->>'ninoId' = p_nino), 0);
+  v_tot := v_tot + coalesce((select sum(coalesce((d.value->>'pts')::int, 0)) from public.docs x, jsonb_each(x.data->p_nino) d
+                             where x.comunidad_id = p_comunidad and x.col = 'desafios' and jsonb_typeof(x.data->p_nino) = 'object'), 0);
+  v_tot := v_tot + coalesce((select sum(pts) from public.album_actividad where comunidad_id = p_comunidad and nino_id = p_nino), 0);
+  return floor(v_tot)::int;
+end $$;
+
+create or replace function public.precio_sobre(p_comunidad uuid)
 returns int language sql stable security definer set search_path = public as $$
-  select (coalesce((select sum((select count(*) from jsonb_object_keys(d.data->p_nino)))
-                    from public.docs d
-                    where d.comunidad_id = p_comunidad and d.col = 'desafios' and jsonb_typeof(d.data->p_nino) = 'object'), 0)
-          / (select desafios_por_sobre from public.album_reglas()))::int
-       + (select count(*) from public.docs a
-          where a.comunidad_id = p_comunidad and a.col = 'asistencia'
-            and jsonb_typeof(a.data->'presente') = 'array' and (a.data->'presente') ? p_nino
-            and jsonb_typeof(a.data->'versiculo') = 'array' and (a.data->'versiculo') ? p_nino
-            and jsonb_typeof(a.data->'biblia') = 'array' and (a.data->'biblia') ? p_nino)::int
-       + coalesce((select extra from public.album_sobres s where s.comunidad_id = p_comunidad and s.nino_id = p_nino), 0)
+  select greatest(1, coalesce((select nullif(data->>'precioSobre','')::int from public.docs where comunidad_id = p_comunidad and col = 'config' and id = 'general'), 50))
 $$;
 
--- Estado del álbum de los niños de la congregación: ganados, abiertos y pegadas
+-- Estado de cada niño: puntos, saldo, sobres y láminas
 create or replace function public.album_estado(p_comunidad uuid)
-returns table (nino_id text, ganados int, abiertos int, pegadas int, repetidas int)
+returns table (nino_id text, pts_ganados int, pts_gastados int, saldo int, sobres int, abiertos int, pegadas int, repetidas int, precio int)
 language sql stable security definer set search_path = public as $$
-  select n.id, public.album_ganados(p_comunidad, n.id),
-         coalesce(s.abiertos, 0),
+  select n.id, g.pts, coalesce(s.puntos_gastados, 0), g.pts - coalesce(s.puntos_gastados, 0),
+         coalesce(s.extra, 0) + coalesce(s.comprados, 0) - coalesce(s.abiertos, 0), coalesce(s.abiertos, 0),
          (select count(*) from public.album_laminas l where l.comunidad_id = p_comunidad and l.nino_id = n.id and l.cantidad > 0)::int,
-         coalesce((select sum(l.cantidad - 1) from public.album_laminas l where l.comunidad_id = p_comunidad and l.nino_id = n.id and l.cantidad > 1), 0)::int
+         coalesce((select sum(l.cantidad - 1) from public.album_laminas l where l.comunidad_id = p_comunidad and l.nino_id = n.id and l.cantidad > 1), 0)::int,
+         public.precio_sobre(p_comunidad)
   from public.docs n
+  cross join lateral (select public.album_pts(p_comunidad, n.id) as pts) g
   left join public.album_sobres s on s.comunidad_id = p_comunidad and s.nino_id = n.id
   where n.comunidad_id = p_comunidad and n.col = 'ninos' and public.mi_rol(p_comunidad) is not null
 $$;
 
--- Abrir un sobre: 4 láminas, al menos 1 nueva mientras falten
+-- Cambiar puntos por sobres (cuando el niño quiera)
+create or replace function public.canjear_sobres(p_comunidad uuid, p_nino text, p_cantidad int default 1)
+returns int language plpgsql security definer set search_path = public as $$
+declare v_precio int := public.precio_sobre(p_comunidad); v_gast int;
+begin
+  if not public.nino_mio(p_comunidad, p_nino) then raise exception 'Este niño no está vinculado a tu familia'; end if;
+  if p_cantidad is null or p_cantidad < 1 or p_cantidad > 10 then raise exception 'Cantidad inválida'; end if;
+  insert into public.album_sobres (comunidad_id, nino_id) values (p_comunidad, p_nino) on conflict do nothing;
+  select puntos_gastados into v_gast from public.album_sobres where comunidad_id = p_comunidad and nino_id = p_nino for update;
+  if public.album_pts(p_comunidad, p_nino) - v_gast < v_precio * p_cantidad then
+    raise exception 'Te faltan puntos: cada sobre cuesta % puntos', v_precio; end if;
+  update public.album_sobres set comprados = comprados + p_cantidad, puntos_gastados = puntos_gastados + v_precio * p_cantidad
+   where comunidad_id = p_comunidad and nino_id = p_nino;
+  return p_cantidad;
+end $$;
+
+-- Abrir un sobre: 5 láminas, al menos 1 nueva mientras falten
 create or replace function public.abrir_sobre(p_comunidad uuid, p_nino text)
 returns table (num int, es_nueva boolean)
 language plpgsql security definer set search_path = public as $$
 declare
-  r record; v_abiertos int; v_total int; v_por int; v_sacadas int[] := '{}'; v_n int; i int; v_falta int[];
+  r record; s public.album_sobres%rowtype; v_total int; v_por int; v_sacadas int[] := '{}'; v_n int; i int; v_falta int[];
 begin
   if not public.nino_mio(p_comunidad, p_nino) then raise exception 'Este niño no está vinculado a tu familia'; end if;
   select * into r from public.album_reglas(); v_total := r.total; v_por := r.por_sobre;
   insert into public.album_sobres (comunidad_id, nino_id) values (p_comunidad, p_nino) on conflict do nothing;
-  select abiertos into v_abiertos from public.album_sobres where comunidad_id = p_comunidad and nino_id = p_nino for update;
-  if v_abiertos >= public.album_ganados(p_comunidad, p_nino) then raise exception 'No tienes sobres por abrir'; end if;
+  select * into s from public.album_sobres where comunidad_id = p_comunidad and nino_id = p_nino for update;
+  if s.abiertos >= s.extra + s.comprados then raise exception 'No tienes sobres por abrir'; end if;
 
   select array_agg(g) into v_falta from generate_series(1, v_total) g
    where not exists (select 1 from public.album_laminas l where l.comunidad_id = p_comunidad and l.nino_id = p_nino and l.lamina = g and l.cantidad > 0);
@@ -151,14 +224,35 @@ begin
   update public.album_sobres set abiertos = abiertos + 1 where comunidad_id = p_comunidad and nino_id = p_nino;
 end $$;
 
--- Sobre de regalo (solo maestros y administradores)
-create or replace function public.regalar_sobre(p_comunidad uuid, p_nino text, p_cantidad int default 1)
+-- Sobres de regalo (solo maestros y administradores)
+create or replace function public.regalar_sobre(p_comunidad uuid, p_nino text, p_cantidad int default 1, p_motivo text default null)
 returns void language plpgsql security definer set search_path = public as $$
 begin
   if not public.es_equipo(p_comunidad) then raise exception 'Solo el equipo puede regalar sobres'; end if;
   if p_cantidad is null or p_cantidad < 1 or p_cantidad > 10 then raise exception 'Cantidad inválida'; end if;
+  if not exists (select 1 from public.docs where comunidad_id = p_comunidad and col = 'ninos' and id = p_nino) then raise exception 'Niño no encontrado'; end if;
   insert into public.album_sobres (comunidad_id, nino_id, extra) values (p_comunidad, p_nino, p_cantidad)
     on conflict (comunidad_id, nino_id) do update set extra = public.album_sobres.extra + p_cantidad;
+  insert into public.album_regalos (comunidad_id, nino_id, cantidad, motivo, por)
+    values (p_comunidad, p_nino, p_cantidad, nullif(left(btrim(coalesce(p_motivo, '')), 120), ''), auth.uid());
+end $$;
+
+-- Puntos por actividades de la app (una vez por actividad, máximo 40 puntos al día)
+create or replace function public.sumar_actividad(p_comunidad uuid, p_nino text, p_tipo text, p_ref text)
+returns int language plpgsql security definer set search_path = public as $$
+declare v_pts int; v_hoy int;
+begin
+  if not public.nino_mio(p_comunidad, p_nino) then return 0; end if;
+  v_pts := case p_tipo when 'cuentos' then 5 when 'plan' then 5 when 'versos' then 5 when 'quiz' then 5
+                       when 'mats' then 3 when 'museo' then 3 when 'biblicos' then 3 when 'leidos' then 2 else 0 end;
+  if v_pts = 0 or p_ref is null or char_length(p_ref) > 120 then return 0; end if;
+  select coalesce(sum(pts), 0) into v_hoy from public.album_actividad where comunidad_id = p_comunidad and nino_id = p_nino and fecha = current_date;
+  if v_hoy >= 40 then return 0; end if;
+  v_pts := least(v_pts, 40 - v_hoy);
+  insert into public.album_actividad (comunidad_id, nino_id, tipo, ref, pts) values (p_comunidad, p_nino, p_tipo, p_ref, v_pts)
+    on conflict do nothing;
+  if not found then return 0; end if;
+  return v_pts;
 end $$;
 
 -- Intercambios: solo láminas repetidas
@@ -253,11 +347,11 @@ begin
   end if;
 end $$;
 
-revoke all on function public.nino_mio(uuid, text), public.nombre_nino(uuid, text), public.album_ganados(uuid, text) from public, anon;
-revoke all on function public.album_estado(uuid), public.abrir_sobre(uuid, text), public.regalar_sobre(uuid, text, int),
+revoke all on function public.nino_mio(uuid, text), public.nombre_nino(uuid, text), public.album_pts(uuid, text), public.precio_sobre(uuid) from public, anon;
+revoke all on function public.album_estado(uuid), public.abrir_sobre(uuid, text), public.regalar_sobre(uuid, text, int, text), public.canjear_sobres(uuid, text, int), public.sumar_actividad(uuid, text, text, text),
   public.ofrecer_intercambio(uuid, text, text, int, int), public.responder_intercambio(uuid, boolean), public.cancelar_intercambio(uuid),
   public.chat_album(uuid, text, text), public.moderar_chat_album(uuid, boolean) from public, anon;
-grant execute on function public.album_estado(uuid), public.abrir_sobre(uuid, text), public.regalar_sobre(uuid, text, int),
+grant execute on function public.album_estado(uuid), public.abrir_sobre(uuid, text), public.regalar_sobre(uuid, text, int, text), public.canjear_sobres(uuid, text, int), public.sumar_actividad(uuid, text, text, text),
   public.ofrecer_intercambio(uuid, text, text, int, int), public.responder_intercambio(uuid, boolean), public.cancelar_intercambio(uuid),
   public.chat_album(uuid, text, text), public.moderar_chat_album(uuid, boolean), public.album_reglas() to authenticated;
 
