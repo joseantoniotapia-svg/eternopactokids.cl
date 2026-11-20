@@ -281,6 +281,9 @@ button.item:hover{border-color:var(--accent)}
 @keyframes albVuelta{from{transform:rotateY(90deg) scale(.9)}to{transform:none}}
 .alb-det{align-items:center;text-align:center}.alb-det>.lam{width:min(230px,62vw)}
 .dd-sobres{margin-top:4px}
+.lam.gris{border-style:dashed;box-shadow:none;background:#EDE6D6}.lam.gris img,.lam.gris video{filter:grayscale(1) contrast(.85);opacity:.4}.lam.gris .lam-nom{background:#EDE6D6;color:#8A7A5C;border-top:2px dashed #B9AC90}.lam.gris .lam-num{opacity:.7}
+.lam.recien{animation:lamColor 1.6s ease-out}@keyframes lamColor{0%,25%{filter:grayscale(1);opacity:.5}100%{filter:none}}
+@media (prefers-reduced-motion:reduce){.lam.recien{animation:none}}
 .alb-acc{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:stretch}.alb-acc .alb-sobre-btn{grid-column:auto!important;flex-direction:column!important}
 .alb-bolsa{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;padding:10px 12px;border-radius:16px;background:#FFF4D6;color:#1E1548}
 .alb-pts{display:flex;flex-direction:column}.alb-pts-n{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1}
@@ -2072,7 +2075,7 @@ function laminaHTML(num,o){o=o||{};const L=albCat(num),cant=o.cant||0;const nomb
   const src=albImg(num);const vid=/\.(mp4|webm)$/i.test(L&&L.img||"");
   const media=!o.vacia&&src?(vid?`<video src="${esc(src)}" autoplay muted loop playsinline aria-label="${esc(nombre)}"></video>`:`<img src="${esc(src)}" alt="${esc(nombre)}" loading="lazy">`)
     :`<span class="lam-ph">${o.vacia?"?":`<span>${esc(inicial(nombre))}</span>`}</span>`;
-  return `<span class="lam${o.vacia?" vacia":""}${o.cls?" "+o.cls:""}" style="--lc:${albEra(num)[3]}"><span class="lam-num">${num}</span>${media}<b class="lam-nom">${esc(nombre)}</b>${cant>1?`<span class="lam-rep">x${cant}</span>`:""}</span>`;}
+  return `<span class="lam${o.vacia?" vacia":""}${o.gris?" gris":""}${o.cls?" "+o.cls:""}" style="--lc:${albEra(num)[3]}"><span class="lam-num">${num}</span>${media}<b class="lam-nom">${esc(nombre)}</b>${cant>1?`<span class="lam-rep">x${cant}</span>`:""}</span>`;}
 
 function albSelector(ns,nid){return ns.length>1?`<div class="row" role="group" aria-label="¿De quién es el álbum?">${ns.map(n=>`<button class="chip" aria-pressed="${n.id===nid}" data-act="albNino" data-id="${esc(n.id)}">${esc(albNom(n.id))}</button>`).join("")}</div>`:"";}
 function albPrevio(){let out="";
@@ -2112,7 +2115,7 @@ function vAlbLibro(nid,todo){todo=todo||ALB.verTodo;ALB.pag=Math.max(0,Math.min(
     <div class="contra-jat"><span class="small">Desarrollado por</span><img src="img/jat-horizontal-negro.svg" alt="JAT · José Antonio Tapia"></div>
     <p class="contra-legal">JAT® es marca registrada de José Antonio Tapia Meneses.<br>© ${new Date().getFullYear()} Eterno Pacto KIDS · Material de uso exclusivo de la congregación. Prohibida su venta y reproducción.</p></div>`;
   else{const x=ALB_SECC[p-2],[ini,fin,tit,col]=x;
-    let celdas="";for(let n=ini;n<=fin;n++){const c=todo?1:albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c})}</button>`:`<span class="lam-b">${laminaHTML(n,{vacia:true})}</span>`;}
+    let celdas="";for(let n=ini;n<=fin;n++){const c=todo?1:albCant(nid,n);celdas+=c?`<button class="lam-b" data-act="albVer" data-n="${n}">${laminaHTML(n,{cant:c,cls:ALB.recien&&ALB.recien.has(n)?"recien":""})}</button>`:`<span class="lam-b" title="Aún no la tienes">${laminaHTML(n,{gris:true})}</span>`;}
     const ok=llenasDe(x),tot=fin-ini+1;
     hoja=`<div class="alb-hoja era" style="--era:${col}"><div class="sec-h"><div><p class="eyebrow">Época ${p-1} de ${ALB_SECC.length} · láminas ${ini} a ${fin}</p><h3>${esc(tit)}</h3></div>${nid&&!todo?`<span class="pill${ok===tot?" sun":""}">${ok===tot?"¡Completa! ":""}${ok}/${tot}</span>`:""}</div><div class="alb-grid">${celdas}</div></div>`;}
   const nom=p===0?"Portada":p===1?"Línea del tiempo":p===ALB_HOJAS-1?"Contraportada":ALB_SECC[p-2][2];
@@ -2208,7 +2211,7 @@ async function accionAlb(act,b){const sb=albSB();const nid=albNinoSel();
     case "albVerTodo":ALB.verTodo=!ALB.verTodo;render();break;
     case "albRasgar":if(ALB.sobre){ALB.sobre.roto=true;pintarSobre();}break;
     case "albVoltear":if(ALB.sobre){ALB.sobre.vistas++;pintarSobre();}break;
-    case "albCerrarSobre":{const s=ALB.sobre;ALB.sobre=null;pintarSobre();ALB.vista="album";
+    case "albCerrarSobre":{const s=ALB.sobre;ALB.sobre=null;pintarSobre();ALB.vista="album";ALB.verTodo=false;ALB.recien=new Set(s?s.cartas.filter(c=>c.nueva).map(c=>c.n):[]);setTimeout(()=>{ALB.recien=null;},2500);
       if(s&&s.cartas.length){const pr=s.cartas.find(c=>c.nueva)||s.cartas[0];const i=ALB_SECC.findIndex(x=>pr.n>=x[0]&&pr.n<=x[1]);if(i>=0&&i+2!==ALB.pag){ALB.dir=i+2>ALB.pag?1:-1;ALB.pag=i+2;}}render();break;}
     case "albVer":{const n=Number(b.dataset.n),L=albCat(n)||{};const c=albCant(nid,n),e=albEra(n),nom=L.nombre||"Lámina "+n;
       const fila=(ic,t,v)=>v?`<p class="fi-fila"><span aria-hidden="true">${ic}</span><span><b>${t}</b> ${esc(v)}</span></p>`:"";
