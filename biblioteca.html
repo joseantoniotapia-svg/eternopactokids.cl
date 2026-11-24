@@ -91,6 +91,25 @@ main{padding-block:26px 40px;display:flex;flex-direction:column;gap:22px}
 .arch li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem;border-top:1px dashed var(--line);padding-top:6px}
 .arch li span{flex:1;min-width:120px}
 .vacio{color:var(--muted);font-style:italic}
+/* tarjetas de clase: miniatura grande y «Entrar a la clase» */
+.lista.clases{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.cl{background:var(--surface);border:2.5px solid var(--edge);border-radius:16px 8px 16px 12px;overflow:hidden;display:flex;flex-direction:column;scroll-margin-top:90px;box-shadow:3px 3px 0 var(--edge)}
+.cl.foco{outline:4px solid var(--pink);outline-offset:3px}
+.cl .tapa{position:relative;aspect-ratio:3/4;background:var(--sunk);display:grid;place-items:center;font-size:3rem}
+.cl .tapa img{width:100%;height:100%;object-fit:cover}
+.cl .tapa .n{position:absolute;left:8px;top:8px;background:#fff;color:#1E1548;border:2.5px solid var(--edge);border-radius:999px;padding:1px 10px;font-family:var(--display);font-weight:700;font-size:.9rem}
+.cl .tapa .p{position:absolute;right:8px;top:8px}
+.cl.bloq .tapa img{filter:grayscale(.6);opacity:.7}
+.cl .cu{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.cl .cu b{font-family:var(--display);font-weight:600;font-size:1.05rem;line-height:1.2}
+.cl .cu .btn{margin-top:auto;align-self:stretch}
+.modal-bg{position:fixed;inset:0;z-index:40;background:rgba(10,8,30,.6);display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--bg);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;border:var(--bd);padding:18px 18px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+@media (min-width:700px){.modal-bg{align-items:center}.modal{border-radius:22px}}
+.modal .top2{display:flex;gap:14px;align-items:flex-start}
+.modal .top2 img{width:110px;border-radius:10px;border:2px solid var(--edge);flex:none}
+.modal h2{font-size:1.5rem}
+.modal .arch li{padding:10px 0}
 .cargando{padding:30px;text-align:center;color:var(--muted)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom));z-index:30;background:var(--ink);color:var(--surface);padding:10px 18px;border-radius:999px;font-weight:700;max-width:calc(100% - 32px)}
 
@@ -244,7 +263,31 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   function botones(asset, nombre) {
     return '<a class="btn sec sm" href="' + esc(blobUrl(asset)) + '" target="_blank" rel="noopener">Ver</a><button class="btn sm" data-bajar="' + esc(asset) + '" data-n="' + esc(nombre || "archivo.pdf") + '">⬇ Descargar</button>';
   }
+  function fechaCl(d) { var f = d.fecha || d.libera_desde || ""; return /^\d{4}-\d{2}-\d{2}/.test(f) ? fechaBonita(f.slice(0, 10)) : ""; }
+  function tarjetaClase(it) {
+    var d = it.d, src = srcDe(d.portadaMini || d.portada) || (d.thumb ? blobUrl(d.thumb) : ""), nArch = (d.archivos || []).filter(function (a) { return a && (a.asset || a.url); }).length || d.narchivos || 0;
+    var pill = it.bloq ? '<span class="pill prem p">🔒 Premium</span>' : it.prem ? '<span class="pill prem p">⭐ Premium</span>' : '<span class="pill av p">Avanzado</span>';
+    var f = fechaCl(d);
+    var btn = st.publico ? '<button class="btn sm" data-login="1">🔑 Entrar para descargar</button>' : it.bloq ? '<a class="btn sm" href="/ofrenda">💛 Abrir con un abono</a>' : '<button class="btn sm" data-clase="' + esc(it.id) + '">📂 Entrar a la clase</button>';
+    return '<article class="cl' + (it.bloq ? " bloq" : "") + '" id="i-' + esc(it.col + "-" + it.id) + '"><div class="tapa">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : "📋") +
+      (d.numero != null ? '<span class="n">Clase N°' + esc(d.numero) + "</span>" : "") + pill + '</div><div class="cu"><b>' + esc(tituloDe(it)) + "</b>" +
+      (d.cita ? '<span class="small muted">📖 ' + esc(d.cita) + "</span>" : "") + '<span class="small muted">' + (f ? "📅 " + esc(f) : "") + (nArch ? (f ? " · " : "") + nArch + (nArch === 1 ? " archivo" : " archivos") : "") + "</span>" + btn + "</div></article>";
+  }
+  function abrirClase(id) {
+    var it = st.items.find(function (x) { return x.id === id; }); if (!it) return;
+    var d = it.d, src = srcDe(d.portada || d.portadaMini) || (d.thumb ? blobUrl(d.thumb) : ""), f = fechaCl(d);
+    var as = (d.archivos || []).filter(function (a) { return a && (a.asset || a.url); });
+    var bg = document.createElement("div"); bg.className = "modal-bg"; bg.id = "modalClase";
+    bg.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTit"><div class="top2">' + (src ? '<img src="' + esc(src) + '" alt="">' : "") + '<div><span class="small muted">' + (d.numero != null ? "Clase N°" + esc(d.numero) : "Clase") + (f ? " · 📅 " + esc(f) : "") + '</span><h2 id="mTit">' + esc(tituloDe(it)) + "</h2>" + (d.cita ? '<p class="small">📖 ' + esc(d.cita) + "</p>" : "") + (d.desc ? '<p class="small muted" style="margin-top:6px">' + esc(d.desc) + "</p>" : "") + "</div></div>" +
+      (as.length ? '<h3>Archivos de la clase</h3><ul class="arch">' + as.map(function (a, i) { var nom = a.nombre || a.titulo || a.archivo || "Archivo " + (i + 1); return '<li id="a-' + esc(a.asset || "") + '"><span><b>' + (i + 1) + ".</b> " + esc(nom) + "</span>" + (a.asset ? botones(a.asset, a.archivo || nom) : '<a class="btn sec sm" href="' + esc(a.url) + '" target="_blank" rel="noopener">Abrir enlace ↗</a>') + "</li>"; }).join("") + "</ul>" : '<p class="vacio">Esta clase aún no tiene archivos.</p>') +
+      '<button class="btn sec" data-cerrar="1" style="align-self:flex-end">Cerrar</button></div>';
+    document.body.appendChild(bg); document.body.style.overflow = "hidden";
+    try { history.replaceState(null, "", "#clase=" + encodeURIComponent(id)); } catch (e) {}
+    var b = bg.querySelector("[data-cerrar]"); if (b) b.focus();
+  }
+  function cerrarClase() { var m = $("#modalClase"); if (m) m.remove(); document.body.style.overflow = ""; try { if (/^#clase=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
   function tarjeta(it) {
+    if (it.col === "maestras") return tarjetaClase(it);
     var d = it.d, meta = [];
     if (it.central) meta.push(it.bloq ? '<span class="pill prem">🔒 Premium</span>' : it.prem ? '<span class="pill prem">⭐ Premium</span>' : '<span class="pill av">Avanzado</span>'); else meta.push('<span class="pill mia">De tu congregación</span>');
     if (it.col === "cuentos" && d.clase != null) meta.push("Clase " + esc(d.clase) + " · Cuento " + esc(d.parte));
@@ -299,7 +342,8 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
         .sort(function (a, b) { return (a.bloq - b.bloq) || (a.col === "cuentos" && b.col === "cuentos" ? (Number(a.d.numero) || 0) - (Number(b.d.numero) || 0) : 0) || tituloDe(a).localeCompare(tituloDe(b), "es"); });
       if (!xs.length) { if (!q) html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">0</span></h2><p class="vacio">Pronto habrá material en esta sección.</p></section>'; return; }
       total += xs.length;
-      html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2><div class="lista">' + xs.map(tarjeta).join("") + "</div></section>";
+      html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2>' + (function () { var cls = xs.filter(function (x) { return x.col === "maestras"; }), otros = xs.filter(function (x) { return x.col !== "maestras"; });
+        return (cls.length ? '<div class="lista clases">' + cls.map(tarjeta).join("") + "</div>" : "") + (otros.length ? '<div class="lista">' + otros.map(tarjeta).join("") + "</div>" : ""); })() + "</section>";
     });
     $("#grupos").innerHTML = html || '<p class="nota">' + (q ? "No encontramos material con «" + esc(ui.q) + "»." : "Pronto habrá material en esta sección.") + "</p>";
     var c = $("#cuenta"); if (c) c.textContent = total ? total + " materiales" : "";
@@ -307,11 +351,13 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 
   /* llegar desde la app a un archivo concreto: /biblioteca#a=<archivo> */
   function irAlFoco() {
+    var mc = location.hash.match(/^#clase=(.+)$/); if (mc) return abrirClase(decodeURIComponent(mc[1]));
     var m = location.hash.match(/^#a=(.+)$/); if (!m) return;
     var asset = decodeURIComponent(m[1]);
     var it = st.items.find(function (x) { return x.d.asset === asset || (x.d.archivos || []).some(function (a) { return a && a.asset === asset; }); });
     if (!it) return;
     if (ui.sec !== "todo" && ui.sec !== seccionDe(it)) { ui.sec = "todo"; pintar(); }
+    if (it.col === "maestras" && !st.publico && !it.bloq) { abrirClase(it.id); var li = document.getElementById("a-" + asset); if (li) { li.scrollIntoView({ block: "center" }); li.style.background = "var(--sunk)"; } return; }
     var el = document.getElementById("i-" + it.col + "-" + it.id); if (!el) return;
     el.classList.add("foco"); el.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(function () { el.classList.remove("foco"); }, 4000);
@@ -333,9 +379,13 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     var b = e.target.closest("button"); if (!b) return;
     if (b.dataset.sec) { ui.sec = b.dataset.sec; try { history.replaceState(null, "", ui.sec === "todo" ? location.pathname : "?seccion=" + ui.sec); } catch (x) {} pintar(); return; }
     if (b.dataset.bajar) bajar(b.dataset.bajar, b.dataset.n, b);
+    if (b.dataset.clase) abrirClase(b.dataset.clase);
+    if (b.dataset.cerrar) cerrarClase();
     if (b.dataset.login) { var c = $("#cajaLogin"); if (c) { c.hidden = false; c.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(function () { var i = $("#lEmail"); if (i) i.focus(); }, 350); } }
   });
   window.addEventListener("hashchange", irAlFoco);
+  document.addEventListener("click", function (e) { if (e.target.id === "modalClase") cerrarClase(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") cerrarClase(); });
   iniciar().catch(function (e) { $("#main").innerHTML = '<p class="nota">No se pudo cargar la biblioteca. Revisa tu conexión y vuelve a intentarlo.</p>'; console.error(e); });
 })();
 </script>
