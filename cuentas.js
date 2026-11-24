@@ -370,6 +370,13 @@
     const v = ["admin", "maestro", "familia"].includes(window.EPK_VISTA) ? window.EPK_VISTA : CTX.rol;
     const verEquipo = equipo() && v !== "familia", verAdmin = CTX.rol === "admin" && v === "admin";
     const r = hoja(`<h2>${esc(c.nombre)}</h2><p class="muted small">${esc(nombreU)} · ${ROLN[CTX.rol]}${v !== CTX.rol ? ` · <b>viendo como ${ROLN[v]}</b>` : ""}</p>
+      <p class="eyebrow" style="margin:4px 0 0">🌐 En la web Eterno Pacto Kids</p>
+      <div class="list web-links">
+      <a class="item" href="/biblioteca" target="_blank" rel="noopener"><span class="grow"><b>📚 Biblioteca</b><span class="muted small">Descarga cuentos y material (Avanzado y ⭐ Premium)</span></span><span aria-hidden="true">↗</span></a>
+      <a class="item" href="/linea" target="_blank" rel="noopener"><span class="grow"><b>⏳ La gran historia de Dios</b><span class="muted small">La línea de tiempo para leer en familia</span></span><span aria-hidden="true">↗</span></a>
+      <a class="item" href="/ofrenda" target="_blank" rel="noopener"><span class="grow"><b>💛 Ofrenda y Premium</b><span class="muted small">Abonos, códigos QR y cómo apoyar</span></span><span aria-hidden="true">↗</span></a>
+      <a class="item" href="/inicio" target="_blank" rel="noopener"><span class="grow"><b>🏠 Sitio web</b><span class="muted small">eternopactokids.cl</span></span><span aria-hidden="true">↗</span></a></div>
+      <p class="eyebrow" style="margin:8px 0 0">Mi cuenta</p>
       <div class="list">
       ${verEquipo ? `<button class="item" data-m="invitar"><span class="grow"><b>Invitar familias y maestros</b><span class="muted small">Código ${esc(c.codigo)}</span></span></button>` : ""}
       ${CTX.super ? `<a class="item" href="panel.html"><span class="grow"><b>Panel de Control</b><span class="muted small">Súper administrador: todas las congregaciones</span></span></a>` : ""}
