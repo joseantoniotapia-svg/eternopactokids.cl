@@ -2404,8 +2404,8 @@ const OFRENDA={correo:"jose.antonio.tapia@gmail.com",
   libre:"https://www.flow.cl/btn.php?token=h449d44b80fb03200491b2d2a8c510af0022856c",
   mensual:"https://www.flow.cl/btn.php?token=s8cca24059ed474fe078fee5f512af40677bf64b",
   anual:"https://www.flow.cl/btn.php?token=h12e1f95df1f0a70dad5964bf7e1498fe217c3fb"};
-const CAT_PREM=[["salon","🧑‍🏫","Recursos para el salón","Dinámicas, decoración y apoyo para la sala de clases"],["clases","📚","Material completo de clases","Guías, presentaciones y fichas listas para cada domingo"],["apoderados","👪","Material para apoderados","Para acompañar la fe de los niños en casa"],["otros","✨","Otros","Más recursos especiales para la congregación"]];
-const catPremDef=col=>col==="maestras"?"clases":col==="matprofes"?"salon":col==="materiales"?"apoderados":"otros";
+const CAT_PREM=[["cuentos","📖","Cuentos","Cuentos semanales y lecturas para la familia"],["juegos","🎲","Juegos y actividades","Para colorear, láminas, dinámicas y juegos"],["clases","📚","Clases y guías","Clases completas, guías y presentaciones para maestros"],["familia","👪","En familia","Para acompañar la fe de los niños en casa"]];
+const catPremDef=(col,cat)=>{const v={salon:"clases",apoderados:"familia",otros:""}.hasOwnProperty(cat)?{salon:"clases",apoderados:"familia",otros:""}[cat]:cat;return CAT_PREM.some(c=>c[0]===v)?v:col==="cuentos"?"cuentos":col==="materiales"?"juegos":"clases";};
 const PRM={cargado:false,familia:null,com:null,comHasta:null};
 function cargarPremium(force){const sb=albSB();if(!sb||(PRM.cargado&&!force)||PRM.cargando)return;PRM.cargando=true;
   Promise.all([sb.rpc("mi_premium"),sb.from("comunidades").select("plan_id,plan_hasta").eq("id",EPK.comunidad.id).maybeSingle()]).then(([m,c])=>{PRM.cargando=false;PRM.cargado=true;
@@ -2444,7 +2444,7 @@ function vOfrenda(){cargarPremium();
   <footer class="of-pie"><img src="img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="img/jat-horizontal-negro.svg" alt="JAT · José Antonio Tapia"></span></footer>`;}
 
 function premItems(){const cols=["materiales","cuentos"].concat(ed()?["matprofes","maestras"]:[]);const out=[];
-  cols.forEach(col=>(S[col]||[]).forEach(x=>{if((x.plan||"gratis")!=="gratis")out.push({x,col,cat:x.catPremium||catPremDef(col)});}));return out;}
+  cols.forEach(col=>(S[col]||[]).forEach(x=>{if((x.plan||"gratis")!=="gratis")out.push({x,col,cat:catPremDef(col,x.catPremium)});}));return out;}
 function premTarjeta({x,col}){const bl=x._bloqueado&&!(window.EPK&&EPK.super);const tit=x.titulo||x.nombre||(col==="cuentos"?"Cuento "+(x.numero||""):"Material");
   const img=x.thumb?`<img src="${esc(blobUrl(x.thumb))}" alt="" loading="lazy">`:`<span class="pr-ph">${col==="cuentos"?"📖":col==="maestras"?"📚":"📄"}</span>`;
   if(bl)return `<div class="pr-item bloq"><span class="pr-img">${img}<span class="pr-lock">🔒</span></span><b>${esc(tit)}</b>${x.desc?`<span class="small muted">${esc(x.desc)}</span>`:""}<button class="btn sm" data-act="irOfrenda">Cómo obtenerlo</button></div>`;

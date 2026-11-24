@@ -68,6 +68,8 @@ main{padding-block:26px 40px;display:flex;flex-direction:column;gap:22px}
 .niveles{display:flex;gap:10px;flex-wrap:wrap}
 .niveles button{border:var(--bd);border-radius:999px;padding:9px 18px;font-family:var(--display);font-weight:600;font-size:1.05rem;background:var(--surface);box-shadow:3px 3px 0 var(--edge)}
 .niveles button[aria-pressed="true"]{background:var(--violet);color:#fff}
+.niveles button .small{opacity:.75;font-family:var(--body);font-size:.8rem}
+.estado .btn{flex:none}
 .niveles button.p[aria-pressed="true"]{background:var(--yellow);color:#1E1548}
 .nota{border:3px dashed var(--edge);border-radius:18px;padding:14px 16px;background:var(--surface)}
 .buscar{font:inherit;color:var(--ink);background:var(--surface);border:2.5px solid var(--edge);border-radius:999px;padding:10px 16px;width:100%;max-width:420px}
@@ -141,9 +143,21 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     ["matprofes", "🧑‍🏫", "Para maestros"],
     ["maestras", "📋", "Clases completas"]
   ];
-  var ui = { nivel: "avanzado", q: "" };
+  // Las 4 secciones (se eligen en el Panel; si no, se ponen solas según el tipo de material)
+  var SECCIONES = [["cuentos", "📖", "Cuentos"], ["juegos", "🎲", "Juegos y actividades"], ["clases", "📚", "Clases y guías"], ["familia", "👪", "En familia"]];
+  function seccionDe(it) {
+    var c = it.d.catPremium; c = { salon: "clases", apoderados: "familia", otros: "" }.hasOwnProperty(c) ? { salon: "clases", apoderados: "familia", otros: "" }[c] : c;
+    if (SECCIONES.some(function (x) { return x[0] === c; })) return c;
+    return it.col === "cuentos" ? "cuentos" : it.col === "materiales" ? "juegos" : "clases";
+  }
+  var ui = { sec: "todo", q: "" };
   var st = { user: null, com: null, rol: null, items: [], premium: false, premTxt: "" };
-  try { var n = new URLSearchParams(location.search).get("nivel"); if (n === "premium") ui.nivel = "premium"; } catch (e) {}
+  try { var sp = new URLSearchParams(location.search).get("seccion"); if (sp) ui.sec = sp; } catch (e) {}
+  function chips() {
+    var cnt = function (k) { return st.items.filter(function (it) { return k === "todo" || seccionDe(it) === k; }).length; };
+    return '<div class="niveles" role="group" aria-label="Secciones"><button data-sec="todo" aria-pressed="' + (ui.sec === "todo") + '">Todo <span class="small">' + cnt("todo") + "</span></button>" +
+      SECCIONES.map(function (x) { var n = cnt(x[0]); return n ? '<button data-sec="' + x[0] + '" aria-pressed="' + (ui.sec === x[0]) + '">' + x[1] + " " + x[2] + ' <span class="small">' + n + "</span></button>" : ""; }).join("") + "</div>";
+  }
 
   var toastT;
   function toast(m) { var t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2800); }
@@ -232,7 +246,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   }
   function tarjeta(it) {
     var d = it.d, meta = [];
-    if (it.central) meta.push(it.prem ? '<span class="pill prem">⭐ Premium</span>' : '<span class="pill av">Avanzado</span>'); else meta.push('<span class="pill mia">De tu congregación</span>');
+    if (it.central) meta.push(it.bloq ? '<span class="pill prem">🔒 Premium</span>' : it.prem ? '<span class="pill prem">⭐ Premium</span>' : '<span class="pill av">Avanzado</span>'); else meta.push('<span class="pill mia">De tu congregación</span>');
     if (it.col === "cuentos" && d.clase != null) meta.push("Clase " + esc(d.clase) + " · Cuento " + esc(d.parte));
     else if (it.col === "cuentos" && d.numero != null) meta.push("Cuento " + esc(d.numero));
     else if (it.col === "maestras" && d.numero != null) meta.push("Clase N°" + esc(d.numero));
@@ -241,7 +255,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     if (d.tamano) meta.push(fmtMB(d.tamano));
     var acts = "";
     if (st.publico) acts = (it.col === "maestras" && d.narchivos ? '<span class="small muted">' + d.narchivos + " archivos</span>" : "") + '<button class="btn sm" data-login="1">🔑 Entrar para descargar</button>';
-    else if (it.bloq) acts = '<a class="btn sm" href="/ofrenda">🔒 Abrir con un abono</a>';
+    else if (it.bloq) acts = '<a class="btn sm" href="/ofrenda">💛 Abrir con un abono</a>';
     else if (it.col === "maestras") {
       var as = (d.archivos || []).filter(function (a) { return a && (a.asset || a.url); });
       acts = as.length ? '<ul class="arch">' + as.map(function (a) {
@@ -259,9 +273,8 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   function pintar() {
     if (st.publico) {
       $("#main").innerHTML = '<section class="estado"><div class="quien"><b>Catálogo abierto</b><span class="small muted">Mira todo lo que hay. Para descargar, entra con la cuenta de la app.</span></div>' +
-        '<div class="niveles" role="group" aria-label="Nivel"><button data-nivel="avanzado" aria-pressed="' + (ui.nivel === "avanzado") + '">Avanzado</button><button class="p" data-nivel="premium" aria-pressed="' + (ui.nivel === "premium") + '">⭐ Premium</button></div>' +
-        '<button class="btn" data-login="1">🔑 Entrar</button></section>' + loginHTML(true) +
-        (ui.nivel === "premium" ? '<p class="nota">⭐ El material Premium se descarga con un abono mensual o anual. <a class="btn sm" style="margin-left:6px" href="/ofrenda">Ver abonos</a></p>' : '<p class="nota">✅ El material <b>Avanzado</b> es para todas las familias de las congregaciones de Eterno Pacto Kids.</p>') +
+        '<button class="btn" data-login="1">🔑 Entrar</button></section>' + loginHTML(true) + chips() +
+        '<p class="nota">✅ Lo <span class="pill av">Avanzado</span> es para todas las familias de las congregaciones. Lo <span class="pill prem">⭐ Premium</span> se abre con un abono. <a href="/ofrenda">Ver abonos</a></p>' +
         '<div class="filtros"><input class="buscar" id="buscar" type="search" placeholder="Buscar por título…" aria-label="Buscar en la biblioteca" value="' + esc(ui.q) + '"><span class="small muted" id="cuenta"></span></div><div id="grupos"></div>';
       $("#buscar").addEventListener("input", function (e) { ui.q = e.target.value; pintarGrupos(); });
       return pintarGrupos();
@@ -269,8 +282,8 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     var rolTxt = { admin: "Administrador", maestro: "Maestro", familia: "Familia" }[st.rol] || "";
     var html = '<section class="estado"><div class="quien"><span class="small muted">' + esc(st.user.email) + " · " + esc(rolTxt) + "</span><b>" + esc(st.com.nombre) + "</b>" +
       (st.premium ? '<span class="pill prem">⭐ ' + esc(st.premTxt) + "</span>" : '<span class="small muted">Tienes el material Avanzado. <a href="/ofrenda">¿Quieres ⭐ Premium?</a></span>') +
-      '</div><div class="niveles" role="group" aria-label="Nivel"><button data-nivel="avanzado" aria-pressed="' + (ui.nivel === "avanzado") + '">Avanzado</button><button class="p" data-nivel="premium" aria-pressed="' + (ui.nivel === "premium") + '">⭐ Premium</button></div></section>';
-    if (ui.nivel === "premium" && !st.premium) html += '<p class="nota">🔒 Puedes ver todo lo que trae Premium. Para descargarlo necesitas un abono mensual o anual. <a class="btn sm" style="margin-left:6px" href="/ofrenda">Ver abonos</a></p>';
+      (!st.premium ? '</div><a class="btn" href="/ofrenda">💛 Quiero Premium</a></section>' : "</div></section>") + chips();
+    if (!st.premium && st.items.some(function (it) { return it.bloq; })) html += '<p class="nota">🔒 Lo marcado con candado es <b>⭐ Premium</b>: puedes ver qué es, y se abre con un abono mensual o anual que sostiene este ministerio. <a class="btn sm" style="margin-left:6px" href="/ofrenda">Ver abonos</a></p>';
     html += '<div class="filtros"><input class="buscar" id="buscar" type="search" placeholder="Buscar por título…" aria-label="Buscar en la biblioteca" value="' + esc(ui.q) + '"><span class="small muted" id="cuenta"></span></div><div id="grupos"></div>';
     $("#main").innerHTML = html;
     $("#buscar").addEventListener("input", function (e) { ui.q = e.target.value; pintarGrupos(); });
@@ -279,15 +292,16 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 
   function pintarGrupos() {
     var q = ui.q.trim().toLowerCase(), total = 0, html = "";
-    GRUPOS.forEach(function (g) {
-      var xs = st.items.filter(function (it) { return it.col === g[0] && (ui.nivel === "premium" ? it.prem : !it.prem); })
+    SECCIONES.forEach(function (g) {
+      if (ui.sec !== "todo" && ui.sec !== g[0]) return;
+      var xs = st.items.filter(function (it) { return seccionDe(it) === g[0]; })
         .filter(function (it) { return !q || (tituloDe(it) + " " + (it.d.desc || "") + " " + (it.d.cita || "")).toLowerCase().indexOf(q) >= 0; })
-        .sort(function (a, b) { return (Number(a.d.numero) || 0) - (Number(b.d.numero) || 0) || tituloDe(a).localeCompare(tituloDe(b), "es"); });
+        .sort(function (a, b) { return (a.bloq - b.bloq) || (a.col === "cuentos" && b.col === "cuentos" ? (Number(a.d.numero) || 0) - (Number(b.d.numero) || 0) : 0) || tituloDe(a).localeCompare(tituloDe(b), "es"); });
       if (!xs.length) return;
       total += xs.length;
       html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2><div class="lista">' + xs.map(tarjeta).join("") + "</div></section>";
     });
-    $("#grupos").innerHTML = html || '<p class="nota">' + (q ? "No encontramos material con «" + esc(ui.q) + "»." : ui.nivel === "premium" ? "Pronto habrá material ⭐ Premium aquí." : "Aún no hay material en este nivel.") + "</p>";
+    $("#grupos").innerHTML = html || '<p class="nota">' + (q ? "No encontramos material con «" + esc(ui.q) + "»." : "Pronto habrá material en esta sección.") + "</p>";
     var c = $("#cuenta"); if (c) c.textContent = total ? total + " materiales" : "";
   }
 
@@ -297,7 +311,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     var asset = decodeURIComponent(m[1]);
     var it = st.items.find(function (x) { return x.d.asset === asset || (x.d.archivos || []).some(function (a) { return a && a.asset === asset; }); });
     if (!it) return;
-    if (it.prem !== (ui.nivel === "premium")) { ui.nivel = it.prem ? "premium" : "avanzado"; pintar(); }
+    if (ui.sec !== "todo" && ui.sec !== seccionDe(it)) { ui.sec = "todo"; pintar(); }
     var el = document.getElementById("i-" + it.col + "-" + it.id); if (!el) return;
     el.classList.add("foco"); el.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(function () { el.classList.remove("foco"); }, 4000);
@@ -317,7 +331,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 
   document.addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
-    if (b.dataset.nivel) { ui.nivel = b.dataset.nivel; try { history.replaceState(null, "", ui.nivel === "premium" ? "?nivel=premium" : location.pathname); } catch (x) {} pintar(); return; }
+    if (b.dataset.sec) { ui.sec = b.dataset.sec; try { history.replaceState(null, "", ui.sec === "todo" ? location.pathname : "?seccion=" + ui.sec); } catch (x) {} pintar(); return; }
     if (b.dataset.bajar) bajar(b.dataset.bajar, b.dataset.n, b);
     if (b.dataset.login) { var c = $("#cajaLogin"); if (c) { c.hidden = false; c.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(function () { var i = $("#lEmail"); if (i) i.focus(); }, 350); } }
   });
