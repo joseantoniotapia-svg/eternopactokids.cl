@@ -81,6 +81,13 @@ a{color:var(--accent)}
 .vistabar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--sun-soft);border:2px solid var(--sun);color:var(--sun-ink);border-radius:14px;padding:10px 14px}
 .vistabar .btn{background:var(--sun-ink);color:var(--sun-soft)}
 .vista-op[aria-current="true"]{border:2px solid var(--accent)}
+.vgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.vg{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:5px;align-items:flex-start;min-width:0}
+.vg b{font-family:var(--display);font-weight:600;line-height:1.2;font-size:1rem}
+.vg-tapa{width:100%;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--sunk);display:grid;place-items:center}
+.vg-tapa img{width:100%;height:100%;object-fit:cover}.vg-ico{font-size:2.4rem}
+.vg.bloq .vg-tapa{filter:grayscale(.7);opacity:.6}
+.vg-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
 .bib-web{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--accent-soft);border:2px dashed var(--accent);border-radius:14px;padding:10px 14px}
 .bib-web p{flex:1;min-width:200px;font-size:.92rem}.bib-web .bw-ico{font-size:1.5rem}
 .flecha{min-width:36px;min-height:32px;font-size:.95rem;line-height:1}
@@ -1652,22 +1659,28 @@ function vRecursos(){
   if(!seg.some(x=>x[0]===ui.rec))ui.rec="cuentos";
   if(ui.rec==="premium")return guia("maria","Aquí están los Recursos Premium: material más preparado para maestros y familias. Lo básico siempre será para todos.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`+bannerBiblioteca("premium")+vPremium();
   let out=guia("maria","El amor también se demuestra. Aquí están los cuentos de cada semana y los materiales para descargar.")+`<div class="seg" role="group" aria-label="Recursos">${seg.map(x=>`<button aria-pressed="${ui.rec===x[0]}" data-act="rec" data-k="${x[0]}">${x[1]}</button>`).join("")}</div>`;
-  if(ui.progreso){const pg=ui.progreso;out+=`<section class="card"><p><b>${pg.hecho<pg.total?`Subiendo cuentos: ${pg.hecho} de ${pg.total}`:`Listo: ${pg.total-pg.errores.length} de ${pg.total} cuentos subidos`}</b></p><div class="prog"><i style="width:${pg.total?pg.hecho/pg.total*100:0}%"></i></div>${pg.hecho<pg.total?`<p class="muted small">No cierres la app hasta que termine.</p>`:""}${pg.errores.length?`<p class="small" style="color:var(--rose)">${pg.errores.map(esc).join("<br>")}</p>`:""}${pg.hecho>=pg.total?`<button class="link-btn" style="align-self:flex-start" data-act="cerrarProg">Ocultar</button>`:""}</section>`;}
-  if(adm()&&ui.uso)out+=`<p class="muted small">Espacio de archivos: ${fmtMB(ui.uso.bytes)} de ${fmtMB(ui.uso.maxBytes)} · ${ui.uso.files} de ${ui.uso.maxFiles} archivos</p>`;
+  /* Visor: la app solo muestra lo que hay y si tienes acceso; las descargas están en la Biblioteca web
+     y el material se carga desde el Panel de la Biblioteca central */
   out+=bannerBiblioteca();
   if(ui.rec!=="profes")out+=lectorBar("Agrega tu nombre para llevar la cuenta de tus lecturas.");
-  if(ui.rec==="cuentos"){
-    out+=`<div class="sec-h"><h2>Cuentos semanales</h2>${ed()?`<button class="btn sm" data-act="subirCuentos" ${ui.progreso&&ui.progreso.hecho<ui.progreso.total?"disabled":""}>Subir PDF</button>`:""}</div>
-    ${ed()?`<p class="muted small">Puedes elegir varios PDF a la vez (hasta 50 MB cada uno). Si el nombre es como <b>Clase01-Cuento2-Título</b>, se ordenan por clase y cuento; si solo trae un número, ese será el número del cuento. Si ese cuento ya existe, se reemplaza el archivo. Usa ▲ ▼ para cambiar el orden.</p>`:""}
-    ${S.cuentos.length?`<input class="search" id="buscarCuento" type="search" placeholder="Buscar por número o título" value="${esc(ui.buscar)}" aria-label="Buscar cuento">`:""}
-    <div id="listaCuentos">${listaCuentosHTML()}</div>`;
-  }else{
-    const col=ui.rec==="profes"?"matprofes":"materiales";const arr=[...S[col]].sort((a,b)=>(a.fecha||"")<(b.fecha||"")?1:-1);
-    out+=`<div class="sec-h"><h2>${ui.rec==="profes"?"Material para profesores":"Material para niños"}</h2>${ed()?`<button class="btn sm" data-act="nuevoMaterial" data-col="${col}">Subir material</button>`:""}</div>`;
-    out+=ui.rec==="profes"?`<div class="note">Solo el equipo de maestros ve esta lista: guías de clase, planificaciones y material para preparar cada domingo.</div>`:`<p class="muted small">Hojas para colorear, actividades y lecturas para descargar en casa.</p>`;
-    out+=arr.length?`<div class="list">${arr.map(m=>filaMaterial(m,col)).join("")}</div>`:emptyBox("Sin materiales todavía",ed()?"Sube un PDF o imagen, o agrega un enlace (Drive, YouTube).":"Los maestros subirán aquí el material para descargar.","");
-  }
+  const col=ui.rec==="cuentos"?"cuentos":ui.rec==="profes"?"matprofes":"materiales";
+  const tit={cuentos:"📖 Cuentos semanales",materiales:"🧒 Material para niños",matprofes:"🧑‍🏫 Material para maestros"}[col];
+  const xs=[...S[col]].filter(x=>!x._central||x._vis!==false||ed()).sort(col==="cuentos"?(a,b)=>(a.numero||0)-(b.numero||0):(a,b)=>String(a.titulo||"").localeCompare(String(b.titulo||""),"es"));
+  out+=`<div class="sec-h"><h2>${tit}</h2><span class="pill">${xs.length}</span></div>`;
+  out+=xs.length?`<div class="vgrid">${xs.map(x=>tarjetaVisor(x,col)).join("")}</div>`:emptyBox("Aún no hay material aquí","Pronto aparecerá el material de la Biblioteca central.","");
   return out;
+}
+function tarjetaVisor(x,col){
+  const L=lector();const leido=col==="cuentos"?L&&L.cuentos[x.id]:col==="materiales"&&L&&L.mats[x.id];
+  const bl=x._bloqueado&&!(window.EPK&&EPK.super);const prem=(x.plan||"gratis")!=="gratis";
+  const tapa=x.thumb?`<img src="${esc(blobUrl(x.thumb))}" alt="" loading="lazy">`:`<span class="vg-ico" aria-hidden="true">${col==="cuentos"?"📖":col==="matprofes"?"🧑‍🏫":"🧩"}</span>`;
+  const sub=col==="cuentos"?(x.clase!=null?`Clase ${esc(x.clase)} · Cuento ${esc(x.parte)}`:`Cuento ${esc(x.numero??"")}`):esc(x.desc||"");
+  const etiqueta=bl?`<span class="pill lock">🔒 ${prem?"Premium":"Bloqueado"}</span>`:leido?`<span class="pill leaf">✓ Leído</span>`:prem?`<span class="pill sun">⭐ Premium</span>`:"";
+  let acc;
+  if(bl)acc=prem?`<button class="btn sm" data-act="irOfrenda">Cómo obtenerlo</button>`:btnPedir(x,col);
+  else if(col==="cuentos")acc=x.asset?`<button class="btn sm" data-act="leerCuento" data-id="${esc(x.id)}">${leido?"Leer otra vez":"Leer"}</button>${preguntasDe(x).length?`<button class="btn ghost sm" data-act="quiz" data-id="${esc(x.id)}">Preguntas</button>`:""}`:`<span class="pill">Sin archivo</span>`;
+  else acc=(x.asset||safeUrl(x.url))?`<button class="btn sm" data-act="leerMat" data-col="${col}" data-id="${esc(x.id)}">${col==="materiales"?(leido?"Ver otra vez":"Hacer actividad"):"Ver"}</button>`:`<span class="pill">Sin archivo</span>`;
+  return `<article class="vg${bl?" bloq":""}"><span class="vg-tapa">${tapa}</span><b>${esc(x.titulo||x.nombre||"Material")}</b><span class="muted small">${sub}</span>${etiqueta}<div class="vg-acts">${acc}</div></article>`;
 }
 async function subirCuentos(files){
   files=[...files].filter(f=>extDe(f.name)==="pdf");

@@ -30,6 +30,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
 :focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:8px}
 .muted{color:var(--muted)}.small{font-size:.9rem}
+[hidden]{display:none!important}
 
 .cab{background:radial-gradient(120% 90% at 50% 0%,#3B2A9C 0%,#2A1E6E 45%,#170F45 100%);color:#fff;padding-top:env(safe-area-inset-top)}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:14px}
@@ -151,7 +152,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   async function iniciar() {
     var s = await sb.auth.getSession();
     st.user = s.data && s.data.session ? s.data.session.user : null;
-    if (!st.user) return pintarLogin();
+    if (!st.user) return cargarPublico();
     var m = await sb.from("miembros").select("rol, comunidades(id,nombre)").eq("user_id", st.user.id);
     var lista = ((m.data) || []).filter(function (x) { return x.comunidades && x.comunidades.id !== CENTRAL; });
     var guardada = null; try { guardada = localStorage.getItem("epk_comunidad_" + st.user.id); } catch (e) {}
@@ -192,22 +193,33 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     irAlFoco();
   }
 
+  /* sin sesión: catálogo abierto (títulos y portadas, sin archivos) */
+  async function cargarPublico() {
+    var r = await sb.rpc("biblioteca_publica");
+    if (r.error) return pintarLogin();
+    st.publico = true; st.items = [];
+    (r.data || []).forEach(function (x) { var d = x.data || {}; st.items.push({ id: "c_" + x.id, col: x.col, d: d, central: true, bloq: false, prem: (d.plan || "gratis") !== "gratis" }); });
+    pintar();
+  }
+
   /* ---------- pantalla ---------- */
-  function pintarLogin() {
-    $("#main").innerHTML = '<section class="login"><div><h2>Entra con tu cuenta</h2><p class="muted" style="margin-top:8px">Usa el mismo correo y contraseña de la app. Así vemos tu congregación y si tienes ⭐ Premium.</p>' +
+  function pintarLogin() { $("#main").innerHTML = loginHTML(); }
+  function loginHTML(oculto) {
+    return '<section class="login" id="cajaLogin"' + (oculto ? " hidden" : "") + '><div><h2>Entra con tu cuenta</h2><p class="muted" style="margin-top:8px">Usa el mismo correo y contraseña de la app. Así vemos tu congregación y si tienes ⭐ Premium.</p>' +
       '<ul class="muted small" style="margin:12px 0 0;padding-left:18px"><li><b>Avanzado:</b> abierto para todas las familias de las congregaciones.</li><li><b>⭐ Premium:</b> se abre con un abono mensual o anual. <a href="/ofrenda">Ver abonos</a></li></ul></div>' +
       '<form id="fLogin" novalidate><label for="lEmail">Correo</label><input id="lEmail" type="email" autocomplete="email" required>' +
       '<label for="lPass">Contraseña</label><input id="lPass" type="password" autocomplete="current-password" required>' +
       '<p class="err" id="lErr" hidden></p><button class="btn" type="submit">Entrar</button>' +
       '<p class="small muted">¿Aún no tienes cuenta? <a href="/app">Créala en la app</a> con el código de tu congregación.</p></form></section>';
-    $("#fLogin").addEventListener("submit", async function (e) {
-      e.preventDefault(); var b = e.target.querySelector("button"); b.disabled = true; $("#lErr").hidden = true;
-      var r = await sb.auth.signInWithPassword({ email: $("#lEmail").value.trim(), password: $("#lPass").value });
-      b.disabled = false;
-      if (r.error) { $("#lErr").textContent = /invalid login/i.test(r.error.message) ? "Correo o contraseña incorrectos." : r.error.message; $("#lErr").hidden = false; return; }
-      iniciar();
-    });
   }
+  document.addEventListener("submit", async function (e) {
+    if (e.target.id !== "fLogin") return;
+    e.preventDefault(); var b = e.target.querySelector("button"); b.disabled = true; $("#lErr").hidden = true;
+    var r = await sb.auth.signInWithPassword({ email: $("#lEmail").value.trim(), password: $("#lPass").value });
+    b.disabled = false;
+    if (r.error) { $("#lErr").textContent = /invalid login/i.test(r.error.message) ? "Correo o contraseña incorrectos." : r.error.message; $("#lErr").hidden = false; return; }
+    st.publico = false; iniciar();
+  });
 
   function thumbDe(it) {
     var d = it.d, src = d.thumb ? blobUrl(d.thumb) : srcDe(d.portadaMini || d.portada);
@@ -228,7 +240,8 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     if (d.archivo) meta.push(esc(ext(d.archivo)));
     if (d.tamano) meta.push(fmtMB(d.tamano));
     var acts = "";
-    if (it.bloq) acts = '<a class="btn sm" href="/ofrenda">🔒 Abrir con un abono</a>';
+    if (st.publico) acts = (it.col === "maestras" && d.narchivos ? '<span class="small muted">' + d.narchivos + " archivos</span>" : "") + '<button class="btn sm" data-login="1">🔑 Entrar para descargar</button>';
+    else if (it.bloq) acts = '<a class="btn sm" href="/ofrenda">🔒 Abrir con un abono</a>';
     else if (it.col === "maestras") {
       var as = (d.archivos || []).filter(function (a) { return a && (a.asset || a.url); });
       acts = as.length ? '<ul class="arch">' + as.map(function (a) {
@@ -244,6 +257,15 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   }
 
   function pintar() {
+    if (st.publico) {
+      $("#main").innerHTML = '<section class="estado"><div class="quien"><b>Catálogo abierto</b><span class="small muted">Mira todo lo que hay. Para descargar, entra con la cuenta de la app.</span></div>' +
+        '<div class="niveles" role="group" aria-label="Nivel"><button data-nivel="avanzado" aria-pressed="' + (ui.nivel === "avanzado") + '">Avanzado</button><button class="p" data-nivel="premium" aria-pressed="' + (ui.nivel === "premium") + '">⭐ Premium</button></div>' +
+        '<button class="btn" data-login="1">🔑 Entrar</button></section>' + loginHTML(true) +
+        (ui.nivel === "premium" ? '<p class="nota">⭐ El material Premium se descarga con un abono mensual o anual. <a class="btn sm" style="margin-left:6px" href="/ofrenda">Ver abonos</a></p>' : '<p class="nota">✅ El material <b>Avanzado</b> es para todas las familias de las congregaciones de Eterno Pacto Kids.</p>') +
+        '<div class="filtros"><input class="buscar" id="buscar" type="search" placeholder="Buscar por título…" aria-label="Buscar en la biblioteca" value="' + esc(ui.q) + '"><span class="small muted" id="cuenta"></span></div><div id="grupos"></div>';
+      $("#buscar").addEventListener("input", function (e) { ui.q = e.target.value; pintarGrupos(); });
+      return pintarGrupos();
+    }
     var rolTxt = { admin: "Administrador", maestro: "Maestro", familia: "Familia" }[st.rol] || "";
     var html = '<section class="estado"><div class="quien"><span class="small muted">' + esc(st.user.email) + " · " + esc(rolTxt) + "</span><b>" + esc(st.com.nombre) + "</b>" +
       (st.premium ? '<span class="pill prem">⭐ ' + esc(st.premTxt) + "</span>" : '<span class="small muted">Tienes el material Avanzado. <a href="/ofrenda">¿Quieres ⭐ Premium?</a></span>') +
@@ -297,6 +319,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     var b = e.target.closest("button"); if (!b) return;
     if (b.dataset.nivel) { ui.nivel = b.dataset.nivel; try { history.replaceState(null, "", ui.nivel === "premium" ? "?nivel=premium" : location.pathname); } catch (x) {} pintar(); return; }
     if (b.dataset.bajar) bajar(b.dataset.bajar, b.dataset.n, b);
+    if (b.dataset.login) { var c = $("#cajaLogin"); if (c) { c.hidden = false; c.scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(function () { var i = $("#lEmail"); if (i) i.focus(); }, 350); } }
   });
   window.addEventListener("hashchange", irAlFoco);
   iniciar().catch(function (e) { $("#main").innerHTML = '<p class="nota">No se pudo cargar la biblioteca. Revisa tu conexión y vuelve a intentarlo.</p>'; console.error(e); });
