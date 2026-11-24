@@ -11,7 +11,7 @@ language sql stable security definer set search_path = public as $$
   select d.col, d.id,
          jsonb_strip_nulls(jsonb_build_object(
            'titulo', d.data->'titulo', 'nombre', d.data->'nombre', 'numero', d.data->'numero',
-           'desc', d.data->'desc', 'cita', d.data->'cita', 'clase', d.data->'clase', 'parte', d.data->'parte',
+           'desc', d.data->'desc', 'cita', d.data->'cita', 'clase', d.data->'clase', 'parte', d.data->'parte', 'claseNombre', d.data->'claseNombre',
            'thumb', d.data->'thumb', 'portadaMini', d.data->'portadaMini',
            'plan', coalesce(d.data->'plan', '"gratis"'::jsonb), 'catPremium', d.data->'catPremium',
            'archivo', d.data->'archivo', 'tamano', d.data->'tamano',

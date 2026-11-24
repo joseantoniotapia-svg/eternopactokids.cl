@@ -87,6 +87,7 @@ a{color:var(--accent)}
 .vg-tapa{width:100%;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:var(--sunk);display:grid;place-items:center}
 .vg-tapa img{width:100%;height:100%;object-fit:cover}.vg-ico{font-size:2.4rem}
 .vg.bloq .vg-tapa{filter:grayscale(.7);opacity:.6}
+.vg-clase{font-family:var(--display);font-weight:600;color:var(--accent)}
 .vg-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
 .bib-web{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--accent-soft);border:2px dashed var(--accent);border-radius:14px;padding:10px 14px}
 .bib-web p{flex:1;min-width:200px;font-size:.92rem}.bib-web .bw-ico{font-size:1.5rem}
@@ -1671,11 +1672,16 @@ function vRecursos(){
   out+=xs.length?`<div class="vgrid">${xs.map(x=>tarjetaVisor(x,col)).join("")}</div>`:emptyBox("Aún no hay material aquí","Pronto aparecerá el material de la Biblioteca central.","");
   return out;
 }
+/* nombre de la clase o parábola de un cuento: el del Panel, o el de la clase de la Biblioteca con ese número / ficha */
+function claseDeCuento(x){if(x.claseNombre)return x.claseNombre;if(x.clase==null)return "";
+  const m=(S.maestras||[]).find(c=>Number(c.numero)===Number(x.clase)||(c.archivos||[]).concat([{nombre:c.titulo}]).some(a=>{const r=String((a&&(a.nombre||a.titulo||a.archivo))||"").match(/ficha\s*n?°?\s*(\d+)/i);return r&&Number(r[1])===Number(x.clase);}));
+  return m?(m.titulo||""):"";}
 function tarjetaVisor(x,col){
   const L=lector();const leido=col==="cuentos"?L&&L.cuentos[x.id]:col==="materiales"&&L&&L.mats[x.id];
   const bl=x._bloqueado&&!(window.EPK&&EPK.super);const prem=(x.plan||"gratis")!=="gratis";
   const tapa=x.thumb?`<img src="${esc(blobUrl(x.thumb))}" alt="" loading="lazy">`:`<span class="vg-ico" aria-hidden="true">${col==="cuentos"?"📖":col==="matprofes"?"🧑‍🏫":"🧩"}</span>`;
-  const sub=col==="cuentos"?(x.clase!=null?`Clase ${esc(x.clase)} · Cuento ${esc(x.parte)}`:`Cuento ${esc(x.numero??"")}`):esc(x.desc||"");
+  const cn=col==="cuentos"?claseDeCuento(x):"";
+  const sub=col==="cuentos"?(x.clase!=null?`Clase ${esc(x.clase)} · Cuento ${esc(x.parte)}`:`Cuento ${esc(x.numero??"")}`)+(cn?`<br><b class="vg-clase">📚 ${esc(cn)}</b>`:""):esc(x.desc||"");
   const etiqueta=bl?`<span class="pill lock">🔒 ${prem?"Premium":"Bloqueado"}</span>`:leido?`<span class="pill leaf">✓ Leído</span>`:prem?`<span class="pill sun">⭐ Premium</span>`:"";
   let acc;
   if(bl)acc=prem?`<button class="btn sm" data-act="irOfrenda">Cómo obtenerlo</button>`:btnPedir(x,col);
