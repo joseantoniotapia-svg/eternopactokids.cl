@@ -91,6 +91,26 @@ main{padding-block:26px 40px;display:flex;flex-direction:column;gap:22px}
 .arch li{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem;border-top:1px dashed var(--line);padding-top:6px}
 .arch li span{flex:1;min-width:120px}
 .vacio{color:var(--muted);font-style:italic}
+/* cuentos en lista: miniatura igual para todos, colores por clase */
+.cuentos-lista{display:flex;flex-direction:column;gap:10px;max-width:820px}
+.cu-fila{--c:#7A4DFF;position:relative;display:grid;grid-template-columns:auto 78px 1fr auto;align-items:center;gap:14px;background:var(--surface);border:2.5px solid var(--edge);border-left:10px solid var(--c);border-radius:18px 10px 18px 12px;padding:10px 14px 10px 10px;box-shadow:3px 3px 0 var(--edge);scroll-margin-top:90px}
+.cu-fila:nth-child(even){transform:rotate(.25deg)}.cu-fila:nth-child(odd){transform:rotate(-.2deg)}
+.cu-fila.foco{outline:4px solid var(--pink);outline-offset:3px}
+.cu-num{width:54px;height:54px;border-radius:50%;background:var(--c);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;line-height:1;border:3px solid var(--edge);box-shadow:2px 2px 0 var(--edge)}
+.cu-num b{font-size:1.35rem}.cu-num span{font-size:.6rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.cu-tapa{width:78px;height:104px;border-radius:10px;overflow:hidden;border:2.5px solid var(--edge);background:var(--sunk);transform:rotate(-3deg);box-shadow:3px 3px 0 color-mix(in srgb,var(--c) 70%,transparent)}
+.cu-fila:nth-child(even) .cu-tapa{transform:rotate(3deg)}
+.cu-tapa img{width:100%;height:100%;object-fit:cover;display:block}
+.cu-tx{min-width:0;display:flex;flex-direction:column;gap:4px}
+.cu-tx b{font-family:var(--display);font-weight:600;font-size:1.12rem;line-height:1.2}
+.cu-tx .etq{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.82rem;color:var(--muted)}
+.cu-tx .cl-chip{background:color-mix(in srgb,var(--c) 18%,var(--surface));color:var(--ink);border:1.5px solid var(--c);border-radius:999px;padding:1px 9px;font-weight:700}
+.cu-acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:620px){.cu-fila{grid-template-columns:auto 64px 1fr;padding:10px}.cu-tapa{width:64px;height:86px}.cu-acts{grid-column:1/-1;justify-content:flex-start}}
+/* portada generada para material sin imagen */
+.tapa-gen{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;text-align:center;color:#fff;background:radial-gradient(circle at 20% 15%,rgba(255,255,255,.35),transparent 40%),linear-gradient(150deg,var(--g1),var(--g2))}
+.tapa-gen span{font-size:2.6rem;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.25))}
+.tapa-gen b{font-family:var(--display);font-weight:700;font-size:1.1rem;line-height:1.15;text-shadow:2px 2px 0 rgba(0,0,0,.3)}
 /* tarjetas de clase: miniatura grande y «Entrar a la clase» */
 .lista.clases{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
 .cl{background:var(--surface);border:2.5px solid var(--edge);border-radius:16px 8px 16px 12px;overflow:hidden;display:flex;flex-direction:column;scroll-margin-top:90px;box-shadow:3px 3px 0 var(--edge)}
@@ -286,8 +306,38 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     var b = bg.querySelector("[data-cerrar]"); if (b) b.focus();
   }
   function cerrarClase() { var m = $("#modalClase"); if (m) m.remove(); document.body.style.overflow = ""; try { if (/^#clase=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+  var COLORES = ["#2FB36B", "#FF8A1A", "#2E7CF6", "#8B5CF6", "#E5383B", "#D99A00", "#1AA3A3", "#E0457B", "#F25C05", "#5B3DF5"];
+  function colorDe(k) { k = Number(k) || 0; return COLORES[((k % COLORES.length) + COLORES.length) % COLORES.length]; }
+  function nivelPill(it) { return it.bloq ? '<span class="pill prem">🔒 Premium</span>' : it.prem ? '<span class="pill prem">⭐ Premium</span>' : it.central ? '<span class="pill av">Avanzado</span>' : '<span class="pill mia">De tu congregación</span>'; }
+  function accionesDe(it) {
+    var d = it.d;
+    if (st.publico) return '<button class="btn sm" data-login="1">🔑 Entrar para descargar</button>';
+    if (it.bloq) return '<a class="btn sm" href="/ofrenda">💛 Abrir con un abono</a>';
+    if (d.asset) return botones(d.asset, d.archivo);
+    if (/^https?:\/\//i.test(d.url || "")) return '<a class="btn sec sm" href="' + esc(d.url) + '" target="_blank" rel="noopener">Abrir enlace ↗</a>';
+    return '<span class="vacio small">Sin archivo todavía</span>';
+  }
+  function tarjetaCuento(it) {
+    var d = it.d, src = d.thumb ? blobUrl(d.thumb) : "";
+    var c = colorDe(d.clase != null ? d.clase : d.numero);
+    var num = d.clase != null ? '<span class="cu-num"><span>Cuento</span><b>' + esc(d.parte) + "</b></span>" : '<span class="cu-num"><span>N°</span><b>' + esc(d.numero == null ? "–" : d.numero) + "</b></span>";
+    var etq = (d.clase != null ? '<span class="cl-chip">Clase ' + esc(d.clase) + "</span>" : d.numero === 0 ? '<span class="cl-chip">Inicio del libro</span>' : "") + nivelPill(it) + (d.tamano ? "<span>" + fmtMB(d.tamano) + "</span>" : "");
+    return '<article class="cu-fila' + (it.bloq ? " bloq" : "") + '" id="i-' + esc(it.col + "-" + it.id) + '" style="--c:' + c + '">' + num +
+      '<span class="cu-tapa">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="tapa-gen" style="--g1:' + c + ';--g2:#2A1E5C"><span>📖</span></span>') + "</span>" +
+      '<div class="cu-tx"><b>' + esc(tituloDe(it).replace(/-/g, " ")) + '</b><span class="etq">' + etq + "</span></div><div class=\"cu-acts\">" + accionesDe(it) + "</div></article>";
+  }
+  function tarjetaRecurso(it) {
+    var d = it.d, src = d.thumb ? blobUrl(d.thumb) : srcDe(d.portadaMini || d.portada);
+    var ico = { materiales: "🧩", matprofes: "🧑‍🏫" }[it.col] || "✨", c = colorDe(String(tituloDe(it)).length);
+    var tapa = src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="tapa-gen" style="--g1:' + c + ';--g2:#5B3DF5"><span>' + ico + "</span><b>" + esc(tituloDe(it)) + "</b></span>";
+    var meta = [d.archivo ? esc(ext(d.archivo)) : "", d.tamano ? fmtMB(d.tamano) : ""].filter(Boolean).join(" · ");
+    return '<article class="cl' + (it.bloq ? " bloq" : "") + '" id="i-' + esc(it.col + "-" + it.id) + '"><div class="tapa">' + tapa + '<span class="p">' + nivelPill(it) + '</span></div><div class="cu"><b>' + esc(tituloDe(it)) + "</b>" +
+      (d.desc ? '<span class="small muted">' + esc(d.desc) + "</span>" : "") + (meta ? '<span class="small muted">' + meta + "</span>" : "") + '<div class="acts" style="margin-top:auto;display:flex;gap:6px;flex-wrap:wrap">' + accionesDe(it) + "</div></div></article>";
+  }
   function tarjeta(it) {
     if (it.col === "maestras") return tarjetaClase(it);
+    if (it.col === "cuentos") return tarjetaCuento(it);
+    return tarjetaRecurso(it);
     var d = it.d, meta = [];
     if (it.central) meta.push(it.bloq ? '<span class="pill prem">🔒 Premium</span>' : it.prem ? '<span class="pill prem">⭐ Premium</span>' : '<span class="pill av">Avanzado</span>'); else meta.push('<span class="pill mia">De tu congregación</span>');
     if (it.col === "cuentos" && d.clase != null) meta.push("Clase " + esc(d.clase) + " · Cuento " + esc(d.parte));
@@ -339,11 +389,16 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
       if (ui.sec !== "todo" && ui.sec !== g[0]) return;
       var xs = st.items.filter(function (it) { return seccionDe(it) === g[0]; })
         .filter(function (it) { return !q || (tituloDe(it) + " " + (it.d.desc || "") + " " + (it.d.cita || "")).toLowerCase().indexOf(q) >= 0; })
-        .sort(function (a, b) { return (a.bloq - b.bloq) || (a.col === "cuentos" && b.col === "cuentos" ? (Number(a.d.numero) || 0) - (Number(b.d.numero) || 0) : 0) || tituloDe(a).localeCompare(tituloDe(b), "es"); });
+        .sort(function (a, b) {
+          var na = Number(a.d.numero), nb = Number(b.d.numero), ta = isNaN(na) || a.d.numero == null, tb = isNaN(nb) || b.d.numero == null;
+          // cuentos y clases en orden de número (ficha); lo bloqueado al final; el resto por título
+          return (a.bloq - b.bloq) || (ta - tb) || (!ta && !tb ? na - nb : 0) || tituloDe(a).localeCompare(tituloDe(b), "es");
+        });
       if (!xs.length) { if (!q) html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">0</span></h2><p class="vacio">Pronto habrá material en esta sección.</p></section>'; return; }
       total += xs.length;
-      html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2>' + (function () { var cls = xs.filter(function (x) { return x.col === "maestras"; }), otros = xs.filter(function (x) { return x.col !== "maestras"; });
-        return (cls.length ? '<div class="lista clases">' + cls.map(tarjeta).join("") + "</div>" : "") + (otros.length ? '<div class="lista">' + otros.map(tarjeta).join("") + "</div>" : ""); })() + "</section>";
+      html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2>' + (function () {
+          var cue = xs.filter(function (x) { return x.col === "cuentos"; }), cls = xs.filter(function (x) { return x.col === "maestras"; }), otros = xs.filter(function (x) { return x.col !== "maestras" && x.col !== "cuentos"; });
+          return (cue.length ? '<div class="cuentos-lista">' + cue.map(tarjeta).join("") + "</div>" : "") + (cls.length ? '<div class="lista clases">' + cls.map(tarjeta).join("") + "</div>" : "") + (otros.length ? '<div class="lista clases"' + (cls.length ? ' style="margin-top:14px"' : "") + ">" + otros.map(tarjeta).join("") + "</div>" : ""); })() + "</section>";
     });
     $("#grupos").innerHTML = html || '<p class="nota">' + (q ? "No encontramos material con «" + esc(ui.q) + "»." : "Pronto habrá material en esta sección.") + "</p>";
     var c = $("#cuenta"); if (c) c.textContent = total ? total + " materiales" : "";
