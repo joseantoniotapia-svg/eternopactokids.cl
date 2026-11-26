@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Eterno Pacto Kids · La escuela dominical en casa</title>
-<meta name="description" content="Eterno Pacto Kids: clases del domingo, cuentos, la Biblia para niños, insignias y retos en familia. Lanzamiento el viernes 27 de noviembre a las 21:00.">
+<meta name="description" content="Eterno Pacto Kids: clases del domingo, cuentos, la Biblia para niños, insignias y retos en familia. Lanzamiento el viernes 4 de diciembre a las 21:00.">
 <meta name="theme-color" content="#5B3DF5">
 <link rel="icon" href="img/icono-192.png"><link rel="apple-touch-icon" href="img/icono-180.png">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Eterno Pacto Kids · ¡Muy pronto!">
-<meta property="og:description" content="La escuela dominical en casa para toda la familia. Lanzamiento: viernes 27 de noviembre, 21:00 (hora de Chile).">
+<meta property="og:description" content="La escuela dominical en casa para toda la familia. Lanzamiento: viernes 4 de diciembre, 21:00 (hora de Chile).">
 <meta property="og:image" content="https://eternopactokids.cl/img/grupo-og.jpg">
 <meta property="og:url" content="https://eternopactokids.cl/">
 <meta name="twitter:card" content="summary_large_image">
@@ -129,6 +129,22 @@ footer img{width:56px;height:auto}
 footer a{color:#E8E3FF}
 footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bienvenida{display:none;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:clamp(1rem,3.4vw,1.2rem);background:#fff;color:#1E1548;border:3px solid var(--edge);border-radius:999px;padding:6px 18px 6px 6px;box-shadow:4px 4px 0 var(--edge);transform:rotate(-1.5deg);animation:hola .6s cubic-bezier(.3,1.6,.5,1) both}
+.bienvenida.on{display:inline-flex}.bienvenida .cara{width:42px;height:42px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font-size:1.5rem;border:2.5px solid var(--edge)}
+.bienvenida b{color:var(--pink)}
+@keyframes hola{from{opacity:0;transform:translateY(-12px) scale(.8) rotate(-6deg)}}
+.visitas{display:inline-flex;align-items:center;gap:12px;margin-top:4px;background:rgba(255,255,255,.12);border:2.5px dashed rgba(255,255,255,.55);border-radius:20px;padding:8px 16px 8px 10px;color:#fff}
+.visitas .gato{width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--yellow);border:3px solid #fff;flex:none}
+.visitas .gato img{width:100%;height:auto;margin-top:-2px}
+.visitas .tx{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;text-align:left}
+.visitas .tx small{font-size:.8rem;opacity:.9}
+.odo{display:inline-flex;gap:3px;margin:3px 0}
+.odo i{font-style:normal;font-family:var(--display);font-weight:700;font-size:1.45rem;width:1.05em;height:1.35em;overflow:hidden;background:#fff;color:#1E1548;border:2.5px solid var(--edge);border-radius:8px;box-shadow:2px 2px 0 var(--edge);display:inline-block;position:relative}
+.odo i:nth-child(odd){transform:rotate(-3deg)}.odo i:nth-child(even){transform:rotate(2deg)}
+.odo i.pto{background:none;border:0;box-shadow:none;width:.35em;color:#fff}
+.odo i span{display:flex;flex-direction:column;align-items:center;transition:transform 1.6s cubic-bezier(.2,.9,.2,1)}
+.odo i span b{height:1.35em;line-height:1.35em;display:block}
+@media (prefers-reduced-motion:reduce){.odo i span{transition:none}.bienvenida{animation:none}}
 </style>
 </head>
 <body>
@@ -137,10 +153,11 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   <div class="wrap top"><a href="/" aria-label="Ir al inicio" style="display:inline-flex"><img src="img/logo-kids.webp" alt="Eterno Pacto Kids" width="64" height="77"></a>
     <nav aria-label="Secciones"><a href="#que-es">¿Qué es?</a><a href="#personajes">Personajes</a><a href="#instalar">Instalar</a><a href="#congregaciones">Congregaciones</a><a href="/linea">⏳ Línea de tiempo</a><a href="/biblioteca">📚 Biblioteca</a><a href="/ofrenda">💛 Ofrenda</a></nav></div>
   <div class="wrap hero">
+    <p class="bienvenida" id="bienvenida" role="status"><span class="cara" aria-hidden="true">👋</span><span id="bienvenidaTx"></span></p>
     <p class="eti espera-txt">Muy pronto</p><p class="eti listo-txt" style="background:#14A05A">¡Ya está aquí!</p>
     <h1 class="espera-txt">La escuela dominical <span>llega a tu casa</span></h1>
     <h1 class="listo-txt">¡Bienvenidos a <span>Eterno Pacto Kids!</span></h1>
-    <p class="fecha espera-txt">Lanzamiento: viernes 27 de noviembre · 21:00 (hora de Chile)</p>
+    <p class="fecha espera-txt">Lanzamiento: viernes 4 de diciembre · 21:00 (hora de Chile)</p>
     <p class="fecha listo-txt">Instálala gratis en tu celular y únete a tu congregación.</p>
     <div class="reloj espera-txt" role="timer" aria-live="off" aria-label="Cuenta regresiva para el lanzamiento">
       <div class="cel"><b id="cd-d">--</b><span>días</span></div><div class="cel"><b id="cd-h">--</b><span>horas</span></div>
@@ -148,6 +165,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
     <p class="visually-hidden" id="cd-txt" aria-live="polite"></p>
     <div class="acciones espera-txt"><button class="btn" id="recordar">⏰ Agregar a mi calendario</button><a class="btn sec" id="compartir" href="#">💬 Compartir por WhatsApp</a></div>
     <div class="acciones listo-txt"><a class="btn big" href="/instalar">📲 Instalar la app</a><a class="btn big sec" href="/app">Entrar a la app</a></div>
+    <div class="visitas" id="visitas" aria-live="polite"><span class="gato" aria-hidden="true"><img src="img/simon-full.webp" alt="" width="300" height="390"></span><span class="tx"><small>¡Miau! Simón lleva la cuenta:</small><span class="odo" id="odo" aria-hidden="true"></span><small id="visitasTx">visitas de familias curiosas 🐾</small></span></div>
   </div>
   <div class="wrap publico" aria-label="Los personajes esperan el lanzamiento">
     <div class="pj mateo"><img src="img/mateo-full.webp" alt="Mateo, el investigador curioso" width="300" height="444"><span class="globo" style="--r:-4deg"><span class="espera-txt">¿Ya casi?</span><span class="listo-txt">¡A explorar!</span></span></div>
@@ -208,7 +226,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
         <li>En <b>Mi familia</b>, crea un perfil para cada integrante y activa los avisos.</li></ol></article>
     </div>
     <div class="enlace" id="enlace">
-      <div class="espera-txt" style="display:flex;align-items:center;gap:14px"><span class="candado" aria-hidden="true">🔒</span><p>El enlace de instalación aparecerá aquí el viernes 27 de noviembre a las 21:00.</p></div>
+      <div class="espera-txt" style="display:flex;align-items:center;gap:14px"><span class="candado" aria-hidden="true">🔒</span><p>El enlace de instalación aparecerá aquí el viernes 4 de diciembre a las 21:00.</p></div>
       <div class="listo-txt"><p>¡Ya puedes instalarla!</p></div>
       <a class="btn listo-txt" href="/instalar">📲 Instalar la app</a>
     </div>
@@ -232,7 +250,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 
 <script>
 (function () {
-  var LANZAMIENTO = new Date("2026-11-27T21:00:00-03:00").getTime();
+  var LANZAMIENTO = new Date("2026-12-04T21:00:00-03:00").getTime();
   var prueba = /[?&]lanzado=1/.test(location.search);
   var $ = function (id) { return document.getElementById(id); };
   var dos = function (n) { return (n < 10 ? "0" : "") + n; };
@@ -258,13 +276,49 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
   // Agregar al calendario (.ics)
   $("recordar").addEventListener("click", function () {
     var ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Eterno Pacto Kids//ES", "BEGIN:VEVENT", "UID:lanzamiento@eternopactokids.cl", "DTSTAMP:20261113T000000Z",
-      "DTSTART:20261128T000000Z", "DTEND:20261128T010000Z", "SUMMARY:Lanzamiento de Eterno Pacto Kids", "DESCRIPTION:¡Hoy se lanza la app! Instálala en https://eternopactokids.cl",
+      "DTSTART:20261205T000000Z", "DTEND:20261205T010000Z", "SUMMARY:Lanzamiento de Eterno Pacto Kids", "DESCRIPTION:¡Hoy se lanza la app! Instálala en https://eternopactokids.cl",
       "URL:https://eternopactokids.cl", "BEGIN:VALARM", "TRIGGER:-PT30M", "ACTION:DISPLAY", "DESCRIPTION:En 30 minutos se lanza Eterno Pacto Kids", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
     var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "lanzamiento-eterno-pacto-kids.ics"; document.body.appendChild(a); a.click(); a.remove();
   });
-  var msg = "📲 ¡Se viene Eterno Pacto Kids! La escuela dominical en casa para toda la familia. Lanzamiento: viernes 27 de noviembre a las 21:00. Mira la cuenta regresiva: https://eternopactokids.cl";
+  var msg = "📲 ¡Se viene Eterno Pacto Kids! La escuela dominical en casa para toda la familia. Lanzamiento: viernes 4 de diciembre a las 21:00. Mira la cuenta regresiva: https://eternopactokids.cl";
   $("compartir").href = "https://wa.me/?text=" + encodeURIComponent(msg);
   $("compartir").target = "_blank"; $("compartir").rel = "noopener";
+  // Bienvenida: si hay sesión abierta en la app (mismo sitio), saludamos por el nombre; si ya vino antes, le damos la bienvenida de vuelta
+  (function () {
+    var nombre = "", vino = false;
+    try {
+      for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (/^sb-.*-auth-token$/.test(k)) { var ses = JSON.parse(localStorage.getItem(k) || "null"); var u = ses && (ses.user || (ses.currentSession && ses.currentSession.user)); if (u) nombre = (u.user_metadata && u.user_metadata.nombre) || ""; } }
+      vino = !!localStorage.getItem("epk_vino"); localStorage.setItem("epk_vino", String(Date.now()));
+    } catch (e) {}
+    var pila = (nombre || "").trim().split(/\s+/)[0];
+    var tx = pila ? "¡Bienvenido, <b>" + pila.replace(/[&<>"']/g, "") + "</b>! Qué bueno verte por aquí" : vino ? "¡Bienvenido de vuelta! Qué bueno verte otra vez" : "";
+    if (!tx) return;
+    var h = new Date().getHours(); var sal = h < 12 ? "☀️" : h < 20 ? "👋" : "🌙";
+    $("bienvenidaTx").innerHTML = tx; document.querySelector("#bienvenida .cara").textContent = sal; $("bienvenida").classList.add("on");
+  })();
+
+  // Contador de visitas (Simón cuenta): suma 1 por navegador cada 12 horas
+  (function () {
+    var SB = "https://izkqplqwxoszwqpzxwrb.supabase.co", KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6a3FwbHF3eG9zendxcHp4d3JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ1MDU2MjMsImV4cCI6MjExMDA4MTYyM30.o9TizvJI1wvRRMRh-FfUDnw4bP8PT8m_jzQBath49YY";
+    var odo = $("odo");
+    function pintar(n, animar) {
+      var txt = n.toLocaleString("es-CL"); odo.innerHTML = "";
+      txt.split("").forEach(function (c) {
+        var i = document.createElement("i");
+        if (!/\d/.test(c)) { i.className = "pto"; i.textContent = c; odo.appendChild(i); return; }
+        var sp = document.createElement("span"); for (var d = 0; d <= 9; d++) { var b = document.createElement("b"); b.textContent = d; sp.appendChild(b); }
+        i.appendChild(sp); odo.appendChild(i);
+        var y = -Number(c) * 1.35; if (animar) { sp.style.transform = "translateY(0)"; requestAnimationFrame(function () { requestAnimationFrame(function () { sp.style.transform = "translateY(" + y + "em)"; }); }); } else sp.style.transform = "translateY(" + y + "em)";
+      });
+      $("visitas").setAttribute("aria-label", "Simón lleva la cuenta: " + txt + " visitas");
+    }
+    var nueva = true; try { var t = Number(localStorage.getItem("epk_visita") || 0); nueva = Date.now() - t > 12 * 3600 * 1000; } catch (e) {}
+    pintar(7000, false);
+    fetch(SB + "/rest/v1/rpc/contar_visita", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" }, body: JSON.stringify({ p_nueva: nueva }) })
+      .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (n) { n = Number(n); if (!n) return; if (nueva) try { localStorage.setItem("epk_visita", String(Date.now())); } catch (e) {} pintar(n, true); })
+      .catch(function () {});
+  })();
 })();
 </script>
 </body>
