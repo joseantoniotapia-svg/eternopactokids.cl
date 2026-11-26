@@ -1679,7 +1679,8 @@ function vRecursos(){
   return out;
 }
 /* nombre de la clase o parábola de un cuento: el del Panel, o el de la clase de la Biblioteca con ese número / ficha */
-function claseDeCuento(x){if(x.claseNombre)return x.claseNombre;if(x.clase==null)return "";
+const NOMBRE_CLASE={1:"Parábola del Sembrador",2:"Parábola de la Semilla de Mostaza",3:"Parábola del Trigo y la Cizaña",4:"Parábola de la Levadura",5:"Parábola de la Red",6:"Parábola del Tesoro Escondido",7:"Parábola de la Perla de Gran Precio",8:"Parábola del Hijo Pródigo",9:"Parábola de la Oveja Perdida",10:"Parábola del Rico y Lázaro",11:"Parábola del Siervo Inútil",12:"Parábola de la Viuda y el Juez",13:"Parábola de la Moneda Perdida",14:"Parábola del Mayordomo Infiel",15:"Parábola de los Talentos",100:"Apocalipsis 2"};
+function claseDeCuento(x){if(x.claseNombre)return x.claseNombre;if(x.clase==null)return "";if(NOMBRE_CLASE[Number(x.clase)])return NOMBRE_CLASE[Number(x.clase)];
   const m=(S.maestras||[]).find(c=>Number(c.numero)===Number(x.clase)||(c.archivos||[]).concat([{nombre:c.titulo}]).some(a=>{const r=String((a&&(a.nombre||a.titulo||a.archivo))||"").match(/ficha\s*n?°?\s*(\d+)/i);return r&&Number(r[1])===Number(x.clase);}));
   return m?(m.titulo||""):"";}
 function tarjetaVisor(x,col){
