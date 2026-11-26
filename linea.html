@@ -228,6 +228,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
 <footer><div class="wrap"><div><b>Eterno Pacto Kids</b><br><span style="font-size:.9rem;opacity:.85">© <span id="anio">2026</span> Eterno Pacto KIDS · Todos los derechos reservados · JAT® es marca registrada de José Antonio Tapia Meneses</span></div>
   <nav aria-label="Enlaces"><a href="/">Inicio</a><a href="/biblioteca">Biblioteca</a><a href="/ofrenda">Ofrenda</a><a href="/app">Entrar a la app</a></nav></div></footer>
 <script src="linea-datos.js"></script>
+<script src="linea-extra.js"></script>
 <script>
 (function () {
 "use strict";
@@ -243,52 +244,13 @@ const LT_PASO=236,LT_PUERTA=270;
 const LTS={x:null,vistos:{}};try{LTS.vistos=JSON.parse(localStorage.getItem("epk_lt_vistos")||"{}")||{};}catch(e){}
 const ltPos=(()=>{const pos=[];let x=140,prev=-1;LT.forEach((h,i)=>{if(h.era!==prev){x+=LT_PUERTA;prev=h.era;}pos.push(x);x+=LT_PASO;});return {pos,ancho:x+160};})();
 const ltEraIni=ei=>LT.findIndex(h=>h.era===ei);
+if(window.LTX)LTX.init({LT,ERAS:LT_ERAS,vistos:()=>LTS.vistos,nombre:n=>NOMBRES[n]||""});
 function ltTengo(n){return true;}
 function ltEstrellas(){const r=a=>{const x=Math.sin(a*12.9898)*43758.5453;return x-Math.floor(x);};
   return [[260,26,1,0],[340,18,1.6,300],[460,10,2.4,700]].map(([t,n,sz,seed])=>({t,img:Array.from({length:n},(_,i)=>`radial-gradient(${sz}px ${sz}px at ${Math.round(r(seed+i)*t)}px ${Math.round(r(seed+i+.5)*t)}px, rgba(255,255,255,${(.5+r(seed+i+.7)*.5).toFixed(2)}), transparent)`).join(",")}));}
 const LT_CIELO=ltEstrellas();
 function ltClaseIdx(){return -1;const c=null;if(!c||!c.cita)return -1;const p=parseRef(String(c.cita).split(/[;,]/)[0]);if(!p)return -1;let best=-1,bd=99;
   LT.forEach((h,i)=>{const q=parseRef(h.cita.split(";")[0]);if(q&&q.li===p.li){const d=Math.abs(q.cap-p.cap);if(d<bd){bd=d;best=i;}}});return bd<=4?best:-1;}
-const LT_MANOS=`<svg class="lt-manos" viewBox="0 0 640 270" aria-hidden="true"><defs><linearGradient id="ltPiel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6D8"/><stop offset=".55" stop-color="#FFD978"/><stop offset="1" stop-color="#F5A623"/></linearGradient>
-<radialGradient id="ltHalo" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFF8DC"/><stop offset=".4" stop-color="#FFE08A" stop-opacity=".55"/><stop offset="1" stop-color="#FFC93C" stop-opacity="0"/></radialGradient>
-<radialGradient id="ltMar" cx="38%" cy="32%" r="70%"><stop offset="0" stop-color="#9BDBFF"/><stop offset=".6" stop-color="#2E7CF6"/><stop offset="1" stop-color="#173C9E"/></radialGradient>
-<filter id="ltBorde" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="2.4" result="d"/><feFlood flood-color="#FFF3C4"/><feComposite in2="d" operator="in" result="b"/><feGaussianBlur in="b" stdDeviation="6" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="ltBrillo" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<clipPath id="ltGlobo"><circle cx="320" cy="128" r="56"/></clipPath></defs><g class="lt-rayos" stroke="#FFF3C4" stroke-width="1.6" opacity=".3">${Array.from({length:19},(_,i)=>{const a=(-178+i*(176/18))*Math.PI/180;return `<line x1="320" y1="128" x2="${(320+Math.cos(a)*380).toFixed(0)}" y2="${(128+Math.sin(a)*380).toFixed(0)}"/>`;}).join("")}</g><ellipse class="lt-halo" cx="320" cy="132" rx="190" ry="110" fill="url(#ltHalo)"/>
-<g class="lt-globo"><g clip-path="url(#ltGlobo)"><circle cx="320" cy="128" r="56" fill="url(#ltMar)"/>
-<g class="lt-tierra" fill="#5BD27A"><path d="M280 100 c14-10 30-6 34 6 c4 12-8 16-4 28 c3 9-10 16-20 10 c-10-6-6-18-14-24 c-8-6-6-14 4-20Z M334 82 c12-4 26 2 30 12 c3 8-8 10-14 8 c-8-3-14 4-20-2 c-5-5-2-15 4-18Z M330 140 c10-6 26-2 30 10 c4 12-6 26-18 26 c-10 0-10-12-16-18 c-6-6-4-14 4-18Z M390 100 c12-6 24 4 22 16 c-2 10-14 8-18 2 c-4-6-12-12-4-18Z"/></g>
-<ellipse cx="298" cy="104" rx="22" ry="10" fill="#fff" opacity=".35" transform="rotate(-25 298 104)"/></g>
-<circle cx="320" cy="128" r="56" fill="none" stroke="#FFF3C4" stroke-width="2" opacity=".85"/></g>
-<g class="lt-manos-par"><g fill="url(#ltPiel)" filter="url(#ltBorde)"><path d="M96 268 C 110 244 136 226 168 214 L 196 244 C 170 252 150 260 140 268 Z"/>
-<path d="M160 214 C 178 192 214 182 250 184 C 270 186 282 196 282 210 C 282 226 262 238 232 242 C 204 246 180 240 168 230 Z"/>
-<path d="M 250.9 200.5 L 292.7 196.1 A 8.5 8.5 0 0 0 290.9 179.2 L 249.1 183.5 A 8.5 8.5 0 0 0 250.9 200.5 Z"/>
-<path d="M 296.3 193.8 L 306.6 186.3 A 7.65 7.65 0 0 0 297.6 173.9 L 287.3 181.4 A 7.65 7.65 0 0 0 296.3 193.8 Z"/>
-<path d="M 254.3 215.5 L 300.3 213.9 A 8.5 8.5 0 0 0 299.7 196.9 L 253.7 198.5 A 8.5 8.5 0 0 0 254.3 215.5 Z"/>
-<path d="M 304.0 211.9 L 314.8 205.1 A 7.65 7.65 0 0 0 306.7 192.2 L 295.9 198.9 A 7.65 7.65 0 0 0 304.0 211.9 Z"/>
-<path d="M 249.7 229.0 L 291.7 230.5 A 8.0 8.0 0 0 0 292.3 214.5 L 250.3 213.0 A 8.0 8.0 0 0 0 249.7 229.0 Z"/>
-<path d="M 295.4 228.8 L 305.9 223.2 A 7.2 7.2 0 0 0 299.2 210.5 L 288.6 216.1 A 7.2 7.2 0 0 0 295.4 228.8 Z"/>
-<path d="M 241.2 240.5 L 277.0 244.2 A 7.5 7.5 0 0 0 278.6 229.3 L 242.8 225.5 A 7.5 7.5 0 0 0 241.2 240.5 Z"/>
-<path d="M 280.5 242.9 L 290.8 238.4 A 6.75 6.75 0 0 0 285.3 226.0 L 275.1 230.6 A 6.75 6.75 0 0 0 280.5 242.9 Z"/>
-<path d="M 208.5 201.3 L 232.9 162.3 A 10.0 10.0 0 0 0 215.9 151.7 L 191.5 190.7 A 10.0 10.0 0 0 0 208.5 201.3 Z"/>
-<path d="M 228.6 164.9 L 242.7 157.4 A 9.0 9.0 0 0 0 234.3 141.5 L 220.2 149.0 A 9.0 9.0 0 0 0 228.6 164.9 Z"/></g><g fill="none" stroke="#E0952A" stroke-width="2" stroke-linecap="round" opacity=".55"><path d="M256 202 Q 275 202 296 198"/>
-<path d="M260 218 Q 282 216 304 214"/>
-<path d="M256 231 Q 275 230 296 227"/>
-<path d="M206 214 C 222 206 236 200 250 196"/></g>
-<g transform="translate(640 0) scale(-1 1)"><g fill="url(#ltPiel)" filter="url(#ltBorde)"><path d="M96 268 C 110 244 136 226 168 214 L 196 244 C 170 252 150 260 140 268 Z"/>
-<path d="M160 214 C 178 192 214 182 250 184 C 270 186 282 196 282 210 C 282 226 262 238 232 242 C 204 246 180 240 168 230 Z"/>
-<path d="M 250.9 200.5 L 292.7 196.1 A 8.5 8.5 0 0 0 290.9 179.2 L 249.1 183.5 A 8.5 8.5 0 0 0 250.9 200.5 Z"/>
-<path d="M 296.3 193.8 L 306.6 186.3 A 7.65 7.65 0 0 0 297.6 173.9 L 287.3 181.4 A 7.65 7.65 0 0 0 296.3 193.8 Z"/>
-<path d="M 254.3 215.5 L 300.3 213.9 A 8.5 8.5 0 0 0 299.7 196.9 L 253.7 198.5 A 8.5 8.5 0 0 0 254.3 215.5 Z"/>
-<path d="M 304.0 211.9 L 314.8 205.1 A 7.65 7.65 0 0 0 306.7 192.2 L 295.9 198.9 A 7.65 7.65 0 0 0 304.0 211.9 Z"/>
-<path d="M 249.7 229.0 L 291.7 230.5 A 8.0 8.0 0 0 0 292.3 214.5 L 250.3 213.0 A 8.0 8.0 0 0 0 249.7 229.0 Z"/>
-<path d="M 295.4 228.8 L 305.9 223.2 A 7.2 7.2 0 0 0 299.2 210.5 L 288.6 216.1 A 7.2 7.2 0 0 0 295.4 228.8 Z"/>
-<path d="M 241.2 240.5 L 277.0 244.2 A 7.5 7.5 0 0 0 278.6 229.3 L 242.8 225.5 A 7.5 7.5 0 0 0 241.2 240.5 Z"/>
-<path d="M 280.5 242.9 L 290.8 238.4 A 6.75 6.75 0 0 0 285.3 226.0 L 275.1 230.6 A 6.75 6.75 0 0 0 280.5 242.9 Z"/>
-<path d="M 208.5 201.3 L 232.9 162.3 A 10.0 10.0 0 0 0 215.9 151.7 L 191.5 190.7 A 10.0 10.0 0 0 0 208.5 201.3 Z"/>
-<path d="M 228.6 164.9 L 242.7 157.4 A 9.0 9.0 0 0 0 234.3 141.5 L 220.2 149.0 A 9.0 9.0 0 0 0 228.6 164.9 Z"/></g><g fill="none" stroke="#E0952A" stroke-width="2" stroke-linecap="round" opacity=".55"><path d="M256 202 Q 275 202 296 198"/>
-<path d="M260 218 Q 282 216 304 214"/>
-<path d="M256 231 Q 275 230 296 227"/>
-<path d="M206 214 C 222 206 236 200 250 196"/></g></g></g><circle class="lt-chispa" cx="352" cy="96" r="5" fill="#fff" filter="url(#ltBrillo)"/></svg>`;
 function ltCara(n,c){const L=albCat(n)||{};const t=ltTengo(n);return `<button class="lt-cara${t?"":" gris"}" data-act="ltFicha" data-n="${n}" aria-label="Ficha de ${esc(L.nombre||"N° "+n)}" title="${esc(L.nombre||"")}"><img src="/img/album/${String(n).padStart(3,"0")}.webp" alt="" loading="lazy"></button>`;}
 function vLinea(){const ci=ltClaseIdx();const vistos=Object.keys(LTS.vistos).length;
   let carril=`<div class="lt-linea" aria-hidden="true"></div>`;
@@ -302,12 +264,12 @@ function vLinea(){const ci=ltClaseIdx();const vistos=Object.keys(LTS.vistos).len
       ${visto?`<span class="lt-visto" title="Ya lo visitaste">✓</span>`:""}</button></div>`;});  const mini=LT_ERAS.map((e,ei)=>`<button class="lt-mini-e" style="--era:${e[1]};flex:${e[4].length}" data-act="ltIr" data-i="${ltEraIni(ei)}" title="${esc(e[0])}"><span>${esc(e[0])}</span></button>`).join("");
   setTimeout(ltMontar,0);
   return `<section class="lt" id="lt">
-    <div class="lt-top"><div class="lt-marcas"><img class="lt-m-epk" src="/img/logo-kids.webp" alt="Eterno Pacto KIDS"><button class="lt-son" data-act="ltSonido" aria-pressed="${LTA.on}">${LTA.on?"🔊 Música":"🔇 Sin música"}</button><img class="lt-m-jat" src="/img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></div>${LT_MANOS}<p class="lt-sup">Eterno Pacto KIDS presenta</p><h2>La gran historia de Dios</h2><p class="lt-sub">Desde la Creación hasta el año 100 d.C. · ${LT.length} momentos · «Todo está en sus manos»</p><p class="lt-der">© Eterno Pacto KIDS · Todos los derechos reservados · JAT®</p></div>
+    <div class="lt-top"><div class="lt-marcas"><img class="lt-m-epk" src="/img/logo-kids.webp" alt="Eterno Pacto KIDS"><button class="lt-son" data-act="ltSonido" aria-pressed="${LTA.on}">${LTA.on?"🔊 Música":"🔇 Sin música"}</button><img class="lt-m-jat" src="/img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></div><p class="lt-sup">Eterno Pacto KIDS presenta</p><h2>La gran historia de Dios</h2><p class="lt-sub">Desde la Creación hasta el año 100 d.C. · ${LT.length} momentos · «Todo está en sus manos»</p><p class="lt-der">© Eterno Pacto KIDS · Todos los derechos reservados · JAT®</p></div>
     <div class="lt-ventana"><div class="lt-cielo" aria-hidden="true">${LT_CIELO.map((c,k)=>`<i class="lt-est e${k}" style="background-image:${c.img};background-size:${c.t}px ${c.t}px"></i>`).join("")}<i class="lt-neb n1"></i><i class="lt-neb n2"></i><i class="lt-neb n3"></i></div>
     <div class="lt-pista" id="ltPista" tabindex="0" aria-label="Línea de tiempo: arrastra o usa las flechas para viajar"><div class="lt-carril" style="width:${ltPos.ancho}px">${carril}</div></div></div>
     <div class="lt-mini" role="group" aria-label="Viajar a una época">${mini}<i class="lt-mini-yo" id="ltYo"></i></div>
     <div class="lt-ctrl"><button class="lt-flecha" data-act="ltPaso" data-d="-1" aria-label="Momento anterior">‹</button><span id="ltDonde" class="lt-donde">Arrastra para viajar en el tiempo</span><button class="lt-flecha" data-act="ltPaso" data-d="1" aria-label="Momento siguiente">›</button></div>
-    <p class="lt-prog">⭐ Has visitado <b id="ltVistos">${vistos}</b> de ${LT.length} momentos · toca una tarjeta para leer su historia</p>
+    <p class="lt-prog">⭐ Has visitado <b id="ltVistos">${vistos}</b> de ${LT.length} momentos · toca una tarjeta para leer su historia</p>${window.LTX?LTX.pasaporte():""}
     <div class="lt-ofrenda"><div class="lt-cta"><div><b>⭐ Colecciona a los personajes</b><span>En la app, cada momento muestra sus personajes del álbum bíblico. Junta puntos, abre sobres y completa los 100.</span></div><a class="btn" href="/app">Entrar a la app</a></div><div class="lt-cta of"><div><b>💛 ¿Te gustó viajar por la historia?</b><span>Ayúdanos a seguir creando nuevos momentos, personajes y aventuras.</span></div><a class="btn sec" href="/ofrenda">Quiero apoyar</a></div></div><footer class="lt-pie"><img src="/img/logo-kids.webp" alt="Eterno Pacto KIDS"><p>© ${new Date().getFullYear()} Eterno Pacto KIDS · Todos los derechos reservados.<br>Prohibida su venta y reproducción. Fechas aproximadas · línea esquemática, no a escala.<br>JAT® es marca registrada de José Antonio Tapia Meneses.</p><span class="lt-jat"><span>Desarrollado por</span><img src="/img/jat-horizontal-blanco.svg" alt="JAT · José Antonio Tapia"></span></footer></section>`;}
 const LT_GRANDES=new Set(["Dios crea el universo","El diluvio","Dios llama a Abraham","El mar Rojo se abre","Los Diez Mandamientos","Caen los muros de Jericó","David y Goliat","El templo de Jerusalén","Daniel en el foso de los leones","Nace Jesús en Belén","Jesús muere en la cruz","¡Jesús resucitó!","Pentecostés","Saulo en el camino a Damasco"]);
 const LT_FONDOS=["linear-gradient(160deg,#FFFDF6,#FFF1D0)","linear-gradient(160deg,#F2FFF8,#CFF5E3)","linear-gradient(160deg,#F7F2FF,#E2D6FF)","linear-gradient(160deg,#FFF6F0,#FFD9C4)","linear-gradient(160deg,#F0F8FF,#CFE6FF)","linear-gradient(160deg,#FFF2F7,#FFD0E2)","linear-gradient(160deg,#FFFBEA,#FFE9A8)"];
@@ -360,9 +322,9 @@ function ltMontar(){const p=document.getElementById("ltPista");if(!p||p._lt)retu
 function ltIr(i,suave){const p=document.getElementById("ltPista");if(!p)return;i=Math.max(0,Math.min(LT.length-1,i));if(suave!==false&&Math.abs(i-(LTS.cerca||0))>1)ltEfecto("viaje");p.scrollTo({left:ltPos.pos[i]+40-p.clientWidth/2,behavior:suave===false?"auto":"smooth"});}
 function ltPaso(d){ltIr((LTS.cerca||0)+d);}
 function ltAbrir(i){const h=LT[i];if(!h)return;const e=LT_ERAS[h.era];
-  if(!LTS.vistos[h.id]){LTS.vistos[h.id]=hoyISO();try{localStorage.setItem("epk_lt_vistos",JSON.stringify(LTS.vistos));}catch(x){}const v=document.getElementById("ltVistos");if(v)v.textContent=Object.keys(LTS.vistos).length;const hc=document.querySelector(`.lt-hito[data-i="${i}"] .lt-card`);if(hc&&!hc.querySelector(".lt-visto"))hc.insertAdjacentHTML("beforeend",`<span class="lt-visto" title="Ya lo visitaste">✓</span>`);}
+  if(!LTS.vistos[h.id]){LTS.vistos[h.id]=hoyISO();try{localStorage.setItem("epk_lt_vistos",JSON.stringify(LTS.vistos));}catch(x){}const v=document.getElementById("ltVistos");if(v)v.textContent=Object.keys(LTS.vistos).length;const hc=document.querySelector(`.lt-hito[data-i="${i}"] .lt-card`);if(hc&&!hc.querySelector(".lt-visto"))hc.insertAdjacentHTML("beforeend",`<span class="lt-visto" title="Ya lo visitaste">✓</span>`);if(window.LTX)LTX.visitado(i);}
   $("#sheetRoot").innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet lt-ficha" style="--era:${e[1]}" role="dialog" aria-modal="true" aria-label="${esc(h.titulo)}">
-    <p class="lt-f-era">${esc(e[0])} · ${esc(h.fecha||"Sin fecha")}</p><div class="lt-f-emoji">${h.emoji}</div><h2>${esc(h.titulo)}</h2><p>${esc(h.texto)}</p>
+    <p class="lt-f-era">${esc(e[0])} · ${esc(h.fecha||"Sin fecha")}</p><div class="lt-f-emoji">${h.emoji}</div><h2>${esc(h.titulo)}</h2><p>${esc(h.texto)}</p>${window.LTX?LTX.bloqueHito(i):""}
     <div class="lt-f-cita"><span>📖 <b>${esc(h.cita)}</b><span class="small muted"> · ${esc(h.cita.replace(/\s*\d.*$/,""))}</span></span><a class="btn sm" href="/app">Leerlo en la app</a></div>
     ${h.pers.length?`<p class="eyebrow">Personajes de este momento</p><div class="lt-f-pers">${h.pers.map(n=>{const L=albCat(n)||{};return `<span class="lt-f-p">${ltCara(n)}<span class="small">${esc(L.nombre||"")}</span></span>`;}).join("")}</div>`:""}
     <div class="row between"><button class="btn line sm" data-act="ltHito" data-i="${i-1}" ${i?"":"disabled"}>‹ Anterior</button><button class="btn sm" data-act="ltCerrar">Cerrar</button><button class="btn line sm" data-act="ltHito" data-i="${i+1}" ${i<LT.length-1?"":"disabled"}>Siguiente ›</button></div>
@@ -384,11 +346,13 @@ function accionLT(act,b){switch(act){
   case "ltFicha":ltFicha(Number(b.dataset.n));break;
   case "ltIr":ltMusica();ltIr(Number(b.dataset.i));break;
   case "ltPaso":ltMusica();ltEfecto("viaje");ltPaso(Number(b.dataset.d));break;
-  case "ltCerrar":$("#sheetRoot").innerHTML="";break;}}
+  case "ltCerrar":if(window.LTX)LTX.callar();$("#sheetRoot").innerHTML="";break;}}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(!b)return;accionLT(b.dataset.act,b);});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#sheetRoot").innerHTML="";});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(window.LTX)LTX.callar();$("#sheetRoot").innerHTML="";}});
 document.getElementById("anio").textContent=new Date().getFullYear();
 $("#lineaRoot").innerHTML=vLinea();
+function ltHash(){const i=window.LTX?LTX.hashIdx():-1;if(i<0)return;setTimeout(()=>{ltIr(i,false);setTimeout(()=>ltAbrir(i),500);},300);}
+ltHash();window.addEventListener("hashchange",ltHash);
 })();
 </script>
 </body>
