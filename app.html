@@ -2947,6 +2947,7 @@ document.addEventListener("change",e=>{const t=e.target;if(t.dataset&&t.dataset.
 $("#modeBtn").addEventListener("click",elegirVista);
 
 /* ---------- arranque ---------- */
+{const m=(location.hash||"").match(/^#leer=(.+)$/);if(m){let ref="";try{ref=decodeURIComponent(m[1]);}catch(e){}const r=parseRef(ref);try{history.replaceState(null,"",location.pathname+location.search);}catch(e){}if(r)abrirRef(r.li,r.cap,r.v);}}
 render();
 if(window.EPK&&EPK.user)EPK.cargarFamilia().then(r=>{if(r&&r.lectores){try{fusionar(r);}catch(e){}render();}else if(Object.keys(BIB.lectores).length)bibSave();});
 setTimeout(()=>{if(!loaded.clases&&!dbFailed){dbFailed=true;render();}},12000);
