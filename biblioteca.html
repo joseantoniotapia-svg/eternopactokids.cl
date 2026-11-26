@@ -93,6 +93,25 @@ main{padding-block:26px 40px;display:flex;flex-direction:column;gap:22px}
 .vacio{color:var(--muted);font-style:italic}
 /* cuentos en lista: miniatura igual para todos, colores por clase */
 .cuentos-lista{display:flex;flex-direction:column;gap:10px;max-width:820px}
+.parabolas{display:flex;flex-direction:column;gap:16px;max-width:900px}
+.pb{--c:#7A4DFF;background:var(--surface);border:2.5px solid var(--edge);border-radius:22px;overflow:hidden;box-shadow:4px 4px 0 color-mix(in srgb,var(--c) 55%,transparent)}
+.pb-cab{display:flex;align-items:center;gap:12px;padding:10px 14px;background:color-mix(in srgb,var(--c) 16%,var(--surface));border-bottom:2.5px dashed color-mix(in srgb,var(--c) 60%,var(--edge))}
+.pb-n{flex:none;width:50px;height:50px;border-radius:50%;background:var(--c);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;line-height:1;border:3px solid var(--edge)}
+.pb-n span{font-size:.56rem;letter-spacing:.05em;text-transform:uppercase}.pb-n b{font-size:1.3rem}
+.pb-t{min-width:0;display:flex;flex-direction:column}.pb-t small{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:color-mix(in srgb,var(--c) 70%,var(--ink))}
+.pb-t b{font-family:var(--display);font-weight:700;font-size:1.2rem;line-height:1.15}
+.pb-dos{display:grid;grid-template-columns:1fr 1fr}
+.pb-cu{display:flex;gap:12px;padding:12px 14px;min-width:0}.pb-cu+.pb-cu{border-left:2px dashed var(--edge)}
+.pb-cu .cu-tapa{flex:none}
+.pb-cu .tx{min-width:0;display:flex;flex-direction:column;gap:6px}
+.pb-cu .tx em{font-style:normal;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--c)}
+.pb-cu .tx b{font-family:var(--display);font-weight:600;font-size:1rem;line-height:1.2}
+.pb-cu .etq{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.78rem;color:var(--muted)}
+.pb-cu .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.pb-cu.falta{align-items:center;justify-content:center;color:var(--muted);font-size:.85rem;text-align:center}
+.pb-cu.bloq .cu-tapa img{filter:grayscale(.6);opacity:.7}
+.pb.foco,.pb-cu.foco{outline:4px solid var(--pink);outline-offset:2px}
+@media (max-width:620px){.pb-cu{flex-direction:column;align-items:center;text-align:center;padding:10px 8px}.pb-cu .tx{align-items:center}.pb-cu .acts{justify-content:center}.pb-cu .acts .btn{padding-inline:10px}.pb-cu .cu-tapa{width:86px;height:114px}}
 .cu-fila{--c:#7A4DFF;position:relative;display:grid;grid-template-columns:auto 78px 1fr auto;align-items:center;gap:14px;background:var(--surface);border:2.5px solid var(--edge);border-left:10px solid var(--c);border-radius:18px 10px 18px 12px;padding:10px 14px 10px 10px;box-shadow:3px 3px 0 var(--edge);scroll-margin-top:90px}
 .cu-fila:nth-child(even){transform:rotate(.25deg)}.cu-fila:nth-child(odd){transform:rotate(-.2deg)}
 .cu-fila.foco{outline:4px solid var(--pink);outline-offset:3px}
@@ -335,6 +354,30 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
       '<span class="cu-tapa">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="tapa-gen" style="--g1:' + c + ';--g2:#2A1E5C"><span>📖</span></span>') + "</span>" +
       '<div class="cu-tx"><b>' + esc(tituloDe(it).replace(/-/g, " ")) + "</b>" + (cn ? '<span class="cu-clase">📚 ' + esc(cn) + "</span>" : "") + '<span class="etq">' + etq + "</span></div><div class=\"cu-acts\">" + accionesDe(it) + "</div></article>";
   }
+  // Cuentos agrupados por parábola (clase): cabecera con el nombre y debajo Cuento 1 y Cuento 2
+  function claseNum(d) { if (d.clase != null && !isNaN(Number(d.clase))) return Number(d.clase); var n = Number(d.numero); return n > 0 && !isNaN(n) ? Math.floor((n - 1) / 2) + 1 : null; }
+  function parteNum(d) { if (d.parte != null) return Number(d.parte); var n = Number(d.numero); return n > 0 ? ((n - 1) % 2) + 1 : 1; }
+  function cuentoMini(it, k) {
+    var d = it.d, src = d.thumb ? blobUrl(d.thumb) : "";
+    var t = tituloDe(it).replace(/-/g, " ").replace(/^\s*clase\s*\d+\s*[-_ ]*cuento\s*\d+\s*/i, "") || "Cuento " + k;
+    return '<div class="pb-cu' + (it.bloq ? " bloq" : "") + '" id="i-' + esc(it.col + "-" + it.id) + '"><span class="cu-tapa">' + (src ? '<img src="' + esc(src) + '" alt="" loading="lazy">' : '<span class="tapa-gen" style="--g1:var(--c);--g2:#2A1E5C"><span>📖</span></span>') + "</span>" +
+      '<div class="tx"><em>Cuento ' + k + "</em><b>" + esc(t) + '</b><span class="etq">' + nivelPill(it) + (d.tamano ? "<span>" + fmtMB(d.tamano) + "</span>" : "") + '</span><div class="acts">' + accionesDe(it) + "</div></div></div>";
+  }
+  function listaCuentos(cue) {
+    var grupos = {}, sueltos = [];
+    cue.forEach(function (it) { var c = claseNum(it.d); if (c == null) sueltos.push(it); else (grupos[c] = grupos[c] || []).push(it); });
+    var html = sueltos.length ? '<div class="cuentos-lista">' + sueltos.map(tarjetaCuento).join("") + "</div>" : "";
+    var claves = Object.keys(grupos).map(Number).sort(function (a, b) { return a - b; });
+    if (!claves.length) return html;
+    return html + '<div class="parabolas"' + (sueltos.length ? ' style="margin-top:16px"' : "") + ">" + claves.map(function (c) {
+      var xs = grupos[c].slice().sort(function (a, b) { return parteNum(a.d) - parteNum(b.d); });
+      var nom = ""; xs.some(function (x) { nom = claseDeCuento(Object.assign({}, x.d, { clase: c })); return !!nom; });
+      var celdas = xs.map(function (x, i) { return cuentoMini(x, parteNum(x.d) || i + 1); });
+      if (celdas.length === 1) celdas.push('<div class="pb-cu falta">📖 El otro cuento de esta parábola llegará pronto</div>');
+      return '<article class="pb" style="--c:' + colorDe(c) + '"><div class="pb-cab"><span class="pb-n"><span>Clase</span><b>' + c + '</b></span><div class="pb-t"><small>' + (nom ? "Parábola · 2 cuentos" : "Clase " + c) + "</small><b>" + esc(nom || "Clase " + c) + "</b></div></div>" +
+        '<div class="pb-dos">' + celdas.join("") + "</div></article>";
+    }).join("") + "</div>";
+  }
   function tarjetaRecurso(it) {
     var d = it.d, src = d.thumb ? blobUrl(d.thumb) : srcDe(d.portadaMini || d.portada);
     var ico = { materiales: "🧩", matprofes: "🧑‍🏫" }[it.col] || "✨", c = colorDe(String(tituloDe(it)).length);
@@ -407,7 +450,7 @@ footer nav{display:flex;gap:14px;flex-wrap:wrap;font-size:.95rem}
       total += xs.length;
       html += '<section class="grupo"><h2>' + g[1] + " " + esc(g[2]) + ' <span class="pill">' + xs.length + '</span></h2>' + (function () {
           var cue = xs.filter(function (x) { return x.col === "cuentos"; }), cls = xs.filter(function (x) { return x.col === "maestras"; }), otros = xs.filter(function (x) { return x.col !== "maestras" && x.col !== "cuentos"; });
-          return (cue.length ? '<div class="cuentos-lista">' + cue.map(tarjeta).join("") + "</div>" : "") + (cls.length ? '<div class="lista clases">' + cls.map(tarjeta).join("") + "</div>" : "") + (otros.length ? '<div class="lista clases"' + (cls.length ? ' style="margin-top:14px"' : "") + ">" + otros.map(tarjeta).join("") + "</div>" : ""); })() + "</section>";
+          return (cue.length ? listaCuentos(cue) : "") + (cls.length ? '<div class="lista clases">' + cls.map(tarjeta).join("") + "</div>" : "") + (otros.length ? '<div class="lista clases"' + (cls.length ? ' style="margin-top:14px"' : "") + ">" + otros.map(tarjeta).join("") + "</div>" : ""); })() + "</section>";
     });
     $("#grupos").innerHTML = html || '<p class="nota">' + (q ? "No encontramos material con «" + esc(ui.q) + "»." : "Pronto habrá material en esta sección.") + "</p>";
     var c = $("#cuenta"); if (c) c.textContent = total ? total + " materiales" : "";
